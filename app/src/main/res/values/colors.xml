@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+        <color name="primary">#4CAF50</color>
+        <color name="primary_dark">#388E3C</color>
+        <color name="primary_light">#C8E6C9</color>
+        <color name="accent">#448AFF</color>
+        <color name="primary_text">#212121</color>
+        <color name="secondary_text">#757575</color>
+        <color name="icons">#FFFFFF</color>
+        <color name="divider">#BDBDBD</color>
+
+        <color name ="videos">#EB5757</color>
+        <color name ="money">#3BB273</color>
+        <color name ="sport">#4D9DE0</color>
+        <color name ="journey">#FFC857</color>
+        <color name ="knowledge">#31393C</color>
+        <color name ="other">#895737</color>
+
+        <color name ="huge">#EB5757</color>
+        <color name ="big">#FFC857</color>
+        <color name ="medium">#3BB273</color>
+        <color name ="small">#BDBDBD</color>
+
+</resources>
