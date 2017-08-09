@@ -7,14 +7,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
 
     private RecyclerView recyclerView;
     private List<Success> successes;
@@ -53,12 +54,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void initVariables() {
         successes = new ArrayList<>();
-        successAdapter = new SuccessAdapter(successes, R.layout.item_layout);
+        successAdapter = new SuccessAdapter(successes, R.layout.item_layout, getApplicationContext());
         recyclerView.setAdapter(successAdapter);
 
-        successes.add(new Success("First yt video", "video", "medium", "", "07.08.17"));
-        successes.add(new Success("Big sale", "business", "big", "", "07.08.17"));
-        successes.add(new Success("First yt video", "video", "big", "", "07.08.17"));
+        successes.add(new Success("First yt video", "Video", "medium", "", "07.08.17"));
+        successes.add(new Success("Big sale", "Money", "huge", "", "06.08.17"));
+        successes.add(new Success("10km run", "Sport", "big", "", "05.08.17"));
+        successes.add(new Success("Graduated", "Knowledge", "small", "", "04.08.17"));
         successAdapter.notifyDataSetChanged();
     }
 

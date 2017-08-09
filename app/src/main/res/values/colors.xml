@@ -21,5 +21,6 @@
         <color name ="big">#FFC857</color>
         <color name ="medium">#3BB273</color>
         <color name ="small">#BDBDBD</color>
+        <color name="white">#FFFFFF</color>
 
 </resources>

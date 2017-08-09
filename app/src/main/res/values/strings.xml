@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">MyWins</string>
     <string name="action_settings">Settings</string>
+    <string name="android">Android</string>
+    <string name="title">Title</string>
+    <string name="category_description">category</string>
+    <string name="dummy_date">27.05.17</string>
+    <string name="dummy_title">Title</string>
+    <string name="dummy_category">Android</string>
+    <string name="importance_description">importance</string>
 </resources>
