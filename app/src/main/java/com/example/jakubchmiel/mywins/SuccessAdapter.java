@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * Created by jakub on 07.08.17.
- * http://www.theandroiddev.com/2017/08/08/create-new-app-portfolio-2/
+ * https://github.com/jcup1/MyWins-CardView/blob/master/app/src/main/java/com/example/jakubchmiel/mywins/SuccessAdapter.java
  */
 
 class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
