@@ -26,9 +26,10 @@ class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
     private Context context;
 
     //2
-    SuccessAdapter(List<Success> successes, int itemLayout) {
+    SuccessAdapter(List<Success> successes, int itemLayout, Context context) {
         this.successes = successes;
         this.itemLayout = itemLayout;
+        this.context = context;
     }
 
     @Override
