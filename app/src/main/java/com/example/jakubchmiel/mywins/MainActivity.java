@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initVariables() {
         successes = new ArrayList<>();
-        successAdapter = new SuccessAdapter(successes, R.layout.item_layout);
+        successAdapter = new SuccessAdapter(successes, R.layout.item_layout, getApplicationContext());
         recyclerView.setAdapter(successAdapter);
 
         successes.add(new Success("First yt video", "Video", "medium", "", "07.08.17"));
