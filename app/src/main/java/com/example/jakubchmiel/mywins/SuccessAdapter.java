@@ -64,23 +64,23 @@ class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
         int color = R.color.other;
 
         if (category.equalsIgnoreCase("video")) {
-            id = R.drawable.ic_play_circle_filled_black_40dp;
-            color = R.color.videos;
+            id = R.drawable.ic_video;
+            color = R.color.video;
         }
         if (category.equalsIgnoreCase("sport")) {
-            id = R.drawable.ic_directions_bike_black_40dp;
+            id = R.drawable.ic_sport;
             color = R.color.sport;
         }
         if (category.equalsIgnoreCase("money")) {
-            id = R.drawable.ic_attach_money_black_40dp;
-            color = R.color.money;
+            id = R.drawable.ic_business;
+            color = R.color.business;
         }
         if (category.equalsIgnoreCase("journey")) {
-            id = R.drawable.ic_location_on_black_40dp;
+            id = R.drawable.ic_journey;
             color = R.color.journey;
         }
         if (category.equalsIgnoreCase("knowledge")) {
-            id = R.drawable.ic_school_black_40dp;
+            id = R.drawable.ic_knowledge;
             color = R.color.knowledge;
         }
 
@@ -126,7 +126,8 @@ class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
             dateTv = itemView.findViewById(R.id.item_date);
             categoryIv = itemView.findViewById(R.id.item_category_iv);
             importanceIv = itemView.findViewById(R.id.item_importance_iv);
-
         }
     }
+
+
 }

@@ -10,8 +10,8 @@
         <color name="icons">#FFFFFF</color>
         <color name="divider">#BDBDBD</color>
 
-        <color name ="videos">#EB5757</color>
-        <color name ="money">#3BB273</color>
+    <color name="video">#EB5757</color>
+    <color name="business">#3BB273</color>
         <color name ="sport">#4D9DE0</color>
         <color name ="journey">#FFC857</color>
         <color name ="knowledge">#31393C</color>
@@ -22,5 +22,16 @@
         <color name ="medium">#3BB273</color>
         <color name ="small">#BDBDBD</color>
         <color name="white">#FFFFFF</color>
+
+    <color name="black_semi_transparent">#B2000000</color>
+    <color name="background">#e5e5e5</color>
+    <color name="half_black">#808080</color>
+    <color name="almostwhite">#fafafa</color>
+    <color name="white_pressed">#f1f1f1</color>
+    <color name="pink">#e91e63</color>
+    <color name="pink_pressed">#ec407a</color>
+    <color name="blue_semi_transparent">#805677fc</color>
+    <color name="blue_semi_transparent_pressed">#80738ffe</color>
+    <color name="shadow">#80000000</color>
 
 </resources>
