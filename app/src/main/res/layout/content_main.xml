@@ -11,7 +11,7 @@
     tools:showIn="@layout/activity_main">
 
     <View
-        android:id="@+id/view"
+        android:id="@+id/main_up_view"
         android:layout_width="match_parent"
         android:layout_height="6dp"/>
 

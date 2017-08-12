@@ -8,4 +8,19 @@
     <string name="dummy_title">Title</string>
     <string name="dummy_category">Android</string>
     <string name="importance_description">importance</string>
+    <string name="title_activity_show_success">ShowSuccess</string>
+    <string name="title_activity_edit_success">EditSuccess</string>
+    <string name="action_date_desc">Sort by oldest</string>
+    <string name="action_date_asc">Sort by newest</string>
+    <string name="action_title_desc">Sort by title desc</string>
+    <string name="action_title_asc">Sort by title asc</string>
+
+    <string name="transition_title">title</string>
+    <string name="transition_category_iv">category_iv</string>
+    <string name="transition_category">category</string>
+
+    <string name="transition_date">date</string>
+    <string name="transition_importance_iv">importance_iv</string>
+
+
 </resources>

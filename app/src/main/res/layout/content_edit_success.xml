@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/shared_element"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     >
 
@@ -15,12 +13,13 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/item_card_view"
+        android:id="@+id/edit_card_basic"
         android:layout_width="match_parent"
         android:layout_height="98dp"
         android:layout_marginLeft="6dp"
         android:layout_marginRight="6dp"
         android:clipToPadding="false"
+
         android:padding="0dp"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="@dimen/cardview_default_radius"
@@ -30,32 +29,33 @@
         tools:layout_editor_absoluteY="0dp">
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/item_constraint_layout"
+            android:id="@+id/edit_constraint_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/item_title"
+            <EditText
+                android:id="@+id/edit_title"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="8dp"
+                android:background="@color/transparent"
                 android:gravity="left|center"
                 android:textAlignment="textStart"
                 android:textColor="@color/primary_text"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintLeft_toRightOf="@+id/item_category_iv"
-                app:layout_constraintRight_toLeftOf="@+id/item_date"
+                app:layout_constraintLeft_toRightOf="@+id/edit_category_iv"
+                app:layout_constraintRight_toLeftOf="@+id/edit_date"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0"
                 tools:text="@string/dummy_title"/>
 
             <ImageView
-                android:id="@+id/item_category_iv"
+                android:id="@+id/edit_category_iv"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="16dp"
@@ -66,7 +66,7 @@
                 app:srcCompat="@mipmap/ic_launcher"/>
 
             <TextView
-                android:id="@+id/item_category"
+                android:id="@+id/edit_category"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
@@ -77,13 +77,13 @@
                 android:textColor="@color/secondary_text"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.444"
-                app:layout_constraintLeft_toLeftOf="@+id/item_category_iv"
-                app:layout_constraintRight_toRightOf="@+id/item_category_iv"
-                app:layout_constraintTop_toBottomOf="@+id/item_category_iv"
+                app:layout_constraintLeft_toLeftOf="@+id/edit_category_iv"
+                app:layout_constraintRight_toRightOf="@+id/edit_category_iv"
+                app:layout_constraintTop_toBottomOf="@+id/edit_category_iv"
                 app:layout_constraintVertical_bias="0.0"/>
 
             <TextView
-                android:id="@+id/item_date"
+                android:id="@+id/edit_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="0dp"
@@ -96,7 +96,7 @@
                 app:layout_constraintTop_toTopOf="parent"/>
 
             <ImageView
-                android:id="@+id/item_importance_iv"
+                android:id="@+id/edit_importance_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="0dp"
@@ -109,6 +109,41 @@
 
         </android.support.constraint.ConstraintLayout>
 
+
     </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/edit_card_description"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:clipToPadding="false"
+
+        android:padding="0dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="@dimen/cardview_default_radius"
+        app:cardElevation="2dp"
+        app:cardUseCompatPadding="true"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="0dp">
+
+        <EditText
+            android:id="@+id/edit_description"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent"
+            android:gravity="top"
+            android:padding="16dp"
+            android:textAlignment="viewStart"
+            android:textColor="@color/secondary_text"
+            android:textSize="18sp"/>
+
+    </android.support.v7.widget.CardView>
+
 
 </LinearLayout>

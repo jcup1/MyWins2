@@ -1,9 +1,8 @@
 package com.example.jakubchmiel.mywins;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
+import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,14 +21,18 @@ class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
 
     //1
     private List<Success> successes;
+    private OnItemClickListener listener;
     private int itemLayout;
     private Context context;
+    private DrawableSelector drawableSelector;
 
     //2
-    SuccessAdapter(List<Success> successes, int itemLayout, Context context) {
+    SuccessAdapter(List<Success> successes, int itemLayout, Context context, OnItemClickListener listener) {
         this.successes = successes;
         this.itemLayout = itemLayout;
         this.context = context;
+        this.listener = listener;
+        this.drawableSelector = new DrawableSelector(context);
     }
 
     @Override
@@ -42,15 +45,17 @@ class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+
         //5
         holder.titleTv.setText(successes.get(position).getTitle());
         holder.categoryTv.setText(successes.get(position).getCategory());
         holder.dateTv.setText(successes.get(position).getDate());
-        selectCategoryImage(holder.categoryIv, successes.get(position).getCategory());
-        selectImportanceImage(holder.importanceIv, successes.get(position).getImportance());
+        drawableSelector.selectCategoryImage(holder.categoryIv, successes.get(position).getCategory(), holder.categoryTv);
+        drawableSelector.selectImportanceImage(holder.importanceIv, successes.get(position).getImportance());
+        holder.bind(successes.get(position), listener);
+
 
     }
-
 
     @Override
     public int getItemCount() {
@@ -58,75 +63,39 @@ class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
     }
 
 
-    //6
-    private void selectCategoryImage(ImageView image, String category) {
-        int id = R.drawable.ic_mood_black_40dp; //default: other
-        int color = R.color.other;
-
-        if (category.equalsIgnoreCase("video")) {
-            id = R.drawable.ic_video;
-            color = R.color.video;
-        }
-        if (category.equalsIgnoreCase("sport")) {
-            id = R.drawable.ic_sport;
-            color = R.color.sport;
-        }
-        if (category.equalsIgnoreCase("money")) {
-            id = R.drawable.ic_business;
-            color = R.color.business;
-        }
-        if (category.equalsIgnoreCase("journey")) {
-            id = R.drawable.ic_journey;
-            color = R.color.journey;
-        }
-        if (category.equalsIgnoreCase("knowledge")) {
-            id = R.drawable.ic_knowledge;
-            color = R.color.knowledge;
-        }
-
-        Drawable myDrawable = ResourcesCompat.getDrawable(context.getResources(), id, null);
-        image.setImageDrawable(myDrawable);
-        image.setColorFilter(ContextCompat.getColor(context, color));
-
+    public interface OnItemClickListener {
+        void onItemClick(Success success, TextView titleTv, TextView categoryTv, TextView dateTv, ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView);
     }
-
-    //7
-    private void selectImportanceImage(ImageView importanceIv, String importance) {
-
-        int id = R.drawable.importance_medium; //default: other
-
-        if (importance.equalsIgnoreCase("huge")) {
-            id = R.drawable.importance_huge;
-        }
-        if (importance.equalsIgnoreCase("big")) {
-            id = R.drawable.importance_big;
-        }
-        if (importance.equalsIgnoreCase("medium")) {
-            id = R.drawable.importance_medium;
-        }
-        if (importance.equalsIgnoreCase("small")) {
-            return;
-        }
-
-        Drawable myDrawable = ResourcesCompat.getDrawable(context.getResources(), id, null);
-        importanceIv.setImageDrawable(myDrawable);
-
-    }
-
 
     class ViewHolder extends RecyclerView.ViewHolder {
         //4
         TextView titleTv, categoryTv, dateTv;
         ImageView categoryIv, importanceIv;
+        ConstraintLayout constraintLayout;
+        CardView cardView;
 
         ViewHolder(View itemView) {
             super(itemView);
             titleTv = itemView.findViewById(R.id.item_title);
-            categoryTv = itemView.findViewById(R.id.item_category_tv);
+            categoryTv = itemView.findViewById(R.id.item_category);
             dateTv = itemView.findViewById(R.id.item_date);
             categoryIv = itemView.findViewById(R.id.item_category_iv);
             importanceIv = itemView.findViewById(R.id.item_importance_iv);
+
+            constraintLayout = itemView.findViewById(R.id.item_constraint_layout);
+            cardView = itemView.findViewById(R.id.item_card_view);
         }
+
+        public void bind(final Success success, final OnItemClickListener listener) {
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onItemClick(success, titleTv, categoryTv, dateTv, categoryIv, importanceIv, constraintLayout, cardView);
+                }
+            });
+        }
+
     }
 
 

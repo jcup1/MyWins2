@@ -46,6 +46,7 @@
                 android:textAlignment="textStart"
                 android:textColor="@color/primary_text"
                 android:textSize="18sp"
+                android:transitionName="@string/transition_title"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toRightOf="@+id/item_category_iv"
@@ -61,6 +62,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="20dp"
                 android:contentDescription="@string/category_description"
+                android:transitionName="@string/transition_category_iv"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@mipmap/ic_launcher"/>
@@ -75,6 +77,7 @@
                 android:text="@string/dummy_category"
                 android:textAlignment="center"
                 android:textColor="@color/secondary_text"
+                android:transitionName="@string/transition_category"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.444"
                 app:layout_constraintLeft_toLeftOf="@+id/item_category_iv"
@@ -92,6 +95,7 @@
                 android:text="@string/dummy_date"
                 android:textColor="@color/secondary_text"
                 android:textSize="14sp"
+                android:transitionName="@string/transition_date"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
 
@@ -103,6 +107,7 @@
                 android:layout_marginRight="0dp"
                 android:contentDescription="@string/importance_description"
                 android:padding="16dp"
+                android:transitionName="@string/transition_importance_iv"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:srcCompat="@drawable/importance_huge"/>
