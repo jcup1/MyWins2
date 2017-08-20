@@ -1,4 +1,4 @@
-package com.example.jakubchmiel.mywins;
+package com.theandroiddev.mywins;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -25,15 +26,15 @@ import java.util.Locale;
 public class InsertSuccess extends AppCompatActivity implements View.OnClickListener {
 
 
-    TextView categoryTv, importanceTv;
-    EditText titleEt, dateEt, description_et;
-    ImageView categoryIv, dateIv, descriptionIv, importance1Iv, importance2Iv, importance3Iv;
+    TextView categoryTv, importanceTv, dateStartedTv, dateEndedTv;
+    EditText titleEt, description_et;
+    ImageView categoryIv, dateStartedIv, dateEndedIv, descriptionIv, importance1Iv, importance2Iv, importance3Iv, importance4Iv;
     Button addBtn;
     DrawableSelector drawableSelector;
     private DisplayMetrics displayMetrics;
     private int accentColor;
     private Calendar myCalendar;
-    private String dummyImportance = "Big";
+    private int dummyImportance = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,7 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
         categoryTv.setText(category);
 
         drawableSelector.selectCategoryImage(categoryIv, category, categoryTv);
-        drawableSelector.setImportance(dummyImportance, importanceTv, importance1Iv, importance2Iv, importance3Iv);
+        drawableSelector.setImportance(dummyImportance, importanceTv, importance1Iv, importance2Iv, importance3Iv, importance4Iv);
 
     }
 
@@ -63,20 +64,31 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
         categoryTv = (TextView) findViewById(R.id.insert_category_tv);
         importanceTv = (TextView) findViewById(R.id.insert_importance_tv);
         titleEt = (EditText) findViewById(R.id.instert_title_et);
-        dateEt = (EditText) findViewById(R.id.insert_date_et);
+        dateStartedTv = (TextView) findViewById(R.id.insert_date_started_tv);
+        dateEndedTv = (TextView) findViewById(R.id.insert_date_ended_tv);
         description_et = (EditText) findViewById(R.id.insert_description_et);
         categoryIv = (ImageView) findViewById(R.id.insert_category_iv);
-        dateIv = (ImageView) findViewById(R.id.insert_date_iv);
+        dateStartedIv = (ImageView) findViewById(R.id.insert_date_started_iv);
+        dateEndedIv = (ImageView) findViewById(R.id.insert_date_ended_iv);
         descriptionIv = (ImageView) findViewById(R.id.insert_description_iv);
         importance1Iv = (ImageView) findViewById(R.id.insert_importance_iv_1);
         importance2Iv = (ImageView) findViewById(R.id.insert_importance_iv_2);
         importance3Iv = (ImageView) findViewById(R.id.insert_importance_iv_3);
+        importance4Iv = (ImageView) findViewById(R.id.insert_importance_iv_4);
         addBtn = (Button) findViewById(R.id.insert_add_btn);
 
 
         accentColor = ResourcesCompat.getColor(getResources(), R.color.accent, null);
 
-        dateIv.setColorFilter(accentColor);
+        dateStartedIv.setColorFilter(accentColor);
+        descriptionIv.setColorFilter(accentColor);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            addBtn.setBackgroundTintList(getResources().getColorStateList(R.color.accent, null));
+        } else {
+            addBtn.setBackgroundColor(ContextCompat.getColor(this, R.color.accent));
+        }
+
+        dateEndedIv.setColorFilter(accentColor);
         descriptionIv.setColorFilter(accentColor);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             addBtn.setBackgroundTintList(getResources().getColorStateList(R.color.accent, null));
@@ -87,7 +99,11 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
         importance1Iv.setOnClickListener(this);
         importance2Iv.setOnClickListener(this);
         importance3Iv.setOnClickListener(this);
-        dateIv.setOnClickListener(this);
+        importance4Iv.setOnClickListener(this);
+        dateStartedTv.setOnClickListener(this);
+        dateEndedTv.setOnClickListener(this);
+        dateStartedIv.setOnClickListener(this);
+        dateEndedIv.setOnClickListener(this);
         descriptionIv.setOnClickListener(this);
         addBtn.setOnClickListener(this);
 
@@ -106,24 +122,29 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.insert_importance_iv_1: {
-
-                if (importanceTv.getText().toString().equals("Medium")) {
-                    drawableSelector.setSmallImportance(importanceTv, importance1Iv, importance2Iv, importance3Iv);
-                    break;
-                } else {
-                    drawableSelector.setMediumImportance(importanceTv, importance1Iv, importance2Iv, importance3Iv);
-                    break;
-                }
-            }
+            case R.id.insert_importance_iv_1:
+                drawableSelector.setSmallImportance(importanceTv, importance1Iv, importance2Iv, importance3Iv, importance4Iv);
+                break;
             case R.id.insert_importance_iv_2:
-                drawableSelector.setBigImportance(importanceTv, importance1Iv, importance2Iv, importance3Iv);
+                drawableSelector.setMediumImportance(importanceTv, importance1Iv, importance2Iv, importance3Iv, importance4Iv);
                 break;
             case R.id.insert_importance_iv_3:
-                drawableSelector.setHugeImportance(importanceTv, importance1Iv, importance2Iv, importance3Iv);
+                drawableSelector.setBigImportance(importanceTv, importance1Iv, importance2Iv, importance3Iv, importance4Iv);
                 break;
-            case R.id.insert_date_iv:
-                setDate();
+            case R.id.insert_importance_iv_4:
+                drawableSelector.setHugeImportance(importanceTv, importance1Iv, importance2Iv, importance3Iv, importance4Iv);
+                break;
+            case R.id.insert_date_started_iv:
+                setDate("started");
+                break;
+            case R.id.insert_date_ended_iv:
+                setDate("ended");
+                break;
+            case R.id.insert_date_started_tv:
+                setDate("started");
+                break;
+            case R.id.insert_date_ended_tv:
+                setDate("ended");
                 break;
             case R.id.insert_description_iv:
                 setDesc();
@@ -131,7 +152,7 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
             case R.id.insert_add_btn:
                 addSuccess();
                 break;
-
+//a
             default:
                 break;
         }
@@ -140,6 +161,11 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
     private void addSuccess() {
 
         if (validateData()) {
+
+            if (!isLegalDate(dateEndedTv.getText().toString())) {
+                dateEndedTv.setText("");
+            }
+
             sendData();
         }
     }
@@ -149,7 +175,7 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
         Intent returnIntent = new Intent();
 
         Success s = new Success(titleEt.getText().toString(), categoryTv.getText().toString(),
-                importanceTv.getText().toString(), description_et.getText().toString(), dateEt.getText().toString());
+                drawableSelector.getImportance(importanceTv.getText().toString()), description_et.getText().toString(), dateStartedTv.getText().toString(), dateEndedTv.getText().toString());
 
 
         returnIntent.putExtra(MainActivity.EXTRA_INSERT_SUCCESS_ITEM, s);
@@ -166,8 +192,8 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
             cnt++;
 
         }
-        if (TextUtils.isEmpty(dateEt.getText().toString())) {
-            dateEt.setError("When it happened?");
+        if (!isLegalDate(dateStartedTv.getText().toString())) {
+            dateStartedTv.setError("When it started?");
             cnt++;
         }
 
@@ -176,10 +202,10 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
     }
 
     private void setDesc() {
-        Toast.makeText(this, "TODO", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Not active", Toast.LENGTH_SHORT).show();
     }
 
-    private void setDate() {
+    private void setDate(final String d) {
 
         myCalendar = Calendar.getInstance();
 
@@ -192,7 +218,7 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
                 myCalendar.set(Calendar.YEAR, year);
                 myCalendar.set(Calendar.MONTH, monthOfYear);
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                updateLabel();
+                updateLabel(d);
             }
 
         };
@@ -203,10 +229,25 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
 
     }
 
-    private void updateLabel() {
-        String myFormat = "yyyy-MM-dd"; //In which you need put here
+    private void updateLabel(String d) {
+        String myFormat = "yy-MM-dd"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
-        dateEt.setText(sdf.format(myCalendar.getTime()));
+        if (d.equals("started")) {
+            dateStartedTv.setText(sdf.format(myCalendar.getTime()));
+            dateStartedTv.setError(null);
+        }
+        if (d.equals("ended")) {
+            dateEndedTv.setText(sdf.format(myCalendar.getTime()));
+        }
+
     }
+
+    boolean isLegalDate(String s) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd");
+        sdf.setLenient(false);
+        return sdf.parse(s, new ParsePosition(0)) != null;
+    }
+
+
 }

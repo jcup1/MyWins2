@@ -1,7 +1,8 @@
-package com.example.jakubchmiel.mywins;
+package com.theandroiddev.mywins;
 
 import android.animation.Animator;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -15,8 +16,10 @@ import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.util.Pair;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,10 +27,14 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -48,7 +55,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String EXTRA_SUCCESS_TITLE = "title";
     public static final String EXTRA_SUCCESS_CATEGORY_IV = "category_iv";
     public static final String EXTRA_SUCCESS_CATEGORY = "category";
-    public static final String EXTRA_SUCCESS_DATE = "date";
+    public static final String EXTRA_SUCCESS_DATE_STARTED = "date_started";
+    public static final String EXTRA_SUCCESS_DATE_ENDED = "date_ended";
     public static final String EXTRA_SUCCESS_IMPORTANCE_IV = "importance_iv";
     public static final String EXTRA_SUCCESS_CONSTRAINT = "success_constraint";
     public static final String EXTRA_SUCCESS_CARD_VIEW = "success_card_view";
@@ -58,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = "MainActivity";
     SharedPreferences prefs = null;
     FloatingActionsMenu floatingActionsMenu;
+    private MenuItem mSearchAction;
+    private boolean isSearchOpened = false;
+    private EditText edtSeach;
     private RecyclerView recyclerView;
     private List<Success> successes;
     private List<Success> successesToRemove;
@@ -86,6 +97,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         remove();
 
     }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        mSearchAction = menu.findItem(R.id.action_search);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -124,11 +142,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void insertDummyData() {
-        Success video = new Success("Recorded First Video", "Video", "big", "I always wanted to create youtube video and finally Hot Shitty Challenge is live...", "2017-05-20");
-        Success money = new Success("25.000$ Sale", "Money", "huge", "It's my first sold company. I grew it in 10 years. I denied first offer which was 5.000$ and it's one of my the best choices in my life. I...", "2017-05-22");
-        Success journey = new Success("Visited Wroclaw", "Journey", "medium", "I travel now and then. Met girl but she introduced me her friend: 'Zoned'. Guess I've got to try again in 2018.", "2016-04-15");
-        Success learn = new Success("Learned Java", "Learn", "big", "This language is easier than I thought and now I'm multilingual! :O", "2015-03-12");
-        Success sport = new Success("20 km marathon", "Sport", "huge", "I burned a lot of calories. Fridge is empty tonight...", "2016-02-21");
+        Success video = new Success("Recorded First Video", "Video", 3, "I always wanted to create youtube video and finally Hot Shitty Challenge is live...", "17-05-20", "17-05-25");
+        Success money = new Success("25.000$ Sale", "Money", 4, "It's my first sold company. I grew it in 10 years. I denied first offer which was 5.000$ and it's one of my the best choices in my life. I...", "17-05-22", "17-05-30");
+        Success journey = new Success("Visited Wroclaw", "Journey", 2, "I travel now and then. Met girl but she introduced me her friend: 'Zoned'. Guess I've got to try again in 2018.", "16-04-15", "16-04-20");
+        Success learn = new Success("Learned Java", "Learn", 3, "This language is easier than I thought and now I'm multilingual! :O", "15-03-12", "15-05-01");
+        Success sport = new Success("20 km marathon", "Sport", 4, "I burned a lot of calories. Fridge is empty tonight...", "16-02-21", "16-02-21");
         save(video);
         save(money);
         save(journey);
@@ -319,7 +337,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initVariables() {
 
-        sortType = Constants.DATEDESC;
+        sortType = Constants.DATE_STARTED_DESC;
         getSuccesses(null, sortType);
     }
 
@@ -339,30 +357,151 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_date_asc) {
-            sortType = Constants.DATEASC;
-            getSuccesses(null, sortType);
-            return true;
-        }
-        if (id == R.id.action_date_desc) {
-            sortType = Constants.DATEDESC;
-            getSuccesses(null, sortType);
-            return true;
-        }
-        if (id == R.id.action_title_asc) {
-            sortType = Constants.TITLEASC;
-            getSuccesses(null, sortType);
 
+        if (id == R.id.action_search) {
+            handleMenuSearch();
             return true;
         }
-        if (id == R.id.action_title_desc) {
-            sortType = Constants.TITLEDESC;
-            getSuccesses(null, sortType);
 
-            return true;
+        if (id == R.id.action_date_started) {
+
+
+            if (!sortType.equals(Constants.DATE_STARTED_ASC)) {
+                sortType = Constants.DATE_STARTED_ASC;
+                getSuccesses(null, sortType);
+                return true;
+            }
+
+            if (!sortType.equals(Constants.DATE_STARTED_DESC)) {
+                sortType = Constants.DATE_STARTED_DESC;
+                getSuccesses(null, sortType);
+                return true;
+            }
+
         }
+
+        if (id == R.id.action_date_ended) {
+
+            if (!sortType.equals(Constants.DATE_ENDED_ASC)) {
+                sortType = Constants.DATE_ENDED_ASC;
+                getSuccesses(null, sortType);
+                return true;
+            }
+
+            if (!sortType.equals(Constants.DATE_ENDED_DESC)) {
+                sortType = Constants.DATE_ENDED_DESC;
+                getSuccesses(null, sortType);
+                return true;
+            }
+
+        }
+
+        if (id == R.id.action_title) {
+
+            if (!sortType.equals(Constants.TITLE_ASC)) {
+                sortType = Constants.TITLE_ASC;
+                getSuccesses(null, sortType);
+                return true;
+            }
+
+            if (!sortType.equals(Constants.TITLE_DESC)) {
+                sortType = Constants.TITLE_DESC;
+                getSuccesses(null, sortType);
+                return true;
+            }
+        }
+
+        if (id == R.id.action_importance) {
+
+            if (!sortType.equals(Constants.IMPORTANCE_ASC)) {
+                sortType = Constants.IMPORTANCE_ASC;
+                getSuccesses(null, sortType);
+                return true;
+            }
+
+            if (!sortType.equals(Constants.IMPORTANCE_DESC)) {
+                sortType = Constants.IMPORTANCE_DESC;
+                getSuccesses(null, sortType);
+                return true;
+            }
+
+        }
+
+        if (id == R.id.action_description) {
+
+            if (!sortType.equals(Constants.DESCRIPTION_ASC)) {
+                sortType = Constants.DESCRIPTION_ASC;
+                getSuccesses(null, sortType);
+                return true;
+            }
+
+            if (!sortType.equals(Constants.DESCRIPTION_DESC)) {
+                sortType = Constants.DESCRIPTION_DESC;
+                getSuccesses(null, sortType);
+                return true;
+            }
+
+        }
+
 
         return super.onOptionsItemSelected(item);
+    }
+
+    protected void handleMenuSearch() {
+        ActionBar action = getSupportActionBar(); //get the actionbar
+
+        if (isSearchOpened) { //test if the search is open
+
+            action.setDisplayShowCustomEnabled(false); //disable a custom view inside the actionbar
+            action.setDisplayShowTitleEnabled(true); //show the title in the action bar
+
+            //hides the keyboard
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(edtSeach.getWindowToken(), 0);
+
+            //add the search icon in the action bar
+            mSearchAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_search));
+
+            isSearchOpened = false;
+            getSuccesses(null, sortType);
+        } else { //open the search entry
+
+            action.setDisplayShowCustomEnabled(true); //enable it to display a
+            // custom view in the action bar.
+            action.setCustomView(R.layout.search_bar);//add the custom view
+            action.setDisplayShowTitleEnabled(false); //hide the title
+
+            edtSeach = action.getCustomView().findViewById(R.id.edtSearch); //the text editor
+
+            //this is a listener to do a search when the user clicks on search button
+            edtSeach.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                        doSearch(edtSeach);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
+
+            edtSeach.requestFocus();
+
+            //open the keyboard focused in the edtSearch
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(edtSeach, InputMethodManager.SHOW_IMPLICIT);
+
+
+            //add the close icon
+            mSearchAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_close));
+
+            isSearchOpened = true;
+        }
+    }
+
+    private void doSearch(EditText edtSeach) {
+        getSuccesses(edtSeach.getText().toString(), sortType);
     }
 
     @Override
@@ -481,11 +620,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             int id = cursor.getInt(0);
             String title = cursor.getString(1);
             String category = cursor.getString(2);
-            String importance = cursor.getString(3);
+            int importance = cursor.getInt(3);
             String description = cursor.getString(4);
-            String date = cursor.getString(5);
+            String dateStarted = cursor.getString(5);
+            String dateEnded = cursor.getString(6);
 
-            success = new Success(title, category, importance, description, date);
+            success = new Success(title, category, importance, description, dateStarted, dateEnded);
             success.setId(id);
             successes.add(success);
 
@@ -499,9 +639,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onItemClick(Success success, TextView titleTv, TextView categoryTv, TextView dateTv, ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView) {
+    public void onItemClick(Success success, TextView titleTv, TextView categoryTv, TextView dateStartedTv, TextView dateEndedTv, ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            showSuccessAnimation(success, titleTv, categoryTv, dateTv, categoryIv, importanceIv, constraintLayout, cardView);
+            showSuccessAnimation(success, titleTv, categoryTv, dateStartedTv, dateEndedTv, categoryIv, importanceIv, constraintLayout, cardView);
 
         } else {
             Log.e(TAG, "onItemClick: " + success.getId());
@@ -521,7 +661,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void showSuccessAnimation(Success success, TextView titleTv, TextView categoryTv, TextView dateTv, ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView) {
+    private void showSuccessAnimation(Success success, TextView titleTv, TextView categoryTv, TextView dateStartedTv, TextView dateEndedTv, ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView) {
 
 
         Intent showSuccessIntent = new Intent(MainActivity.this, ShowSuccess.class);
@@ -532,16 +672,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Pair<View, String> p1, p2, p3, p4, p5, p6, p7;
         p1 = Pair.create((View) titleTv, EXTRA_SUCCESS_TITLE);
         p2 = Pair.create((View) categoryTv, EXTRA_SUCCESS_CATEGORY);
-        p3 = Pair.create((View) dateTv, EXTRA_SUCCESS_DATE);
-        p4 = Pair.create((View) categoryIv, EXTRA_SUCCESS_CATEGORY_IV);
-        p5 = Pair.create((View) importanceIv, EXTRA_SUCCESS_IMPORTANCE_IV);
-        p6 = Pair.create((View) cardView, EXTRA_SUCCESS_CARD_VIEW);
+        p3 = Pair.create((View) dateStartedTv, EXTRA_SUCCESS_DATE_STARTED);
+        p4 = Pair.create((View) dateEndedTv, EXTRA_SUCCESS_DATE_ENDED);
+        p5 = Pair.create((View) categoryIv, EXTRA_SUCCESS_CATEGORY_IV);
+        p6 = Pair.create((View) importanceIv, EXTRA_SUCCESS_IMPORTANCE_IV);
+        p7 = Pair.create((View) cardView, EXTRA_SUCCESS_CARD_VIEW);
 
 //        getWindow().setEnterTransition(new Fade(Fade.IN));
 //        getWindow().setExitTransition(new Fade(Fade.IN));
         ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
                 this,
-                p1, p2, p3, p4, p5, p6);
+                p1, p2, p3, p4, p5, p6, p7);
 
         startActivity(showSuccessIntent, activityOptionsCompat.toBundle());
 

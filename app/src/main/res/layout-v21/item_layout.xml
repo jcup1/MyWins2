@@ -12,9 +12,6 @@
 
     <android.support.v7.widget.CardView
 
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/item_card_view"
         android:layout_width="match_parent"
         android:layout_height="98dp"
@@ -50,7 +47,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toRightOf="@+id/item_category_iv"
-                app:layout_constraintRight_toLeftOf="@+id/item_date"
+                app:layout_constraintRight_toLeftOf="@+id/item_date_started"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0"
                 tools:text="@string/dummy_title"/>
@@ -86,31 +83,51 @@
                 app:layout_constraintVertical_bias="0.0"/>
 
             <TextView
-                android:id="@+id/item_date"
+                android:id="@+id/item_date_started"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="0dp"
-                android:layout_marginTop="0dp"
-                android:padding="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:padding="4dp"
                 android:text="@string/dummy_date"
                 android:textColor="@color/secondary_text"
                 android:textSize="14sp"
-                android:transitionName="@string/transition_date"
+                android:transitionName="@string/transition_date_started"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <TextView
+                android:id="@+id/item_date_ended"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="0dp"
+                android:padding="4dp"
+                android:text="@string/dummy_date"
+                android:textColor="@color/secondary_text"
+                android:textSize="14sp"
+                android:transitionName="@string/transition_date_ended"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/item_importance_iv"
+                app:layout_constraintVertical_bias="0.0"
+                />
 
             <ImageView
                 android:id="@+id/item_importance_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="0dp"
-                android:layout_marginRight="0dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="0dp"
                 android:contentDescription="@string/importance_description"
-                android:padding="16dp"
+                android:padding="8dp"
                 android:transitionName="@string/transition_importance_iv"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:srcCompat="@drawable/importance_huge"/>
+                app:layout_constraintTop_toBottomOf="@+id/item_date_started"
+                app:srcCompat="@drawable/importance_huge"
+                />
 
         </android.support.constraint.ConstraintLayout>
 

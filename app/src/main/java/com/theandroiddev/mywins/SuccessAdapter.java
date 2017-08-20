@@ -1,4 +1,4 @@
-package com.example.jakubchmiel.mywins;
+package com.theandroiddev.mywins;
 
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
@@ -49,7 +49,8 @@ class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
         //5
         holder.titleTv.setText(successes.get(position).getTitle());
         holder.categoryTv.setText(successes.get(position).getCategory());
-        holder.dateTv.setText(successes.get(position).getDate());
+        holder.dateStartedTv.setText(successes.get(position).getDateStarted());
+        holder.dateEndedTv.setText(successes.get(position).getDateEnded());
         drawableSelector.selectCategoryImage(holder.categoryIv, successes.get(position).getCategory(), holder.categoryTv);
         drawableSelector.selectImportanceImage(holder.importanceIv, successes.get(position).getImportance());
         holder.bind(successes.get(position), listener);
@@ -64,12 +65,12 @@ class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
 
 
     public interface OnItemClickListener {
-        void onItemClick(Success success, TextView titleTv, TextView categoryTv, TextView dateTv, ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView);
+        void onItemClick(Success success, TextView titleTv, TextView categoryTv, TextView dateStartedTv, TextView dateEndedTv, ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
         //4
-        TextView titleTv, categoryTv, dateTv;
+        TextView titleTv, categoryTv, dateStartedTv, dateEndedTv;
         ImageView categoryIv, importanceIv;
         ConstraintLayout constraintLayout;
         CardView cardView;
@@ -78,7 +79,8 @@ class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
             super(itemView);
             titleTv = itemView.findViewById(R.id.item_title);
             categoryTv = itemView.findViewById(R.id.item_category);
-            dateTv = itemView.findViewById(R.id.item_date);
+            dateStartedTv = itemView.findViewById(R.id.item_date_started);
+            dateEndedTv = itemView.findViewById(R.id.item_date_ended);
             categoryIv = itemView.findViewById(R.id.item_category_iv);
             importanceIv = itemView.findViewById(R.id.item_importance_iv);
 
@@ -91,7 +93,7 @@ class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    listener.onItemClick(success, titleTv, categoryTv, dateTv, categoryIv, importanceIv, constraintLayout, cardView);
+                    listener.onItemClick(success, titleTv, categoryTv, dateStartedTv, dateEndedTv, categoryIv, importanceIv, constraintLayout, cardView);
                 }
             });
         }

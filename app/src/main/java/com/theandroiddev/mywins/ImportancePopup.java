@@ -1,4 +1,4 @@
-package com.example.jakubchmiel.mywins;
+package com.theandroiddev.mywins;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,10 +16,10 @@ public class ImportancePopup extends AppCompatActivity implements View.OnClickLi
 
     TextView popupImportance;
     Button popupDone;
-    ImageView importanceIv1, importanceIv2, importanceIv3;
+    ImageView importanceIv1, importanceIv2, importanceIv3, importanceIv4;
     private DisplayMetrics displayMetrics;
     private DrawableSelector drawableSelector;
-    private String dummyImportance = "BIG";
+    private int dummyImportance = 3;
 
     public ImportancePopup() {
         this.drawableSelector = new DrawableSelector(this);
@@ -40,18 +40,20 @@ public class ImportancePopup extends AppCompatActivity implements View.OnClickLi
         importanceIv1 = (ImageView) findViewById(R.id.popup_importance_iv_1);
         importanceIv2 = (ImageView) findViewById(R.id.popup_importance_iv_2);
         importanceIv3 = (ImageView) findViewById(R.id.popup_importance_iv_3);
+        importanceIv4 = (ImageView) findViewById(R.id.popup_importance_iv_4);
 
         importanceIv1.setOnClickListener(this);
         importanceIv2.setOnClickListener(this);
         importanceIv3.setOnClickListener(this);
+        importanceIv4.setOnClickListener(this);
         popupDone.setOnClickListener(this);
 
 
-        String importance = getIntent().getExtras().getString("importance", "big");
-        popupImportance.setText(importance);
+        int importance = getIntent().getExtras().getInt("importance", 3);
+        popupImportance.setText(String.valueOf(importance));
 
 
-        drawableSelector.setImportance(dummyImportance, popupImportance, importanceIv1, importanceIv2, importanceIv3);
+        drawableSelector.setImportance(dummyImportance, popupImportance, importanceIv1, importanceIv2, importanceIv3, importanceIv4);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             popupDone.setBackgroundTintList(getResources().getColorStateList(R.color.accent, null));
@@ -65,7 +67,7 @@ public class ImportancePopup extends AppCompatActivity implements View.OnClickLi
     private void saveImportance() {
 
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("importance", popupImportance.getText().toString());
+        returnIntent.putExtra("importance", drawableSelector.getImportance(popupImportance.getText().toString()));
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }
@@ -86,19 +88,20 @@ public class ImportancePopup extends AppCompatActivity implements View.OnClickLi
         switch (view.getId()) {
             case R.id.popup_importance_iv_1: {
 
-                if (popupImportance.getText().toString().equals("Medium")) {
-                    drawableSelector.setSmallImportance(popupImportance, importanceIv1, importanceIv2, importanceIv3);
-                    break;
-                } else {
-                    drawableSelector.setMediumImportance(popupImportance, importanceIv1, importanceIv2, importanceIv3);
-                    break;
-                }
+                drawableSelector.setSmallImportance(popupImportance, importanceIv1, importanceIv2, importanceIv3, importanceIv4);
+                break;
+
             }
             case R.id.popup_importance_iv_2:
-                drawableSelector.setBigImportance(popupImportance, importanceIv1, importanceIv2, importanceIv3);
+                drawableSelector.setMediumImportance(popupImportance, importanceIv1, importanceIv2, importanceIv3, importanceIv4);
+
                 break;
             case R.id.popup_importance_iv_3:
-                drawableSelector.setHugeImportance(popupImportance, importanceIv1, importanceIv2, importanceIv3);
+                drawableSelector.setBigImportance(popupImportance, importanceIv1, importanceIv2, importanceIv3, importanceIv4);
+
+                break;
+            case R.id.popup_importance_iv_4:
+                drawableSelector.setHugeImportance(popupImportance, importanceIv1, importanceIv2, importanceIv3, importanceIv4);
                 break;
             case R.id.popup_add_btn:
                 saveImportance();

@@ -1,4 +1,4 @@
-package com.example.jakubchmiel.mywins;
+package com.theandroiddev.mywins;
 
 import org.junit.Test;
 

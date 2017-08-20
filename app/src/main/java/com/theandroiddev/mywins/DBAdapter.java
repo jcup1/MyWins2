@@ -1,4 +1,4 @@
-package com.example.jakubchmiel.mywins;
+package com.theandroiddev.mywins;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -44,14 +44,15 @@ public class DBAdapter {
         contentValues.put(Constants.CATEGORY, success.getCategory());
         contentValues.put(Constants.IMPORTANCE, success.getImportance());
         contentValues.put(Constants.DESCRIPTION, success.getDescription());
-        contentValues.put(Constants.DATE, success.getDate());
+        contentValues.put(Constants.DATE_STARTED, success.getDateStarted());
+        contentValues.put(Constants.DATE_ENDED, success.getDateEnded());
 
         sqLiteDatabase.insert(Constants.TB_NAME, Constants.ROW_ID, contentValues);
     }
 
     public Cursor retrieve(String searchTerm, String sort) {
 
-        String[] columns = {Constants.ROW_ID, Constants.TITLE, Constants.CATEGORY, Constants.IMPORTANCE, Constants.DESCRIPTION, Constants.DATE};
+        String[] columns = {Constants.ROW_ID, Constants.TITLE, Constants.CATEGORY, Constants.IMPORTANCE, Constants.DESCRIPTION, Constants.DATE_STARTED, Constants.DATE_ENDED};
         Cursor cursor;
         if (searchTerm != null && searchTerm.length() > 0) {
             String sql = "SELECT * FROM " + Constants.TB_NAME + " WHERE " + Constants.TITLE + " LIKE '%" + searchTerm + "%'";
@@ -82,7 +83,8 @@ public class DBAdapter {
         contentValues.put(Constants.CATEGORY, showSuccess.getCategory());
         contentValues.put(Constants.IMPORTANCE, showSuccess.getImportance());
         contentValues.put(Constants.DESCRIPTION, showSuccess.getDescription());
-        contentValues.put(Constants.DATE, showSuccess.getDate());
+        contentValues.put(Constants.DATE_STARTED, showSuccess.getDateStarted());
+        contentValues.put(Constants.DATE_ENDED, showSuccess.getDateEnded());
 
         sqLiteDatabase.update(Constants.TB_NAME, contentValues, Constants.ROW_ID + "=" + showSuccess.getId(), null);
     }

@@ -30,7 +30,7 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-import com.example.jakubchmiel.mywins.R;
+import com.theandroiddev.mywins.R;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

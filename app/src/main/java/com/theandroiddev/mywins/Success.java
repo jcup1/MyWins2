@@ -1,4 +1,4 @@
-package com.example.jakubchmiel.mywins;
+package com.theandroiddev.mywins;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -20,23 +20,25 @@ public class Success implements Parcelable {
             return new Success[size];
         }
     };
-    String title, category, importance, description, date;
-    int id;
+    String title, category, description, date_started, date_ended;
+    int id, importance;
 
-    public Success(String title, String category, String importance, String description, String date) {
+    public Success(String title, String category, int importance, String description, String date_started, String date_ended) {
         this.title = title;
         this.category = category;
         this.importance = importance;
         this.description = description;
-        this.date = date;
+        this.date_started = date_started;
+        this.date_ended = date_ended;
     }
 
     protected Success(Parcel in) {
         title = in.readString();
         category = in.readString();
-        importance = in.readString();
+        importance = in.readInt();
         description = in.readString();
-        date = in.readString();
+        date_started = in.readString();
+        date_ended = in.readString();
         id = in.readInt();
     }
 
@@ -56,11 +58,11 @@ public class Success implements Parcelable {
         this.category = category;
     }
 
-    public String getImportance() {
+    public int getImportance() {
         return importance;
     }
 
-    public void setImportance(String importance) {
+    public void setImportance(int importance) {
         this.importance = importance;
     }
 
@@ -72,13 +74,22 @@ public class Success implements Parcelable {
         this.description = description;
     }
 
-    public String getDate() {
-        return date;
+    public String getDateStarted() {
+        return date_started;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setDateStarted(String date) {
+        this.date_started = date;
     }
+
+    public String getDateEnded() {
+        return date_ended;
+    }
+
+    public void setDateEnded(String date) {
+        this.date_ended = date;
+    }
+
 
     public int getId() {
         return id;
@@ -97,9 +108,10 @@ public class Success implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(title);
         parcel.writeString(category);
-        parcel.writeString(importance);
+        parcel.writeInt(importance);
         parcel.writeString(description);
-        parcel.writeString(date);
+        parcel.writeString(date_started);
+        parcel.writeString(date_ended);
         parcel.writeInt(id);
     }
 }

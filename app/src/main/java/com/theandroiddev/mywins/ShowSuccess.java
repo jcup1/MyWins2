@@ -1,4 +1,4 @@
-package com.example.jakubchmiel.mywins;
+package com.theandroiddev.mywins;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -18,9 +18,9 @@ import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import static com.example.jakubchmiel.mywins.MainActivity.EXTRA_EDIT_SUCCESS_ITEM;
-import static com.example.jakubchmiel.mywins.MainActivity.EXTRA_SHOW_SUCCESS_ITEM;
-import static com.example.jakubchmiel.mywins.MainActivity.EXTRA_SUCCESS_ITEM;
+import static com.theandroiddev.mywins.MainActivity.EXTRA_EDIT_SUCCESS_ITEM;
+import static com.theandroiddev.mywins.MainActivity.EXTRA_SHOW_SUCCESS_ITEM;
+import static com.theandroiddev.mywins.MainActivity.EXTRA_SUCCESS_ITEM;
 
 public class ShowSuccess extends AppCompatActivity {
     private static final String TAG = "ShowSuccess";
@@ -29,7 +29,7 @@ public class ShowSuccess extends AppCompatActivity {
     int id;
     int color;
 
-    TextView showTitle, showCategory, showDescription, showDate;
+    TextView showTitle, showCategory, showDescription, showDateStarted, showDateEnded;
     ImageView showCategoryIv, showImportanceIv;
     DrawableSelector drawableSelector;
     ConstraintLayout showConstraintLayout;
@@ -78,7 +78,7 @@ public class ShowSuccess extends AppCompatActivity {
         Intent editSuccessIntent = new Intent(ShowSuccess.this, EditSuccess.class);
 
         Success showSuccess = new Success(showTitle.getText().toString(), showCategory.getText().toString(),
-                (String) showImportanceIv.getTag(), showDescription.getText().toString(), showDate.getText().toString());
+                (int) showImportanceIv.getTag(), showDescription.getText().toString(), showDateStarted.getText().toString(), showDateEnded.getText().toString());
         showSuccess.setId((Integer) showTitle.getTag());
 
         editSuccessIntent.putExtra(EXTRA_SHOW_SUCCESS_ITEM, showSuccess);
@@ -94,7 +94,8 @@ public class ShowSuccess extends AppCompatActivity {
         showCategoryIv = (ImageView) findViewById(R.id.show_category_iv);
         showImportanceIv = (ImageView) findViewById(R.id.show_importance_iv);
         showDescription = (TextView) findViewById(R.id.show_description);
-        showDate = (TextView) findViewById(R.id.show_date);
+        showDateStarted = (TextView) findViewById(R.id.show_date_started);
+        showDateEnded = (TextView) findViewById(R.id.show_date_ended);
 
 
         Success s = getIntent().getParcelableExtra(EXTRA_SUCCESS_ITEM);
@@ -103,7 +104,8 @@ public class ShowSuccess extends AppCompatActivity {
         showTitle.setText(s.getTitle());
         showCategory.setText(s.getCategory());
         showDescription.setText(s.getDescription());
-        showDate.setText(s.getDate());
+        showDateStarted.setText(s.getDateStarted());
+        showDateEnded.setText(s.getDateEnded());
         showImportanceIv.setTag(s.getImportance());
 
         drawableSelector.selectCategoryImage(showCategoryIv, s.getCategory(), showCategory);
@@ -147,7 +149,8 @@ public class ShowSuccess extends AppCompatActivity {
                 if (s != null) {
                     showTitle.setText(s.getTitle());
                     showCategory.setText(s.getCategory());
-                    showDate.setText(s.getDate());
+                    showDateStarted.setText(s.getDateStarted());
+                    showDateEnded.setText(s.getDateEnded());
                     showDescription.setText(s.getDescription());
                     showImportanceIv.setTag(s.getImportance());
                     drawableSelector.selectCategoryImage(showCategoryIv, s.getCategory(), showCategory);

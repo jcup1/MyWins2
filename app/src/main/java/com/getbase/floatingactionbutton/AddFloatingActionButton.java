@@ -12,7 +12,7 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.util.AttributeSet;
 
-import com.example.jakubchmiel.mywins.R;
+import com.theandroiddev.mywins.R;
 
 public class AddFloatingActionButton extends FloatingActionButton {
     int mPlusColor;

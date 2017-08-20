@@ -1,4 +1,4 @@
-package com.example.jakubchmiel.mywins;
+package com.theandroiddev.mywins;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -52,21 +52,21 @@ public class DrawableSelector {
 
     }
 
-    void selectImportanceImage(ImageView importanceIv, String importance) {
+    void selectImportanceImage(ImageView importanceIv, int importance) {
 
         int id = R.drawable.importance_medium; //default: other
 
-        if (importance.equalsIgnoreCase("huge")) {
+        if (importance == 4) {
             id = R.drawable.importance_huge;
         }
-        if (importance.equalsIgnoreCase("big")) {
+        if (importance == 3) {
             id = R.drawable.importance_big;
         }
-        if (importance.equalsIgnoreCase("medium")) {
+        if (importance == 2) {
             id = R.drawable.importance_medium;
         }
-        if (importance.equalsIgnoreCase("small")) {
-            return;
+        if (importance == 1) {
+            id = R.drawable.importance_small;
         }
 
         Drawable myDrawable = ResourcesCompat.getDrawable(context.getResources(), id, null);
@@ -74,65 +74,87 @@ public class DrawableSelector {
 
     }
 
-    void setImportance(String importance, TextView importanceTv, ImageView importance1Tv, ImageView importance2Tv, ImageView importance3Tv) {
+    void setImportance(int importance, TextView importanceTv, ImageView importance1Tv, ImageView importance2Tv, ImageView importance3Tv, ImageView importance4Tv) {
 
         switch (importance) {
 
-            case "Small":
-                setSmallImportance(importanceTv, importance1Tv, importance2Tv, importance3Tv);
+            case 1:
+                setSmallImportance(importanceTv, importance1Tv, importance2Tv, importance3Tv, importance4Tv);
                 break;
-            case "Medium":
-                setMediumImportance(importanceTv, importance1Tv, importance2Tv, importance3Tv);
+            case 2:
+                setMediumImportance(importanceTv, importance1Tv, importance2Tv, importance3Tv, importance4Tv);
                 break;
-            case "Big":
-                setBigImportance(importanceTv, importance1Tv, importance2Tv, importance3Tv);
+            case 3:
+                setBigImportance(importanceTv, importance1Tv, importance2Tv, importance3Tv, importance4Tv);
                 break;
-            case "Huge":
-                setHugeImportance(importanceTv, importance1Tv, importance2Tv, importance3Tv);
+            case 4:
+                setHugeImportance(importanceTv, importance1Tv, importance2Tv, importance3Tv, importance4Tv);
                 break;
             default:
-                setBigImportance(importanceTv, importance1Tv, importance2Tv, importance3Tv);
+                setMediumImportance(importanceTv, importance1Tv, importance2Tv, importance3Tv, importance4Tv);
                 break;
 
         }
 
     }
 
-    void setHugeImportance(TextView importanceTv, ImageView importance1Iv, ImageView importance2Iv, ImageView importance3Iv) {
+    void setHugeImportance(TextView importanceTv, ImageView importance1Iv, ImageView importance2Iv, ImageView importance3Iv, ImageView importance4Iv) {
         importanceTv.setText("Huge");
         int hugeColor = ResourcesCompat.getColor(context.getResources(), R.color.huge, null);
         importance1Iv.setColorFilter(hugeColor);
         importance2Iv.setColorFilter(hugeColor);
         importance3Iv.setColorFilter(hugeColor);
+        importance4Iv.setColorFilter(hugeColor);
 
     }
 
-    void setBigImportance(TextView importanceTv, ImageView importance1Iv, ImageView importance2Iv, ImageView importance3Iv) {
+    void setBigImportance(TextView importanceTv, ImageView importance1Iv, ImageView importance2Iv, ImageView importance3Iv, ImageView importance4Iv) {
         importanceTv.setText("Big");
         int almostNoColor = ResourcesCompat.getColor(context.getResources(), R.color.white_pressed, null);
         int bigColor = ResourcesCompat.getColor(context.getResources(), R.color.big, null);
         importance1Iv.setColorFilter(bigColor);
         importance2Iv.setColorFilter(bigColor);
-        importance3Iv.setColorFilter(almostNoColor);
+        importance3Iv.setColorFilter(bigColor);
+        importance4Iv.setColorFilter(almostNoColor);
 
     }
 
-    void setMediumImportance(TextView importanceTv, ImageView importance1Iv, ImageView importance2Iv, ImageView importance3Iv) {
+    void setMediumImportance(TextView importanceTv, ImageView importance1Iv, ImageView importance2Iv, ImageView importance3Iv, ImageView importance4Iv) {
         importanceTv.setText("Medium");
         int almostNoColor = ResourcesCompat.getColor(context.getResources(), R.color.white_pressed, null);
         int mediumColor = ResourcesCompat.getColor(context.getResources(), R.color.medium, null);
         importance1Iv.setColorFilter(mediumColor);
-        importance2Iv.setColorFilter(almostNoColor);
+        importance2Iv.setColorFilter(mediumColor);
         importance3Iv.setColorFilter(almostNoColor);
+        importance4Iv.setColorFilter(almostNoColor);
 
     }
 
-    void setSmallImportance(TextView importanceTv, ImageView importance1Iv, ImageView importance2Iv, ImageView importance3Iv) {
+    void setSmallImportance(TextView importanceTv, ImageView importance1Iv, ImageView importance2Iv, ImageView importance3Iv, ImageView importance4Iv) {
         importanceTv.setText("Small");
         int almostNoColor = ResourcesCompat.getColor(context.getResources(), R.color.white_pressed, null);
-        importance1Iv.setColorFilter(almostNoColor);
+        int smallColor = ResourcesCompat.getColor(context.getResources(), R.color.small, null);
+        importance1Iv.setColorFilter(smallColor);
         importance2Iv.setColorFilter(almostNoColor);
         importance3Iv.setColorFilter(almostNoColor);
+        importance4Iv.setColorFilter(almostNoColor);
+    }
+
+    public int getImportance(String s) {
+
+        if (s.equals("Huge")) {
+            return 4;
+        }
+        if (s.equals("Big")) {
+            return 3;
+        }
+        if (s.equals("Medium")) {
+            return 2;
+        }
+        if (s.equals("Small")) {
+            return 1;
+        }
+        return 3;
     }
 
 

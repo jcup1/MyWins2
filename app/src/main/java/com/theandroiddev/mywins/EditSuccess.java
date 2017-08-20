@@ -1,4 +1,4 @@
-package com.example.jakubchmiel.mywins;
+package com.theandroiddev.mywins;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -11,6 +11,7 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -27,7 +28,7 @@ public class EditSuccess extends AppCompatActivity {
     private static final int IMPORTANCE_SUCCESS_REQUEST = 4;
 
 
-    TextView editCategory, editDate;
+    TextView editCategory, editDateStarted, editDateEnded;
     EditText editTitle, editDescription;
     ImageView editCategoryIv, editImportanceIv;
     DrawableSelector drawableSelector;
@@ -73,24 +74,35 @@ public class EditSuccess extends AppCompatActivity {
         editCategoryIv = (ImageView) findViewById(R.id.edit_category_iv);
         editImportanceIv = (ImageView) findViewById(R.id.edit_importance_iv);
         editDescription = (EditText) findViewById(R.id.edit_description);
-        editDate = (TextView) findViewById(R.id.edit_date);
+        editDateStarted = (TextView) findViewById(R.id.edit_date_started);
+        editDateEnded = (TextView) findViewById(R.id.edit_date_ended);
 
         Success editSuccess = getIntent().getParcelableExtra(MainActivity.EXTRA_SHOW_SUCCESS_ITEM);
 
         editTitle.setTag(editSuccess.getId());
+        Log.e(TAG, "initViews: " + editSuccess.getImportance());
         editTitle.setText(editSuccess.getTitle());
         editCategory.setText(editSuccess.getCategory());
         editDescription.setText(editSuccess.getDescription());
-        editDate.setText(editSuccess.getDate());
+        editDateStarted.setText(editSuccess.getDateStarted());
+        checkDateEnded(editSuccess.getDateEnded());
+
         editImportanceIv.setTag(editSuccess.getImportance());
 
         drawableSelector.selectCategoryImage(editCategoryIv, editSuccess.getCategory(), editCategory);
         drawableSelector.selectImportanceImage(editImportanceIv, editSuccess.getImportance());
 
-        editDate.setOnClickListener(new View.OnClickListener() {
+        editDateStarted.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setDate();
+                setDate("started");
+            }
+        });
+
+        editDateEnded.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setDate("ended");
             }
         });
 
@@ -103,12 +115,23 @@ public class EditSuccess extends AppCompatActivity {
 
     }
 
+    private void checkDateEnded(String dateEnded) {
+
+        if (dateEnded.equals("")) {
+            editDateEnded.setText("Set End Date");
+        } else {
+            editDateEnded.setText(dateEnded);
+        }
+
+    }
+
     private void setImportance() {
         //TODO popup importance
 
         Intent importanceIntent = new Intent(EditSuccess.this, ImportancePopup.class);
 
-        importanceIntent.putExtra("importance", (CharSequence) editImportanceIv.getTag());
+        importanceIntent.putExtra("importance", (int) editImportanceIv.getTag());
+        Log.e(TAG, "setImportance: " + (int) editImportanceIv.getTag());
 
         startActivityForResult(importanceIntent, IMPORTANCE_SUCCESS_REQUEST);
 
@@ -120,8 +143,8 @@ public class EditSuccess extends AppCompatActivity {
 
             Intent returnIntent = new Intent();
 
-            Success editSuccess = new Success(editTitle.getText().toString(), editCategory.getText().toString(), (String) editImportanceIv.getTag(), editDescription.getText().toString(),
-                    editDate.getText().toString());
+            Success editSuccess = new Success(editTitle.getText().toString(), editCategory.getText().toString(), (int) editImportanceIv.getTag(), editDescription.getText().toString(),
+                    editDateStarted.getText().toString(), editDateEnded.getText().toString());
             editSuccess.setId((Integer) editTitle.getTag());
 
             returnIntent.putExtra(MainActivity.EXTRA_EDIT_SUCCESS_ITEM, editSuccess);
@@ -144,8 +167,8 @@ public class EditSuccess extends AppCompatActivity {
             cnt++;
 
         }
-        if (TextUtils.isEmpty(editDate.getText().toString())) {
-            editDate.setError("When it happened?");
+        if (TextUtils.isEmpty(editDateStarted.getText().toString())) {
+            editDateStarted.setError("When it started?");
             cnt++;
         }
 
@@ -153,7 +176,7 @@ public class EditSuccess extends AppCompatActivity {
 
     }
 
-    private void setDate() {
+    private void setDate(final String d) {
 
         myCalendar = Calendar.getInstance();
 
@@ -166,7 +189,7 @@ public class EditSuccess extends AppCompatActivity {
                 myCalendar.set(Calendar.YEAR, year);
                 myCalendar.set(Calendar.MONTH, monthOfYear);
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                updateLabel();
+                updateLabel(d);
             }
 
         };
@@ -177,11 +200,18 @@ public class EditSuccess extends AppCompatActivity {
 
     }
 
-    private void updateLabel() {
-        String myFormat = "MM.dd.yy"; //In which you need put here
+    private void updateLabel(String d) {
+        String myFormat = "MM-dd-yy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
-        editDate.setText(sdf.format(myCalendar.getTime()));
+        if (d.equals("started")) {
+            editDateStarted.setText(sdf.format(myCalendar.getTime()));
+        }
+        if (d.equals("ended")) {
+            editDateEnded.setText(sdf.format(myCalendar.getTime()));
+
+        }
+
     }
 
     @Override
@@ -191,7 +221,7 @@ public class EditSuccess extends AppCompatActivity {
         if (requestCode == 4) {
             if (resultCode == Activity.RESULT_OK) {
 
-                String importance = data.getStringExtra("importance");
+                int importance = data.getIntExtra("importance", 3);
                 editImportanceIv.setTag(importance);
                 drawableSelector.selectImportanceImage(editImportanceIv, importance);
             }

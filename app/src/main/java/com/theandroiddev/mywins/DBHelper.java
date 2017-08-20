@@ -1,4 +1,4 @@
-package com.example.jakubchmiel.mywins;
+package com.theandroiddev.mywins;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
