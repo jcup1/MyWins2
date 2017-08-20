@@ -152,7 +152,7 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
             case R.id.insert_add_btn:
                 addSuccess();
                 break;
-//a
+
             default:
                 break;
         }
