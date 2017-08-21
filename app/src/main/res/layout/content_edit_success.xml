@@ -152,9 +152,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/transparent"
-            android:gravity="top"
+            android:gravity="top|left"
             android:padding="16dp"
-            android:textAlignment="viewStart"
             android:textColor="@color/secondary_text"
             android:textSize="18sp"/>
 

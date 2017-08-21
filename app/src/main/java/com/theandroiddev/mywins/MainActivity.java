@@ -26,13 +26,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -95,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onPause() {
         super.onPause();
         remove();
+
 
     }
 
@@ -175,12 +177,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         floatingActionsMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
             @Override
             public void onMenuExpanded() {
+
+
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm.isActive()) {
+
+                    imm.hideSoftInputFromWindow(edtSeach.getWindowToken(), 0);
+                }
+                handleMenuSearch();
                 showCircularReveal(shadowView);
             }
 
             @Override
             public void onMenuCollapsed() {
                 hideCircularReveal(shadowView);
+            }
+        });
+
+        shadowView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (floatingActionsMenu.isExpanded()) {
+                    floatingActionsMenu.collapse();
+                }
             }
         });
 
@@ -447,44 +466,68 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
+
     protected void handleMenuSearch() {
         ActionBar action = getSupportActionBar(); //get the actionbar
 
         if (isSearchOpened) { //test if the search is open
 
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(edtSeach.getWindowToken(), 0);
+
             action.setDisplayShowCustomEnabled(false); //disable a custom view inside the actionbar
             action.setDisplayShowTitleEnabled(true); //show the title in the action bar
 
             //hides the keyboard
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(edtSeach.getWindowToken(), 0);
+
 
             //add the search icon in the action bar
             mSearchAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_search));
 
             isSearchOpened = false;
             getSuccesses(null, sortType);
+
         } else { //open the search entry
 
             action.setDisplayShowCustomEnabled(true); //enable it to display a
             // custom view in the action bar.
-            action.setCustomView(R.layout.search_bar);//add the custom view
+            View view = getLayoutInflater().inflate(R.layout.search_bar,
+                    null);
+            ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,
+                    ActionBar.LayoutParams.MATCH_PARENT);
+            action.setCustomView(view, layoutParams);
             action.setDisplayShowTitleEnabled(false); //hide the title
 
             edtSeach = action.getCustomView().findViewById(R.id.edtSearch); //the text editor
+            edtSeach.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    doSearch(String.valueOf(charSequence));
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
             //this is a listener to do a search when the user clicks on search button
             edtSeach.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                        doSearch(edtSeach);
-                        return true;
-                    }
-                    return false;
-                }
-            });
+                    doSearch(edtSeach.getText().toString());
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(edtSeach.getWindowToken(), 0);
 
+                    return true;
+                }
+
+                                               }
+            );
 
             edtSeach.requestFocus();
 
@@ -500,8 +543,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void doSearch(EditText edtSeach) {
-        getSuccesses(edtSeach.getText().toString(), sortType);
+    private void doSearch(String s) {
+        getSuccesses(s, sortType);
     }
 
     @Override

@@ -112,8 +112,7 @@
                 android:transitionName="@string/transition_date_ended"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/show_importance_iv"
-                app:layout_constraintVertical_bias="0.0"/>
+                app:layout_constraintTop_toBottomOf="@+id/show_importance_iv" />
 
             <ImageView
                 android:id="@+id/show_importance_iv"
@@ -158,6 +157,7 @@
             android:id="@+id/show_description"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:gravity="top"
             android:padding="16dp"
             android:textColor="@color/secondary_text"
             android:textSize="18sp"/>

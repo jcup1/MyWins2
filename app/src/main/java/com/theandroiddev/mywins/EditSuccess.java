@@ -141,10 +141,12 @@ public class EditSuccess extends AppCompatActivity {
 
         if (validateData()) {
 
+            String dateEnded = getConvertedDateEnded(editDateEnded.getText().toString());
+
             Intent returnIntent = new Intent();
 
             Success editSuccess = new Success(editTitle.getText().toString(), editCategory.getText().toString(), (int) editImportanceIv.getTag(), editDescription.getText().toString(),
-                    editDateStarted.getText().toString(), editDateEnded.getText().toString());
+                    editDateStarted.getText().toString(), dateEnded);
             editSuccess.setId((Integer) editTitle.getTag());
 
             returnIntent.putExtra(MainActivity.EXTRA_EDIT_SUCCESS_ITEM, editSuccess);
@@ -155,6 +157,12 @@ public class EditSuccess extends AppCompatActivity {
         }
 
 
+    }
+
+    private String getConvertedDateEnded(String s) {
+        if (s.equals("Set End Date")) {
+            return "";
+        } else return s;
     }
 
     private boolean validateData() {
