@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         DBAdapter dbAdapter = new DBAdapter(this);
         dbAdapter.openDB();
-        dbAdapter.add(success);
+        dbAdapter.addSuccess(success);
         Log.e(TAG, "save: " + success);
         getSuccesses(null, sortType);
         dbAdapter.closeDB();
@@ -179,12 +179,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onMenuExpanded() {
 
 
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm.isActive()) {
-
-                    imm.hideSoftInputFromWindow(edtSeach.getWindowToken(), 0);
+                if (edtSeach != null) {
+                    handleMenuSearch();
                 }
-                handleMenuSearch();
                 showCircularReveal(shadowView);
             }
 
@@ -481,7 +478,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //hides the keyboard
 
 
-            //add the search icon in the action bar
+            //addSuccess the search icon in the action bar
             mSearchAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_search));
 
             isSearchOpened = false;
@@ -536,7 +533,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             imm.showSoftInput(edtSeach, InputMethodManager.SHOW_IMPLICIT);
 
 
-            //add the close icon
+            //addSuccess the close icon
             mSearchAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_close));
 
             isSearchOpened = true;
@@ -644,7 +641,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void remove() {
         DBAdapter dbAdapter = new DBAdapter(this);
         dbAdapter.openDB();
-        dbAdapter.remove(successesToRemove);
+        dbAdapter.removeSuccess(successesToRemove);
         dbAdapter.closeDB();
     }
 
@@ -657,7 +654,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         DBAdapter dbAdapter = new DBAdapter(this);
         dbAdapter.openDB();
         Success success;
-        Cursor cursor = dbAdapter.retrieve(searchTerm, sort);
+        Cursor cursor = dbAdapter.retrieveSuccess(searchTerm, sort);
 
         while (cursor.moveToNext()) {
             int id = cursor.getInt(0);
@@ -676,7 +673,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         dbAdapter.closeDB();
 
-        successAdapter = new SuccessAdapter(successes, R.layout.item_layout, getApplicationContext(), this);
+        successAdapter = new SuccessAdapter(successes, R.layout.success_layout, getApplicationContext(), this);
         recyclerView.setAdapter(successAdapter);
         successAdapter.notifyDataSetChanged();
     }

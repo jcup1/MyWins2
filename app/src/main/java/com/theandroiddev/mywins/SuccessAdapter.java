@@ -65,7 +65,8 @@ class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
 
 
     public interface OnItemClickListener {
-        void onItemClick(Success success, TextView titleTv, TextView categoryTv, TextView dateStartedTv, TextView dateEndedTv, ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView);
+        void onItemClick(Success success, TextView titleTv, TextView categoryTv, TextView dateStartedTv, TextView dateEndedTv,
+                         ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

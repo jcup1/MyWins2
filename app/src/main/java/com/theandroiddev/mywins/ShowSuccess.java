@@ -2,6 +2,7 @@ package com.theandroiddev.mywins;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,20 +12,28 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.theandroiddev.mywins.MainActivity.EXTRA_EDIT_SUCCESS_ITEM;
 import static com.theandroiddev.mywins.MainActivity.EXTRA_SHOW_SUCCESS_ITEM;
 import static com.theandroiddev.mywins.MainActivity.EXTRA_SUCCESS_ITEM;
 
-public class ShowSuccess extends AppCompatActivity {
+public class ShowSuccess extends AppCompatActivity implements SuccessImageAdapter.OnSuccessImageClickListener {
     private static final String TAG = "ShowSuccess";
     private static final int EDIT_SUCCESS_REQUEST = 3;
+    final int REQUEST_CODE_GALLERY = 999;
 
     int id;
     int color;
@@ -33,9 +42,35 @@ public class ShowSuccess extends AppCompatActivity {
     ImageView showCategoryIv, showImportanceIv;
     DrawableSelector drawableSelector;
     ConstraintLayout showConstraintLayout;
+    DBAdapter dbAdapter;
+    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.UP | ItemTouchHelper.DOWN) {
+
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+            int pos = viewHolder.getAdapterPosition();
+            toRemove(pos);
+
+        }
+    };
+    private int selectedImageNumber = 100;
+    private RecyclerView recyclerView;
+    private List<SuccessImage> successImages;
+    private List<SuccessImage> successImagesToRemove;
+    private SuccessImageAdapter successImageAdapter;
 
     public ShowSuccess() {
         this.drawableSelector = new DrawableSelector(this);
+    }
+
+    private void toRemove(int position) {
+        //showSnackbar(position);
+
     }
 
     @Override
@@ -57,9 +92,45 @@ public class ShowSuccess extends AppCompatActivity {
                 editSuccess();
             }
         });
-        initFab(fab);
 
+        initFab(fab);
+        initRecycler();
         initViews();
+        initImages();
+    }
+
+    private void initImages() {
+        SuccessImage successImage = new SuccessImage();
+        successImage.setImageDataBitmap(BitmapFactory.decodeResource(getResources(),
+                R.drawable.ic_done));
+        successImages.add(successImage);
+        successImageAdapter.notifyDataSetChanged();
+    }
+
+    private void initRecycler() {
+
+        recyclerView = (RecyclerView) findViewById(R.id.show_image_recycler_view);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setHasFixedSize(true);
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
+    }
+
+    private void getSuccessImages(int successId, String searchTerm, String sort) {
+
+        dbAdapter = new DBAdapter(this);
+        successImages = new ArrayList<>();
+        successImagesToRemove = new ArrayList<>();
+        successImages.clear();
+
+        //retrieveSuccesses(successId, searchTerm, sort);
+
+        successImageAdapter = new SuccessImageAdapter(successImages, this, R.layout.success_image_layout, getApplicationContext(), drawableSelector);
+        recyclerView.setAdapter(successImageAdapter);
+        successImageAdapter.notifyDataSetChanged();
     }
 
     private void initFab(FloatingActionButton fab) {
@@ -97,7 +168,6 @@ public class ShowSuccess extends AppCompatActivity {
         showDateStarted = (TextView) findViewById(R.id.show_date_started);
         showDateEnded = (TextView) findViewById(R.id.show_date_ended);
 
-
         Success s = getIntent().getParcelableExtra(EXTRA_SUCCESS_ITEM);
 
         showTitle.setTag(s.getId());
@@ -110,6 +180,8 @@ public class ShowSuccess extends AppCompatActivity {
 
         drawableSelector.selectCategoryImage(showCategoryIv, s.getCategory(), showCategory);
         drawableSelector.selectImportanceImage(showImportanceIv, s.getImportance());
+
+        //getSuccessImages(s.getId(), null, "");
 
         AlphaAnimation fadeIn = new AlphaAnimation(0.0f, 1.0f);
         showDescription.startAnimation(fadeIn);
@@ -131,7 +203,7 @@ public class ShowSuccess extends AppCompatActivity {
 
         DBAdapter dbAdapter = new DBAdapter(this);
         dbAdapter.openDB();
-        dbAdapter.edit(showSuccess);
+        dbAdapter.editSuccess(showSuccess);
         dbAdapter.closeDB();
     }
 
@@ -158,11 +230,30 @@ public class ShowSuccess extends AppCompatActivity {
 
                 }
 
+//                retrieveSuccesses(successId, searchTerm, sort);
+
+
                 Snackbar.make(showConstraintLayout, "Saved", Snackbar.LENGTH_SHORT).show();
             }
         }
 
 
     }
+
+    @Override
+    public void onSuccessImageClick(SuccessImage successImage, ImageView successImageIv, int position, ConstraintLayout constraintLayout, CardView cardView) {
+        //TODO HANDLE
+    }
+
+    @Override
+    public void onSuccessImageLongClick(SuccessImage successImage, ImageView successImageIv, int position, ConstraintLayout constraintLayout, CardView cardView) {
+        //TODO HANDLE
+    }
+//    private void retrieveSuccesses(int successId, String searchTerm, String sort) {
+//        dbAdapter.openDB();
+//        successImages.addAll(dbAdapter.retrieveSuccessImages(successId, searchTerm, sort));
+//        dbAdapter.closeDB();
+//
+//    }
 }
 

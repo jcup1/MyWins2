@@ -28,6 +28,7 @@
     <string name="action_date_ended">Sort by date ended</string>
     <string name="importance">Sort by importance</string>
     <string name="search">Search</string>
+    <string name="default_description">Default description</string>
 
 
 </resources>

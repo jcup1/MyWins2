@@ -1,15 +1,28 @@
 package com.theandroiddev.mywins;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -17,25 +30,91 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
-public class EditSuccess extends AppCompatActivity {
+public class EditSuccess extends AppCompatActivity implements SuccessImageAdapter.OnSuccessImageClickListener {
     private static final String TAG = "EditSuccess";
 
     private static final int IMPORTANCE_SUCCESS_REQUEST = 4;
-
-
+    private final int REQUEST_CODE_GALLERY = 5;
+    DBAdapter dbAdapter;
     TextView editCategory, editDateStarted, editDateEnded;
     EditText editTitle, editDescription;
     ImageView editCategoryIv, editImportanceIv;
     DrawableSelector drawableSelector;
-    private Calendar myCalendar;
+    private int selectedImageNumber = 100;
+    private RecyclerView recyclerView;
+    private List<SuccessImage> successImages;
+    private List<SuccessImage> successImagesToRemove;
+    private SuccessImageAdapter successImageAdapter;
+    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.UP | ItemTouchHelper.DOWN) {
 
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+            int pos = viewHolder.getAdapterPosition();
+            toRemove(pos);
+
+        }
+    };
+    private Calendar myCalendar;
+    private boolean[] activeImage;
+    private int imagesActive;
     public EditSuccess() {
         this.drawableSelector = new DrawableSelector(this);
+    }
+
+    private void toRemove(int position) {
+        showSnackbar(position);
+
+    }
+
+    private void showSnackbar(final int position) {
+        final SuccessImage successImage = successImages.get(position);
+        Snackbar snackbar = Snackbar
+                .make(recyclerView, "SUCCESS REMOVED", Snackbar.LENGTH_LONG)
+                .setAction("UNDO", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        undoToRemove(successImage, position);
+                    }
+                });
+        snackbar.show();
+
+        sendToRemoveQueue(successImage, position);
+    }
+
+    private void sendToRemoveQueue(SuccessImage successImage, int position) {
+        successImages.remove(position);
+        successImageAdapter.notifyItemRemoved(position);
+        successImagesToRemove.add(successImage);
+    }
+
+    private void undoToRemove(SuccessImage successImage, int position) {
+        successImages.add(position, successImage);
+        successImageAdapter.notifyItemInserted(position);
+        recyclerView.scrollToPosition(position);
+        successImagesToRemove.remove(successImage);
+    }
+
+    private void remove() {
+        DBAdapter dbAdapter = new DBAdapter(this);
+        dbAdapter.openDB();
+        dbAdapter.removeSuccessImage(successImagesToRemove);
+        dbAdapter.closeDB();
     }
 
     @Override
@@ -54,7 +133,19 @@ public class EditSuccess extends AppCompatActivity {
         });
 
         initFab(fab);
+        initRecycler();
         initViews();
+        initImages();
+
+    }
+
+    private void initImages() {
+        SuccessImage successImage = new SuccessImage();
+        successImage.setFileName("default");
+        successImage.setImageDataBitmap(BitmapFactory.decodeResource(getResources(),
+                R.drawable.ic_done));
+        successImages.add(successImage);
+        successImageAdapter.notifyDataSetChanged();
     }
 
     private void initFab(FloatingActionButton fab) {
@@ -64,6 +155,18 @@ public class EditSuccess extends AppCompatActivity {
 
         fab.setImageDrawable(myDrawable);
         fab.setColorFilter(ContextCompat.getColor(this, color));
+
+    }
+
+    private void initRecycler() {
+
+        recyclerView = (RecyclerView) findViewById(R.id.edit_image_recycler_view);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setHasFixedSize(true);
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
     }
 
@@ -92,6 +195,9 @@ public class EditSuccess extends AppCompatActivity {
         drawableSelector.selectCategoryImage(editCategoryIv, editSuccess.getCategory(), editCategory);
         drawableSelector.selectImportanceImage(editImportanceIv, editSuccess.getImportance());
 
+        getSuccessImages(editSuccess.getId(), null, "");
+        Log.e(TAG, "initViews: " + editSuccess.getId());
+
         editDateStarted.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,6 +218,27 @@ public class EditSuccess extends AppCompatActivity {
                 setImportance();
             }
         });
+
+    }
+
+    private void getSuccessImages(int successId, String searchTerm, String sort) {
+
+        dbAdapter = new DBAdapter(this);
+        successImages = new ArrayList<>();
+        successImagesToRemove = new ArrayList<>();
+        successImages.clear();
+
+        //retrieveSuccesses(successId, searchTerm, sort);
+
+        successImageAdapter = new SuccessImageAdapter(successImages, this, R.layout.success_image_layout, getApplicationContext(), drawableSelector);
+        recyclerView.setAdapter(successImageAdapter);
+        successImageAdapter.notifyDataSetChanged();
+    }
+
+    private void retrieveSuccesses(int successId, String searchTerm, String sort) {
+        dbAdapter.openDB();
+        successImages.addAll(dbAdapter.retrieveSuccessImages(successId, searchTerm, sort));
+        dbAdapter.closeDB();
 
     }
 
@@ -144,19 +271,25 @@ public class EditSuccess extends AppCompatActivity {
             String dateEnded = getConvertedDateEnded(editDateEnded.getText().toString());
 
             Intent returnIntent = new Intent();
+            remove();
 
             Success editSuccess = new Success(editTitle.getText().toString(), editCategory.getText().toString(), (int) editImportanceIv.getTag(), editDescription.getText().toString(),
                     editDateStarted.getText().toString(), dateEnded);
             editSuccess.setId((Integer) editTitle.getTag());
 
+            saveImages(editSuccess.getId());
+
             returnIntent.putExtra(MainActivity.EXTRA_EDIT_SUCCESS_ITEM, editSuccess);
 
             setResult(Activity.RESULT_OK, returnIntent);
             finish();
-
         }
+    }
 
-
+    private void saveImages(int successId) {
+        dbAdapter.openDB();
+        dbAdapter.addImages(successImages, successId);
+        dbAdapter.closeDB();
     }
 
     private String getConvertedDateEnded(String s) {
@@ -181,7 +314,6 @@ public class EditSuccess extends AppCompatActivity {
         }
 
         return cnt <= 0;
-
     }
 
     private void setDate(final String d) {
@@ -235,5 +367,78 @@ public class EditSuccess extends AppCompatActivity {
             }
         }
 
+        if (requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK && data != null) {
+            Uri uri = data.getData();
+            try {
+                InputStream inputStream = getContentResolver().openInputStream(uri);
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+
+                if (selectedImageNumber != 0) {
+                    successImages.get(selectedImageNumber).setImageDataBitmap(bitmap);
+                } else {//selected = 0
+                    SuccessImage successImage = new SuccessImage();
+                    successImage.setImageDataBitmap(bitmap);
+                    successImages.add(successImage);
+                }
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            successImageAdapter.notifyDataSetChanged();
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if (requestCode == REQUEST_CODE_GALLERY) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+
+                startActivityForResult(Intent.createChooser(intent, ""), REQUEST_CODE_GALLERY);
+
+            } else {
+                Toast.makeText(this, "Access file: permission denied", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    public void openGallery() {
+
+        ActivityCompat.requestPermissions(
+                EditSuccess.this,
+                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                REQUEST_CODE_GALLERY
+        );
+    }
+
+    private void handleImage(int i, String clickLength) {
+
+        selectedImageNumber = i;
+
+        if (clickLength.equals("short")) {
+            openGallery();
+        }
+        if (clickLength.equals("long")) {
+            //TODO HANDLE LOONG LICK
+        }
+    }
+
+    @Override
+    public void onSuccessImageClick(SuccessImage successImage, ImageView successImageIv, int position, ConstraintLayout constraintLayout, CardView cardView) {
+
+        handleImage(position, "short");
+
+    }
+
+    @Override
+    public void onSuccessImageLongClick(SuccessImage successImage, ImageView successImageIv, int position, ConstraintLayout constraintLayout, CardView cardView) {
+
+        handleImage(position, "long");
     }
 }

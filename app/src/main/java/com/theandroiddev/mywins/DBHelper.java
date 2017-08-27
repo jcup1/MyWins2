@@ -16,14 +16,18 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(Constants.CREATE_TB);
+        sqLiteDatabase.execSQL(Constants.CREATE_TB_SUCCESSES);
+        sqLiteDatabase.execSQL(Constants.CREATE_TB_IMAGES);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
-        sqLiteDatabase.execSQL(Constants.DROP_TB);
+        sqLiteDatabase.execSQL(Constants.DROP_TB_SUCCESSES);
+        sqLiteDatabase.execSQL(Constants.DROP_TB_IMAGES);
         onCreate(sqLiteDatabase);
 
     }
+
+
 }
