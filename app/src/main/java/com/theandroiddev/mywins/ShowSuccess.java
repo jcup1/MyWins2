@@ -1,8 +1,10 @@
 package com.theandroiddev.mywins;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,12 +13,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.util.LruCache;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.AlphaAnimation;
@@ -24,45 +27,34 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.theandroiddev.mywins.MainActivity.EXTRA_EDIT_SUCCESS_ITEM;
+import static com.theandroiddev.mywins.MainActivity.EXTRA_SHOW_SUCCESS_IMAGES;
 import static com.theandroiddev.mywins.MainActivity.EXTRA_SHOW_SUCCESS_ITEM;
 import static com.theandroiddev.mywins.MainActivity.EXTRA_SUCCESS_ITEM;
 
 public class ShowSuccess extends AppCompatActivity implements SuccessImageAdapter.OnSuccessImageClickListener {
     private static final String TAG = "ShowSuccess";
     private static final int EDIT_SUCCESS_REQUEST = 3;
-    final int REQUEST_CODE_GALLERY = 999;
-
+    private final int REQUEST_CODE_FROM_GALLERY = 01;
+    private final int REQUEST_CODE_CLICK_IMAGE = 02;
     int id;
     int color;
-
+    Success s;
     TextView showTitle, showCategory, showDescription, showDateStarted, showDateEnded;
     ImageView showCategoryIv, showImportanceIv;
     DrawableSelector drawableSelector;
     ConstraintLayout showConstraintLayout;
     DBAdapter dbAdapter;
-    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.UP | ItemTouchHelper.DOWN) {
-
-        @Override
-        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-            return false;
-        }
-
-        @Override
-        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-
-            int pos = viewHolder.getAdapterPosition();
-            toRemove(pos);
-
-        }
-    };
+    ImageLoadingUtils imageLoadingUtils;
+    private Cursor cursor;
+    private LruCache<String, Bitmap> memoryCache;
     private int selectedImageNumber = 100;
     private RecyclerView recyclerView;
-    private List<SuccessImage> successImages;
-    private List<SuccessImage> successImagesToRemove;
+    private ArrayList<SuccessImage> successImages;
+    private ArrayList<SuccessImage> successImagesToRemove;
     private SuccessImageAdapter successImageAdapter;
+    private boolean isImageFitToScreen;
 
     public ShowSuccess() {
         this.drawableSelector = new DrawableSelector(this);
@@ -96,15 +88,14 @@ public class ShowSuccess extends AppCompatActivity implements SuccessImageAdapte
         initFab(fab);
         initRecycler();
         initViews();
-        initImages();
     }
 
-    private void initImages() {
-        SuccessImage successImage = new SuccessImage();
-        successImage.setImageDataBitmap(BitmapFactory.decodeResource(getResources(),
-                R.drawable.ic_done));
-        successImages.add(successImage);
-        successImageAdapter.notifyDataSetChanged();
+    private void initImages(int successId, String searchTerm, String sortTerm) {
+        getSuccessImages(successId, searchTerm, sortTerm);
+        //SuccessImage successImage = new SuccessImage();
+//        successImage.setImageDataBitmap(BitmapFactory.decodeResource(getResources(),
+//                R.drawable.ic_done));
+//        successImages.add(successImage);
     }
 
     private void initRecycler() {
@@ -114,20 +105,30 @@ public class ShowSuccess extends AppCompatActivity implements SuccessImageAdapte
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
-
     }
 
     private void getSuccessImages(int successId, String searchTerm, String sort) {
 
         dbAdapter = new DBAdapter(this);
+        imageLoadingUtils = new ImageLoadingUtils(this);
+        int cachesize = 60 * 1024 * 1024;
+        memoryCache = new LruCache<String, Bitmap>(cachesize) {
+            @SuppressLint("NewApi")
+            @Override
+            protected int sizeOf(String key, Bitmap value) {
+                return value.getByteCount();
+            }
+        };
+
+
         successImages = new ArrayList<>();
         successImagesToRemove = new ArrayList<>();
         successImages.clear();
-
+        dbAdapter.openDB();
+        Log.d(TAG, "getSuccessImages: " + dbAdapter.retrieveSuccessImages(successId));
+        successImages.addAll(dbAdapter.retrieveSuccessImages(successId));
         //retrieveSuccesses(successId, searchTerm, sort);
-
+        dbAdapter.closeDB();
         successImageAdapter = new SuccessImageAdapter(successImages, this, R.layout.success_image_layout, getApplicationContext(), drawableSelector);
         recyclerView.setAdapter(successImageAdapter);
         successImageAdapter.notifyDataSetChanged();
@@ -153,6 +154,7 @@ public class ShowSuccess extends AppCompatActivity implements SuccessImageAdapte
         showSuccess.setId((Integer) showTitle.getTag());
 
         editSuccessIntent.putExtra(EXTRA_SHOW_SUCCESS_ITEM, showSuccess);
+        editSuccessIntent.putParcelableArrayListExtra(EXTRA_SHOW_SUCCESS_IMAGES, successImages);
 
         startActivityForResult(editSuccessIntent, EDIT_SUCCESS_REQUEST);
     }
@@ -168,7 +170,7 @@ public class ShowSuccess extends AppCompatActivity implements SuccessImageAdapte
         showDateStarted = (TextView) findViewById(R.id.show_date_started);
         showDateEnded = (TextView) findViewById(R.id.show_date_ended);
 
-        Success s = getIntent().getParcelableExtra(EXTRA_SUCCESS_ITEM);
+        s = getIntent().getParcelableExtra(EXTRA_SUCCESS_ITEM);
 
         showTitle.setTag(s.getId());
         showTitle.setText(s.getTitle());
@@ -181,13 +183,17 @@ public class ShowSuccess extends AppCompatActivity implements SuccessImageAdapte
         drawableSelector.selectCategoryImage(showCategoryIv, s.getCategory(), showCategory);
         drawableSelector.selectImportanceImage(showImportanceIv, s.getImportance());
 
-        //getSuccessImages(s.getId(), null, "");
-
         AlphaAnimation fadeIn = new AlphaAnimation(0.0f, 1.0f);
         showDescription.startAnimation(fadeIn);
         fadeIn.setDuration(375);
         fadeIn.setFillAfter(true);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initImages(s.getId(), "", "");
     }
 
     @Override
@@ -243,6 +249,16 @@ public class ShowSuccess extends AppCompatActivity implements SuccessImageAdapte
     @Override
     public void onSuccessImageClick(SuccessImage successImage, ImageView successImageIv, int position, ConstraintLayout constraintLayout, CardView cardView) {
         //TODO HANDLE
+        Intent intent = new Intent(this, ImageActivity.class);
+        ArrayList<String> imagePaths = new ArrayList<>();
+
+        for (int i = 0; i < successImages.size(); i++) {
+            imagePaths.add(successImages.get(i).getImagePath());
+        }
+        Log.e(TAG, "onSuccessImageClick: " + imagePaths);
+        intent.putStringArrayListExtra("imagePaths", imagePaths);
+        intent.putExtra("position", position);
+        startActivity(intent);
     }
 
     @Override

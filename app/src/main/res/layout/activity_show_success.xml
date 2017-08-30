@@ -8,14 +8,6 @@
     android:layout_height="match_parent"
     tools:context=".ShowSuccess">
 
-    <View
-        android:id="@+id/show_view_up"
-        android:layout_width="0dp"
-        android:layout_height="6dp"
-        app:layout_constraintBottom_toTopOf="@+id/include2"
-        app:layout_constraintTop_toBottomOf="@+id/show_toolbar"
-        tools:layout_editor_absoluteX="8dp" />
-
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/show_toolbar"
@@ -32,6 +24,14 @@
         tools:layout_constraintTop_creator="1"/>
 
 
+    <View
+        android:id="@+id/show_view_up"
+        android:layout_width="0dp"
+        android:layout_height="6dp"
+        app:layout_constraintBottom_toTopOf="@+id/include2"
+        app:layout_constraintTop_toBottomOf="@+id/show_toolbar"
+        tools:layout_editor_absoluteX="8dp"/>
+
     <include
         android:id="@+id/include2"
         layout="@layout/content_show_success"
@@ -44,24 +44,22 @@
         app:layout_constraintTop_toBottomOf="@+id/show_view_up"
         app:layout_constraintVertical_bias="0.0"/>
 
-    <!--<android.support.design.widget.FloatingActionButton-->
-    <!--android:id="@+id/show_fab"-->
-    <!--android:layout_width="56dp"-->
-    <!--android:layout_height="56dp"-->
-    <!--android:layout_marginBottom="26dp"-->
-    <!--android:layout_marginRight="22dp"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--app:layout_constraintRight_toRightOf="parent"-->
-    <!--tools:layout_constraintBottom_creator="1"-->
-    <!--tools:layout_constraintRight_creator="1"-->
-    <!--android:layout_marginEnd="22dp" />-->
+    <View
+        android:id="@+id/show_view_down"
+        android:layout_width="0dp"
+        android:layout_height="6dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/include2"
+        tools:layout_editor_absoluteX="8dp"/>
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="32dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginRight="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -73,7 +71,6 @@
             android:id="@+id/show_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:layout_gravity="right|bottom"
             android:layout_margin="16dp"
             android:src="@drawable/ic_add_white_24dp"
@@ -81,15 +78,5 @@
             app:fabSize="normal"
             app:pressedTranslationZ="12dp" />
     </android.support.design.widget.CoordinatorLayout>
-
-    <View
-        android:id="@+id/show_view_down"
-        android:layout_width="0dp"
-        android:layout_height="6dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/include2"
-        tools:layout_editor_absoluteX="8dp"/>
 
 </android.support.constraint.ConstraintLayout>

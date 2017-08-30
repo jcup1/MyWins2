@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -54,80 +53,12 @@ public class DBAdapter {
         sqLiteDatabase.insert(Constants.TB_NAME_SUCCESSES, Constants.SUCCESS_ID, contentValues);
     }
 
-    public void addImages(List<SuccessImage> successImages, int successId) {
-
-        for (int i = 0; i < successImages.size(); i++) {
-            Log.d(TAG, "addImages: ITERATE" + i);
-
-            String sql = "INSERT INTO " + Constants.TB_NAME_IMAGES + " VALUES (NULL, ?, ?, ?)";
-            SQLiteStatement sqLiteStatement = sqLiteDatabase.compileStatement(sql);
-            sqLiteStatement.clearBindings();
-            sqLiteStatement.bindDouble(1, successId);
-            sqLiteStatement.bindString(2, successImages.get(i).getFileName());
-            sqLiteStatement.bindBlob(3, successImages.get(i).getImageData());
-
-            sqLiteStatement.executeInsert();
-
-        }
-
-    }
-
-    public Cursor retrieveImage(String sql) {
-        return sqLiteDatabase.rawQuery(sql, null);
-    }
-
     public Cursor retrieveSuccess(String searchTerm, String sort) {
 
         String[] columns = {Constants.SUCCESS_ID, Constants.TITLE, Constants.CATEGORY, Constants.IMPORTANCE, Constants.DESCRIPTION, Constants.DATE_STARTED, Constants.DATE_ENDED};
         Cursor cursor;
         if (searchTerm != null && searchTerm.length() > 0) {
             String sql = "SELECT * FROM " + Constants.TB_NAME_SUCCESSES + " WHERE " + Constants.TITLE + " LIKE '%" + searchTerm + "%'";
-            cursor = sqLiteDatabase.rawQuery(sql, null);
-            return cursor;
-        }
-        cursor = sqLiteDatabase.query(Constants.TB_NAME_SUCCESSES, columns, null, null, null, null, sort);
-        return cursor;
-    }
-
-    public ArrayList<SuccessImage> retrieveSuccessImages(int successId, String searchTerm, String sort) {
-
-        String[] columns = {Constants.IMAGE_ID, Constants.SUCCESS_ID, Constants.FILENAME, Constants.IMAGEDATA};
-
-        ArrayList<SuccessImage> successImagesRetrieved = new ArrayList<>();
-        String sql = "SELECT * FROM " + Constants.TB_NAME_IMAGES + " WHERE "
-                + Constants.SUCCESS_ID + " = " + successId;
-
-        Cursor cursor = sqLiteDatabase.rawQuery(sql, null);
-        try {
-            // Move to first row
-            if (!cursor.moveToFirst())
-                return successImagesRetrieved;
-            do {
-                Log.d(TAG, "retrieveSuccessImages: " + 1);
-                SuccessImage successImage = new SuccessImage();
-                successImage.setId(cursor.getInt(0));
-                successImage.setSuccessId(cursor.getInt(1));
-                successImage.setFileName(cursor.getString(2));
-                successImage.setImageData(cursor.getBlob(3));
-
-                successImagesRetrieved.add(successImage);
-            } while (cursor.moveToNext());
-            cursor.close();
-
-            return successImagesRetrieved;
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-    }
-
-    private Cursor retrieveSuccessImage(int successId, String searchTerm, String sort) {
-
-        String[] columns = {Constants.IMAGE_ID, Constants.SUCCESS_ID, Constants.FILENAME, Constants.IMAGEDATA};
-        Cursor cursor;
-        if (searchTerm != null && searchTerm.length() > 0) {
-            String sql = "SELECT * FROM " + Constants.TB_NAME_IMAGES + " WHERE " + Constants.SUCCESS_ID + " LIKE '%" + successId + "%'";
             cursor = sqLiteDatabase.rawQuery(sql, null);
             return cursor;
         }
@@ -161,16 +92,48 @@ public class DBAdapter {
         sqLiteDatabase.update(Constants.TB_NAME_SUCCESSES, contentValues, Constants.SUCCESS_ID + "=" + showSuccess.getId(), null);
     }
 
+    public void addSuccessImages(List<SuccessImage> successImage) {
 
-    public void removeSuccessImage(List<SuccessImage> successImagesToRemove) {
-        Log.d(TAG, "toRemove:" + Arrays.toString(successImagesToRemove.toArray()));
+        for (int i = 1; i < successImage.size(); i++) {
 
-        for (int i = 0; i < successImagesToRemove.size(); i++) {
-            Log.d(TAG, "removeSuccess: " + successImagesToRemove.get(i).getFileName());
-            sqLiteDatabase.delete(Constants.TB_NAME_IMAGES, Constants.IMAGE_ID + "=? and " + Constants.FILENAME + "=?", new String[]{String.valueOf(successImagesToRemove.get(i).getId()), successImagesToRemove.get(i).getFileName()});
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(Constants.IMAGE_PATH, successImage.get(i).getImagePath());
+            contentValues.put(Constants.SUCCESS_ID, successImage.get(i).getSuccessId());
+            sqLiteDatabase.insert(Constants.TB_NAME_IMAGES, Constants.IMAGE_ID, contentValues);
 
         }
-        Log.d(TAG, "removeSuccessImage: after");
+
+    }
+
+    public List<SuccessImage> retrieveSuccessImages(int successId) {
+
+        List<SuccessImage> successImages = new ArrayList<>();
+
+        //String[] columns = {Constants.IMAGE_ID, Constants.IMAGE_PATH, Constants.SUCCESS_ID};
+        String sql = "SELECT * FROM " + Constants.TB_NAME_IMAGES + " WHERE " + Constants.SUCCESS_ID + "=" + successId;
+        Cursor cursor = sqLiteDatabase.rawQuery(sql, null);
+        if (cursor.moveToFirst()) {
+            do {
+                SuccessImage sI = new SuccessImage(successId);
+                sI.setImagePath(cursor.getString(1));
+
+                successImages.add(sI);
+
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return successImages;
+    }
+
+    public void editSuccessImages(List<SuccessImage> successImages, int successId) {
+
+        deleteImages(successId);
+        addSuccessImages(successImages);
+
+    }
+
+    public void deleteImages(int successId) {
+        sqLiteDatabase.execSQL("DELETE FROM " + Constants.TB_NAME_IMAGES + " WHERE " + Constants.SUCCESS_ID + " = " + successId);
 
     }
 

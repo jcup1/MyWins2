@@ -5,11 +5,13 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -46,6 +48,7 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
     private static final int IMPORTANCE_SUCCESS_REQUEST = 4;
     private final int REQUEST_CODE_GALLERY = 5;
     DBAdapter dbAdapter;
+    Success editSuccess;
     TextView editCategory, editDateStarted, editDateEnded;
     EditText editTitle, editDescription;
     ImageView editCategoryIv, editImportanceIv;
@@ -54,6 +57,7 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
     private RecyclerView recyclerView;
     private List<SuccessImage> successImages;
     private List<SuccessImage> successImagesToRemove;
+    private List<SuccessImage> successImagesToAdd;
     private SuccessImageAdapter successImageAdapter;
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.UP | ItemTouchHelper.DOWN) {
 
@@ -79,13 +83,15 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
 
     private void toRemove(int position) {
         showSnackbar(position);
+        successImageAdapter.notifyDataSetChanged();
+
 
     }
 
     private void showSnackbar(final int position) {
         final SuccessImage successImage = successImages.get(position);
         Snackbar snackbar = Snackbar
-                .make(recyclerView, "SUCCESS REMOVED", Snackbar.LENGTH_LONG)
+                .make(recyclerView, "IMAGE REMOVED", Snackbar.LENGTH_LONG)
                 .setAction("UNDO", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -110,13 +116,6 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
         successImagesToRemove.remove(successImage);
     }
 
-    private void remove() {
-        DBAdapter dbAdapter = new DBAdapter(this);
-        dbAdapter.openDB();
-        dbAdapter.removeSuccessImage(successImagesToRemove);
-        dbAdapter.closeDB();
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,17 +134,49 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
         initFab(fab);
         initRecycler();
         initViews();
-        initImages();
+
 
     }
 
     private void initImages() {
-        SuccessImage successImage = new SuccessImage();
-        successImage.setFileName("default");
-        successImage.setImageDataBitmap(BitmapFactory.decodeResource(getResources(),
-                R.drawable.ic_done));
-        successImages.add(successImage);
+//        SuccessImage successImage = new SuccessImage();
+//        successImage.setFileName("default");
+//        successImage.setImageDataBitmap(BitmapFactory.decodeResource(getResources(),
+//                R.drawable.ic_done));
+//        successImages.add(success
+// Image);
+
+        dbAdapter = new DBAdapter(this);
+        successImagesToRemove = new ArrayList<>();
+        successImages.clear();
+
+        //retrieveSuccesses(successId, searchTerm, sort);
+
+        successImageAdapter = new SuccessImageAdapter(successImages, this, R.layout.success_image_layout, getApplicationContext(), drawableSelector);
+        recyclerView.setAdapter(successImageAdapter);
         successImageAdapter.notifyDataSetChanged();
+        successImageAdapter.notifyDataSetChanged();
+    }
+
+    private void getSuccessImages(int successId, String searchTerm, String sort) {
+
+        dbAdapter = new DBAdapter(this);
+        successImages = new ArrayList<>();
+        successImagesToRemove = new ArrayList<>();
+        successImagesToAdd = new ArrayList<>();
+        successImages.clear();
+        dbAdapter.openDB();
+        successImages.addAll(dbAdapter.retrieveSuccessImages(successId));
+        successImages.add(0, addImageIv());
+        dbAdapter.closeDB();
+        successImageAdapter = new SuccessImageAdapter(successImages, this, R.layout.success_image_layout, getApplicationContext(), drawableSelector);
+        recyclerView.setAdapter(successImageAdapter);
+        successImageAdapter.notifyDataSetChanged();
+    }
+
+    private SuccessImage addImageIv() {
+
+        return new SuccessImage(editSuccess.getId());
     }
 
     private void initFab(FloatingActionButton fab) {
@@ -180,10 +211,12 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
         editDateStarted = (TextView) findViewById(R.id.edit_date_started);
         editDateEnded = (TextView) findViewById(R.id.edit_date_ended);
 
-        Success editSuccess = getIntent().getParcelableExtra(MainActivity.EXTRA_SHOW_SUCCESS_ITEM);
+        editSuccess = getIntent().getParcelableExtra(MainActivity.EXTRA_SHOW_SUCCESS_ITEM);
+        successImages = getIntent().getParcelableArrayListExtra(MainActivity.EXTRA_SHOW_SUCCESS_IMAGES);
+
+        Log.d(TAG, "initViews: " + successImages);
 
         editTitle.setTag(editSuccess.getId());
-        Log.e(TAG, "initViews: " + editSuccess.getImportance());
         editTitle.setText(editSuccess.getTitle());
         editCategory.setText(editSuccess.getCategory());
         editDescription.setText(editSuccess.getDescription());
@@ -219,25 +252,12 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
             }
         });
 
-    }
 
-    private void getSuccessImages(int successId, String searchTerm, String sort) {
-
-        dbAdapter = new DBAdapter(this);
-        successImages = new ArrayList<>();
-        successImagesToRemove = new ArrayList<>();
-        successImages.clear();
-
-        //retrieveSuccesses(successId, searchTerm, sort);
-
-        successImageAdapter = new SuccessImageAdapter(successImages, this, R.layout.success_image_layout, getApplicationContext(), drawableSelector);
-        recyclerView.setAdapter(successImageAdapter);
-        successImageAdapter.notifyDataSetChanged();
     }
 
     private void retrieveSuccesses(int successId, String searchTerm, String sort) {
         dbAdapter.openDB();
-        successImages.addAll(dbAdapter.retrieveSuccessImages(successId, searchTerm, sort));
+        successImages.addAll(dbAdapter.retrieveSuccessImages(successId));
         dbAdapter.closeDB();
 
     }
@@ -271,7 +291,6 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
             String dateEnded = getConvertedDateEnded(editDateEnded.getText().toString());
 
             Intent returnIntent = new Intent();
-            remove();
 
             Success editSuccess = new Success(editTitle.getText().toString(), editCategory.getText().toString(), (int) editImportanceIv.getTag(), editDescription.getText().toString(),
                     editDateStarted.getText().toString(), dateEnded);
@@ -288,7 +307,7 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
 
     private void saveImages(int successId) {
         dbAdapter.openDB();
-        dbAdapter.addImages(successImages, successId);
+        dbAdapter.editSuccessImages(successImages, successId);
         dbAdapter.closeDB();
     }
 
@@ -369,16 +388,25 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
 
         if (requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK && data != null) {
             Uri uri = data.getData();
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+            Cursor cursor = getContentResolver().query(uri, filePathColumn, null, null, null);
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String imagePath = cursor.getString(columnIndex);
+            cursor.close();
+
+
             try {
                 InputStream inputStream = getContentResolver().openInputStream(uri);
                 Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
 
                 if (selectedImageNumber != 0) {
-                    successImages.get(selectedImageNumber).setImageDataBitmap(bitmap);
+                    successImages.get(selectedImageNumber).setImagePath(imagePath);
                 } else {//selected = 0
-                    SuccessImage successImage = new SuccessImage();
-                    successImage.setImageDataBitmap(bitmap);
+                    SuccessImage successImage = new SuccessImage(editSuccess.getId());
+                    successImage.setImagePath(imagePath);
                     successImages.add(successImage);
+                    successImagesToAdd.add(successImage);
                 }
 
             } catch (FileNotFoundException e) {
@@ -394,11 +422,8 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
 
         if (requestCode == REQUEST_CODE_GALLERY) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-
-                startActivityForResult(Intent.createChooser(intent, ""), REQUEST_CODE_GALLERY);
+                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, REQUEST_CODE_GALLERY);
 
             } else {
                 Toast.makeText(this, "Access file: permission denied", Toast.LENGTH_SHORT).show();

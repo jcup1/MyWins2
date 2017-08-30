@@ -64,9 +64,9 @@
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="32dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginRight="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -78,7 +78,6 @@
             android:id="@+id/edit_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:layout_gravity="right|bottom"
             android:layout_margin="16dp"
             android:src="@drawable/ic_add_white_24dp"

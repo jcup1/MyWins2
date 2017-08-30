@@ -18,9 +18,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class InsertSuccess extends AppCompatActivity implements View.OnClickListener {
@@ -197,6 +199,20 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
             cnt++;
         }
 
+        if (!TextUtils.isEmpty(dateStartedTv.getText().toString()) && !TextUtils.isEmpty(dateEndedTv.getText().toString())) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd");
+            try {
+                Date date1 = sdf.parse(dateStartedTv.getText().toString());
+                Date date2 = sdf.parse(dateEndedTv.getText().toString());
+                if (date1.after(date2)) {
+                    dateEndedTv.setError("You ended before started!");
+                    cnt++;
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
         return cnt <= 0;
 
     }
@@ -239,6 +255,7 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
         }
         if (d.equals("ended")) {
             dateEndedTv.setText(sdf.format(myCalendar.getTime()));
+            dateEndedTv.setError(null);
         }
 
     }

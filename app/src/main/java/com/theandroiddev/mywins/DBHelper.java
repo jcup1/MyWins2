@@ -27,6 +27,8 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(Constants.DROP_TB_IMAGES);
         onCreate(sqLiteDatabase);
 
+        MainActivity.dbUpdate = true;
+
     }
 
 

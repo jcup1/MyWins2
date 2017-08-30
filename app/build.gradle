@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.0"
+    buildToolsVersion "26.0.1"
     defaultConfig {
         applicationId "com.theandroiddev.mywins"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 7
-        versionName "0.82"
+        versionCode 9
+        versionName "0.91"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -35,5 +35,6 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:design:26.0.0-alpha1'
     compile 'com.github.ozodrukh.CircularReveal:circualreveal:2.1.0'
+
     testCompile 'junit:junit:4.12'
 }

@@ -49,8 +49,10 @@ import io.codetail.animation.ViewAnimationUtils;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, SuccessAdapter.OnItemClickListener {
 
     public static final String EXTRA_SUCCESS_ITEM = "success_item";
+
     public static final String EXTRA_INSERT_SUCCESS_ITEM = "insert_success_item";
     public static final String EXTRA_SHOW_SUCCESS_ITEM = "show_success_item";
+    public static final String EXTRA_SHOW_SUCCESS_IMAGES = "show_success_images";
     public static final String EXTRA_EDIT_SUCCESS_ITEM = "edit_success_item";
 
     public static final String EXTRA_SUCCESS_TITLE = "title";
@@ -61,15 +63,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String EXTRA_SUCCESS_IMPORTANCE_IV = "importance_iv";
     public static final String EXTRA_SUCCESS_CONSTRAINT = "success_constraint";
     public static final String EXTRA_SUCCESS_CARD_VIEW = "success_card_view";
+
+
     static final int INSERT_SUCCESS_REQUEST = 1;
     static final int SHOW_SUCCESS_REQUEST = 2;
     private static final int EDIT_SUCCESS_REQUEST = 3;
     private static final String TAG = "MainActivity";
+    public static boolean dbUpdate;
     SharedPreferences prefs = null;
     FloatingActionsMenu floatingActionsMenu;
     private MenuItem mSearchAction;
     private boolean isSearchOpened = false;
     private EditText edtSeach;
+    private CardView loginCard;
     private RecyclerView recyclerView;
     private List<Success> successes;
     private List<Success> successesToRemove;
@@ -126,11 +132,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.show_toolbar);
         setSupportActionBar(toolbar);
         initFABs();
+        initLogin();
         initRecycler();
         initCircularReveal();
         initVariables();
         prefs = getSharedPreferences("example.jakubchmiel.mywins", MODE_PRIVATE);
 
+    }
+
+    private void initLogin() {
+        loginCard = (CardView) findViewById(R.id.main_login_card);
+        loginCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar snackbar = Snackbar
+                        .make(recyclerView, "NOT READY YET", Snackbar.LENGTH_LONG);
+                snackbar.show();
+            }
+        });
     }
 
     @Override
@@ -141,9 +160,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             insertDummyData();
             prefs.edit().putBoolean("firstrun", false).apply();
         }
+        if (dbUpdate) {
+            insertDummyData();
+            dbUpdate = false;
+        }
     }
 
-    private void insertDummyData() {
+    public void insertDummyData() {
         Success video = new Success("Recorded First Video", "Video", 3, "I always wanted to create youtube video and finally Hot Shitty Challenge is live...", "17-05-20", "17-05-25");
         Success money = new Success("25.000$ Sale", "Money", 4, "It's my first sold company. I grew it in 10 years. I denied first offer which was 5.000$ and it's one of my the best choices in my life. I...", "17-05-22", "17-05-30");
         Success journey = new Success("Visited Wroclaw", "Journey", 2, "I travel now and then. Met girl but she introduced me her friend: 'Zoned'. Guess I've got to try again in 2018.", "16-04-15", "16-04-20");
@@ -482,6 +505,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mSearchAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_search));
 
             isSearchOpened = false;
+            edtSeach = null;
             getSuccesses(null, sortType);
 
         } else { //open the search entry
@@ -671,6 +695,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
 
+        cursor.close();
         dbAdapter.closeDB();
 
         successAdapter = new SuccessAdapter(successes, R.layout.success_layout, getApplicationContext(), this);

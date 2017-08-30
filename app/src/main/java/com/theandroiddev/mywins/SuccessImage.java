@@ -1,10 +1,7 @@
 package com.theandroiddev.mywins;
 
-import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import java.io.ByteArrayOutputStream;
 
 /**
  * Created by grazyna on 2017-08-23.
@@ -25,34 +22,16 @@ public class SuccessImage implements Parcelable {
     };
     int id;
     int successId;
-    String fileName;
-    byte[] imageData;
-    private Bitmap imageDataBitmap;
-
-    public SuccessImage(String fileName, byte[] imageData, int successId) {
-        this.fileName = fileName;
-        this.imageData = imageData;
-        this.successId = successId;
-    }
+    String imagePath;
 
     protected SuccessImage(Parcel in) {
         id = in.readInt();
-        fileName = in.readString();
-        imageData = in.createByteArray();
+        imagePath = in.readString();
         successId = in.readInt();
     }
 
-    public SuccessImage() {
-
-        this.fileName = "default";
-        this.imageData = null;
-        this.imageDataBitmap = null;
-
-    }
-
-    public SuccessImage(String fileName, Bitmap imageDataBitmap) {
-        this.fileName = fileName;
-        this.imageDataBitmap = imageDataBitmap;
+    public SuccessImage(int successId) {
+        this.successId = successId;
     }
 
     public int getId() {
@@ -63,28 +42,20 @@ public class SuccessImage implements Parcelable {
         this.id = id;
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public byte[] getImageData() {
-        return imageData;
-    }
-
-    public void setImageData(byte[] imageData) {
-        this.imageData = imageData;
-    }
-
     public int getSuccessId() {
         return successId;
     }
 
     public void setSuccessId(int successId) {
         this.successId = successId;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     @Override
@@ -95,26 +66,9 @@ public class SuccessImage implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(id);
-        parcel.writeString(fileName);
-        parcel.writeByteArray(imageData);
+        parcel.writeString(imagePath);
         parcel.writeInt(successId);
     }
 
-    public Bitmap getImageDataBitmap() {
 
-
-        //Bitmap bitmap = BitmapFactory.decodeByteArray(getImageData(), 0, getImageData().length);
-
-        return imageDataBitmap;
-    }
-
-    public void setImageDataBitmap(Bitmap imageDataBitmap) {
-        this.imageDataBitmap = imageDataBitmap;
-        if (getImageData() == null) {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            imageDataBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            setImageData(stream.toByteArray());
-        }
-
-    }
 }

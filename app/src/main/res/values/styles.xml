@@ -28,6 +28,12 @@
 
     </style>
 
+    <style name="AppTheme.Dialog.No.Bg" parent="AppTheme.Dialog">
+
+        <item name="android:windowBackground">@null</item>
+
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
