@@ -44,7 +44,7 @@ class Constants {
 
 
     //DATABASE
-    static final int DB_VERSION = 7;
+    static final int DB_VERSION = 8;
 
     static final String SUCCESS_ID = "success_id";
     static final String TITLE = "title";
