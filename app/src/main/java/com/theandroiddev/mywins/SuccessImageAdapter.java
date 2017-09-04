@@ -1,42 +1,37 @@
 package com.theandroiddev.mywins;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.util.List;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * Created by grazyna on 2017-08-23.
  */
 
-public class SuccessImageAdapter extends RecyclerView.Adapter<SuccessImageAdapter.ViewHolder> {
+class SuccessImageAdapter extends RecyclerView.Adapter<SuccessImageAdapter.ViewHolder> {
 
-    private static final int FADE_DURATION = 375;
-    boolean isImageFitToScreen;
     private List<SuccessImage> successImages;
     private OnSuccessImageClickListener listener;
     private int successImageLayout;
-    private Context context;
-    private DrawableSelector drawableSelector;
 
 
-    public SuccessImageAdapter(List<SuccessImage> successImages, OnSuccessImageClickListener listener, int successImageLayout, Context context, DrawableSelector drawableSelector) {
+    SuccessImageAdapter(List<SuccessImage> successImages, OnSuccessImageClickListener listener, int successImageLayout) {
         this.successImages = successImages;
         this.listener = listener;
         this.successImageLayout = successImageLayout;
-        this.context = context;
-        this.drawableSelector = drawableSelector;
     }
 
     @Override
@@ -53,10 +48,9 @@ public class SuccessImageAdapter extends RecyclerView.Adapter<SuccessImageAdapte
                 holder.successImageIv.setImageResource(R.drawable.ic_action_add);
                 holder.bind(successImages.get(position), position, listener);
 
-
             }
         } else {
-            //Bitmap bitmap = BitmapFactory.decodeFile(successImages.get(position).getImagePath());
+
             Bitmap thumbnail = getbitpam(successImages.get(position).getImagePath());
             Bitmap orientedBitmap = ExifUtil.rotateBitmap(successImages.get(position).getImagePath(), thumbnail);
             holder.successImageIv.setImageBitmap(orientedBitmap);
@@ -64,25 +58,9 @@ public class SuccessImageAdapter extends RecyclerView.Adapter<SuccessImageAdapte
 
         }
 
-//        setFadeAnimation(holder.itemView);
-
     }
 
-    private void setFadeAnimation(View view) {
-        AlphaAnimation anim = new AlphaAnimation(0.0f, 1.0f);
-        anim.setDuration(FADE_DURATION);
-        view.startAnimation(anim);
-    }
-
-
-    private void removeAt(int position) {
-
-        successImages.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, successImages.size());
-    }
-
-    public Bitmap getbitpam(String path) {
+    private Bitmap getbitpam(String path) {
         Bitmap imgthumBitmap = null;
         try {
 
@@ -99,6 +77,7 @@ public class SuccessImageAdapter extends RecyclerView.Adapter<SuccessImageAdapte
 
 
         } catch (Exception ex) {
+            Log.d(TAG, Log.getStackTraceString(ex));
 
         }
         return imgthumBitmap;
@@ -110,7 +89,7 @@ public class SuccessImageAdapter extends RecyclerView.Adapter<SuccessImageAdapte
         return successImages.size();
     }
 
-    public interface OnSuccessImageClickListener {
+    interface OnSuccessImageClickListener {
         void onSuccessImageClick(SuccessImage successImage, ImageView successImageIv, int position, ConstraintLayout constraintLayout,
                                  CardView cardView);
 
@@ -118,14 +97,14 @@ public class SuccessImageAdapter extends RecyclerView.Adapter<SuccessImageAdapte
                                      CardView cardView);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView successImageIv;
         ConstraintLayout constraintLayout;
         CardView cardView;
 
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
 
             successImageIv = itemView.findViewById(R.id.success_image_iv);
@@ -140,7 +119,13 @@ public class SuccessImageAdapter extends RecyclerView.Adapter<SuccessImageAdapte
                 @Override
                 public void onClick(View view) {
                     listener.onSuccessImageClick(successImage, successImageIv, position, constraintLayout, cardView);
+                }
+            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
                     listener.onSuccessImageLongClick(successImage, successImageIv, position, constraintLayout, cardView);
+                    return true;
                 }
             });
         }

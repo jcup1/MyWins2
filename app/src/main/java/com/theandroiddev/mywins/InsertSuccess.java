@@ -1,29 +1,25 @@
 package com.theandroiddev.mywins;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.ParseException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
+import static com.theandroiddev.mywins.Constants.DATE_ENDED;
+import static com.theandroiddev.mywins.Constants.DATE_STARTED;
+import static com.theandroiddev.mywins.Constants.EXTRA_INSERT_SUCCESS_ITEM;
+import static com.theandroiddev.mywins.Constants.SNACK_DESCRIPTION_TODO;
+import static com.theandroiddev.mywins.Constants.dummyImportanceDefault;
 
 public class InsertSuccess extends AppCompatActivity implements View.OnClickListener {
 
@@ -33,10 +29,9 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
     ImageView categoryIv, dateStartedIv, dateEndedIv, descriptionIv, importance1Iv, importance2Iv, importance3Iv, importance4Iv;
     Button addBtn;
     DrawableSelector drawableSelector;
+    DateHelper dateHelper;
     private DisplayMetrics displayMetrics;
     private int accentColor;
-    private Calendar myCalendar;
-    private int dummyImportance = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +50,14 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
         categoryTv.setText(category);
 
         drawableSelector.selectCategoryImage(categoryIv, category, categoryTv);
-        drawableSelector.setImportance(dummyImportance, importanceTv, importance1Iv, importance2Iv, importance3Iv, importance4Iv);
+        drawableSelector.setImportance(dummyImportanceDefault, importanceTv, importance1Iv, importance2Iv, importance3Iv, importance4Iv);
 
     }
 
     private void initViews() {
 
         drawableSelector = new DrawableSelector(this);
+        dateHelper = new DateHelper(this);
 
         categoryTv = (TextView) findViewById(R.id.insert_category_tv);
         importanceTv = (TextView) findViewById(R.id.insert_importance_tv);
@@ -137,16 +133,16 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
                 drawableSelector.setHugeImportance(importanceTv, importance1Iv, importance2Iv, importance3Iv, importance4Iv);
                 break;
             case R.id.insert_date_started_iv:
-                setDate("started");
+                dateHelper.setDate(DATE_STARTED, dateStartedTv, dateEndedTv);
                 break;
             case R.id.insert_date_ended_iv:
-                setDate("ended");
+                dateHelper.setDate(DATE_ENDED, dateStartedTv, dateEndedTv);
                 break;
             case R.id.insert_date_started_tv:
-                setDate("started");
+                dateHelper.setDate(DATE_STARTED, dateStartedTv, dateEndedTv);
                 break;
             case R.id.insert_date_ended_tv:
-                setDate("ended");
+                dateHelper.setDate(DATE_ENDED, dateStartedTv, dateEndedTv);
                 break;
             case R.id.insert_description_iv:
                 setDesc();
@@ -162,109 +158,31 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
 
     private void addSuccess() {
 
-        if (validateData()) {
+        if (dateHelper.validateData(titleEt, dateStartedTv, dateEndedTv)) {
 
-            if (!isLegalDate(dateEndedTv.getText().toString())) {
-                dateEndedTv.setText("");
-            }
+            String dateStarted = dateHelper.checkBlankDate(dateStartedTv.getText().toString());
+            String dateEnded = dateHelper.checkBlankDate(dateEndedTv.getText().toString());
 
-            sendData();
+            sendData(dateStarted, dateEnded);
         }
     }
 
-    private void sendData() {
+    private void sendData(String dateStarted, String dateEnded) {
 
         Intent returnIntent = new Intent();
 
         Success s = new Success(titleEt.getText().toString(), categoryTv.getText().toString(),
-                drawableSelector.getImportance(importanceTv.getText().toString()), description_et.getText().toString(), dateStartedTv.getText().toString(), dateEndedTv.getText().toString());
+                drawableSelector.getImportance(importanceTv.getText().toString()), description_et.getText().toString(), dateStarted, dateEnded);
 
 
-        returnIntent.putExtra(MainActivity.EXTRA_INSERT_SUCCESS_ITEM, s);
+        returnIntent.putExtra(EXTRA_INSERT_SUCCESS_ITEM, s);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }
 
-    private boolean validateData() {
-
-        int cnt = 0;
-
-        if (TextUtils.isEmpty(titleEt.getText().toString())) {
-            titleEt.setError("What's the name of your success?");
-            cnt++;
-
-        }
-        if (!isLegalDate(dateStartedTv.getText().toString())) {
-            dateStartedTv.setError("When it started?");
-            cnt++;
-        }
-
-        if (!TextUtils.isEmpty(dateStartedTv.getText().toString()) && !TextUtils.isEmpty(dateEndedTv.getText().toString())) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd");
-            try {
-                Date date1 = sdf.parse(dateStartedTv.getText().toString());
-                Date date2 = sdf.parse(dateEndedTv.getText().toString());
-                if (date1.after(date2)) {
-                    dateEndedTv.setError("You ended before started!");
-                    cnt++;
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return cnt <= 0;
-
-    }
 
     private void setDesc() {
-        Toast.makeText(this, "Not active", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, SNACK_DESCRIPTION_TODO, Toast.LENGTH_SHORT).show();
     }
-
-    private void setDate(final String d) {
-
-        myCalendar = Calendar.getInstance();
-
-        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-                // TODO Auto-generated method stub
-                myCalendar.set(Calendar.YEAR, year);
-                myCalendar.set(Calendar.MONTH, monthOfYear);
-                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                updateLabel(d);
-            }
-
-        };
-
-        new DatePickerDialog(InsertSuccess.this, date, myCalendar
-                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-
-    }
-
-    private void updateLabel(String d) {
-        String myFormat = "yy-MM-dd"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-
-        if (d.equals("started")) {
-            dateStartedTv.setText(sdf.format(myCalendar.getTime()));
-            dateStartedTv.setError(null);
-        }
-        if (d.equals("ended")) {
-            dateEndedTv.setText(sdf.format(myCalendar.getTime()));
-            dateEndedTv.setError(null);
-        }
-
-    }
-
-    boolean isLegalDate(String s) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd");
-        sdf.setLenient(false);
-        return sdf.parse(s, new ParsePosition(0)) != null;
-    }
-
 
 }

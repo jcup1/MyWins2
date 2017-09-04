@@ -12,6 +12,7 @@
         android:layout_gravity="center"
         android:imeOptions="actionSearch"
         android:inputType="text"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        android:theme="@style/EditTextCustomSearch"/>
 
 </LinearLayout>

@@ -14,30 +14,30 @@ import java.util.List;
  * Created by jakub on 14.08.17.
  */
 
-public class DBAdapter {
+class DBAdapter {
     private static final String TAG = "DBAdapter";
-    Context context;
-    SQLiteDatabase sqLiteDatabase;
-    DBHelper dbHelper;
+    private Context context;
+    private SQLiteDatabase sqLiteDatabase;
+    private DBHelper dbHelper;
 
-    public DBAdapter(Context context) {
+    DBAdapter(Context context) {
 
         this.context = context;
         dbHelper = new DBHelper(context);
 
     }
 
-    public void openDB() {
+    void openDB() {
 
         sqLiteDatabase = dbHelper.getWritableDatabase();
 
     }
 
-    public void closeDB() {
+    void closeDB() {
         dbHelper.close();
     }
 
-    public void addSuccess(Success success) {
+    void addSuccess(Success success) {
         Log.d(TAG, "addSuccess: " + success);
 
         ContentValues contentValues = new ContentValues();
@@ -53,7 +53,7 @@ public class DBAdapter {
         sqLiteDatabase.insert(Constants.TB_NAME_SUCCESSES, Constants.SUCCESS_ID, contentValues);
     }
 
-    public Cursor retrieveSuccess(String searchTerm, String sort) {
+    Cursor retrieveSuccess(String searchTerm, String sort) {
 
         String[] columns = {Constants.SUCCESS_ID, Constants.TITLE, Constants.CATEGORY, Constants.IMPORTANCE, Constants.DESCRIPTION, Constants.DATE_STARTED, Constants.DATE_ENDED};
         Cursor cursor;
@@ -66,7 +66,7 @@ public class DBAdapter {
         return cursor;
     }
 
-    public void removeSuccess(List<Success> successesToRemove) {
+    void removeSuccess(List<Success> successesToRemove) {
         Log.d(TAG, "toRemove:" + Arrays.toString(successesToRemove.toArray()));
 
 
@@ -79,7 +79,7 @@ public class DBAdapter {
 
     }
 
-    public void editSuccess(Success showSuccess) {
+    void editSuccess(Success showSuccess) {
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(Constants.TITLE, showSuccess.getTitle());
@@ -92,7 +92,7 @@ public class DBAdapter {
         sqLiteDatabase.update(Constants.TB_NAME_SUCCESSES, contentValues, Constants.SUCCESS_ID + "=" + showSuccess.getId(), null);
     }
 
-    public void addSuccessImages(List<SuccessImage> successImage) {
+    private void addSuccessImages(List<SuccessImage> successImage) {
 
         for (int i = 1; i < successImage.size(); i++) {
 
@@ -105,11 +105,10 @@ public class DBAdapter {
 
     }
 
-    public List<SuccessImage> retrieveSuccessImages(int successId) {
+    List<SuccessImage> retrieveSuccessImages(int successId) {
 
         List<SuccessImage> successImages = new ArrayList<>();
 
-        //String[] columns = {Constants.IMAGE_ID, Constants.IMAGE_PATH, Constants.SUCCESS_ID};
         String sql = "SELECT * FROM " + Constants.TB_NAME_IMAGES + " WHERE " + Constants.SUCCESS_ID + "=" + successId;
         Cursor cursor = sqLiteDatabase.rawQuery(sql, null);
         if (cursor.moveToFirst()) {
@@ -125,16 +124,39 @@ public class DBAdapter {
         return successImages;
     }
 
-    public void editSuccessImages(List<SuccessImage> successImages, int successId) {
+    void editSuccessImages(List<SuccessImage> successImages, int successId) {
 
         deleteImages(successId);
         addSuccessImages(successImages);
 
     }
 
-    public void deleteImages(int successId) {
+    private void deleteImages(int successId) {
         sqLiteDatabase.execSQL("DELETE FROM " + Constants.TB_NAME_IMAGES + " WHERE " + Constants.SUCCESS_ID + " = " + successId);
 
+    }
+
+    Success getSuccess(int id) {
+
+        String sql = "SELECT * FROM " + Constants.TB_NAME_SUCCESSES + " WHERE " + Constants.SUCCESS_ID + " = " + id;
+        Cursor cursor = sqLiteDatabase.rawQuery(sql, null);
+
+        if (cursor.moveToFirst()) {
+            String title = cursor.getString(1);
+            String category = cursor.getString(2);
+            int importance = cursor.getInt(3);
+            String description = cursor.getString(4);
+            String dateStarted = cursor.getString(5);
+            String dateEnded = cursor.getString(6);
+            cursor.close();
+            Success s = new Success(title, category, importance, description, dateStarted, dateEnded);
+            s.setId(id);
+            s.setId(id);
+            return s;
+        }
+
+
+        return null;
     }
 
 }

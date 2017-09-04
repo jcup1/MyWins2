@@ -11,6 +11,13 @@
         android:title="@string/search"
         app:showAsAction="ifRoom"
         />
+
+    <item
+        android:id="@+id/action_date_added"
+        android:orderInCategory="100"
+        android:title="@string/action_date_added"
+        app:showAsAction="never"/>
+
     <item
         android:id="@+id/action_title"
         android:orderInCategory="100"
@@ -39,5 +46,6 @@
         android:orderInCategory="100"
         android:title="@string/action_description"
         app:showAsAction="never"/>
+
 
 </menu>

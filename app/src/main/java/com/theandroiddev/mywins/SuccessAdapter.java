@@ -19,14 +19,12 @@ import java.util.List;
 
 class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
 
-    //1
     private List<Success> successes;
     private OnItemClickListener listener;
     private int itemLayout;
     private Context context;
     private DrawableSelector drawableSelector;
 
-    //2
     SuccessAdapter(List<Success> successes, int itemLayout, Context context, OnItemClickListener listener) {
         this.successes = successes;
         this.itemLayout = itemLayout;
@@ -37,7 +35,6 @@ class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        //3
         View v = LayoutInflater.from(parent.getContext()).inflate(itemLayout, parent, false);
         return new ViewHolder(v);
 
@@ -46,14 +43,13 @@ class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        //5
         holder.titleTv.setText(successes.get(position).getTitle());
         holder.categoryTv.setText(successes.get(position).getCategory());
         holder.dateStartedTv.setText(successes.get(position).getDateStarted());
         holder.dateEndedTv.setText(successes.get(position).getDateEnded());
         drawableSelector.selectCategoryImage(holder.categoryIv, successes.get(position).getCategory(), holder.categoryTv);
         drawableSelector.selectImportanceImage(holder.importanceIv, successes.get(position).getImportance());
-        holder.bind(successes.get(position), listener);
+        holder.bind(successes.get(position), listener, position);
 
 
     }
@@ -64,13 +60,15 @@ class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
     }
 
 
-    public interface OnItemClickListener {
-        void onItemClick(Success success, TextView titleTv, TextView categoryTv, TextView dateStartedTv, TextView dateEndedTv,
+    interface OnItemClickListener {
+        void onItemClick(Success success, int position, TextView titleTv, TextView categoryTv, TextView dateStartedTv, TextView dateEndedTv,
                          ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView);
+
+        void onLongItemClick(int position, CardView cardView);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        //4
+
         TextView titleTv, categoryTv, dateStartedTv, dateEndedTv;
         ImageView categoryIv, importanceIv;
         ConstraintLayout constraintLayout;
@@ -89,12 +87,20 @@ class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
             cardView = itemView.findViewById(R.id.item_card_view);
         }
 
-        public void bind(final Success success, final OnItemClickListener listener) {
+        void bind(final Success success, final OnItemClickListener listener, final int position) {
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    listener.onItemClick(success, titleTv, categoryTv, dateStartedTv, dateEndedTv, categoryIv, importanceIv, constraintLayout, cardView);
+                    listener.onItemClick(success, position, titleTv, categoryTv, dateStartedTv, dateEndedTv, categoryIv, importanceIv, constraintLayout, cardView);
+                }
+            });
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    listener.onLongItemClick(position, cardView);
+                    return true;
                 }
             });
         }

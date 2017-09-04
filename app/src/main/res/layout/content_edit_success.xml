@@ -13,20 +13,18 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/edit_card_basic"
         android:layout_width="0dp"
-        android:layout_height="98dp"
+        android:layout_height="@dimen/cardview_basic_height"
 
-        android:layout_marginEnd="6dp"
-        android:layout_marginLeft="6dp"
-        android:layout_marginRight="6dp"
-        android:layout_marginStart="6dp"
+        android:layout_marginEnd="@dimen/cardview_default_margin"
+        android:layout_marginLeft="@dimen/cardview_default_margin"
+        android:layout_marginRight="@dimen/cardview_default_margin"
+        android:layout_marginStart="@dimen/cardview_default_margin"
         android:clipToPadding="false"
-        android:padding="0dp"
 
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="@dimen/cardview_default_radius"
-        app:cardElevation="2dp"
+        app:cardElevation="@dimen/cardview_default_elevation"
         app:cardUseCompatPadding="true"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -42,12 +40,12 @@
                 android:id="@+id/edit_title"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="24dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="8dp"
-                android:background="@color/transparent"
+                android:layout_marginBottom="@dimen/items_default_margin"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="9dp"
                 android:gravity="left|center"
+                android:inputType="text"
+                android:maxLines="3"
                 android:textColor="@color/primary_text"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -56,30 +54,49 @@
                 app:layout_constraintRight_toLeftOf="@+id/edit_date_started"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0"
-                tools:text="@string/dummy_title" />
+                tools:text="@string/dummy_title"/>
+
+            <TextView
+                android:id="@+id/edit_date_started"
+                android:layout_width="@dimen/item_date_width"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/items_default_margin"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="@dimen/items_default_margin"
+                android:gravity="right"
+                android:maxLines="1"
+                android:padding="@dimen/item_date_default_padding"
+                android:text="@string/dummy_date"
+                android:textColor="@color/secondary_text"
+                android:textSize="14sp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
 
             <TextView
                 android:id="@+id/edit_date_ended"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/item_date_width"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="@dimen/items_default_margin"
                 android:layout_marginRight="8dp"
-                android:padding="4dp"
+                android:layout_marginTop="0dp"
+                android:gravity="right"
+                android:maxLines="1"
+                android:padding="@dimen/item_date_default_padding"
                 android:text="@string/dummy_date"
                 android:textColor="@color/secondary_text"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edit_importance_iv" />
+                app:layout_constraintTop_toBottomOf="@+id/edit_importance_iv"/>
 
             <ImageView
                 android:id="@+id/edit_category_iv"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginLeft="16dp"
+                android:layout_marginLeft="@dimen/item_category_iv_left_margin"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="@dimen/item_category_iv_top"
                 android:contentDescription="@string/category_description"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -92,41 +109,31 @@
                 android:layout_marginBottom="16dp"
                 android:gravity="center"
                 android:maxLines="1"
+                android:minLines="1"
                 android:text="@string/dummy_category"
                 android:textAlignment="center"
                 android:textColor="@color/secondary_text"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.444"
                 app:layout_constraintLeft_toLeftOf="@+id/edit_category_iv"
                 app:layout_constraintRight_toRightOf="@+id/edit_category_iv"
                 app:layout_constraintTop_toBottomOf="@+id/edit_category_iv"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintVertical_bias="0.0"/>
 
-            <TextView
-                android:id="@+id/edit_date_started"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginTop="8dp"
-                android:padding="4dp"
-                android:text="@string/dummy_date"
-                android:textColor="@color/secondary_text"
-                android:textSize="14sp"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+
 
             <ImageView
                 android:id="@+id/edit_importance_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
+                android:layout_marginEnd="@dimen/items_default_margin"
+                android:layout_marginRight="@dimen/items_default_margin"
+                android:layout_marginTop="0dp"
                 android:contentDescription="@string/importance_description"
-                android:padding="8dp"
+                android:padding="@dimen/items_default_margin"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/edit_date_started"
-                app:srcCompat="@drawable/importance_huge" />
+                app:srcCompat="@drawable/importance_huge"
+                />
 
         </android.support.constraint.ConstraintLayout>
 
@@ -141,25 +148,21 @@
         android:id="@+id/edit_card_description"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginEnd="6dp"
-        android:layout_marginLeft="6dp"
-        android:layout_marginRight="6dp"
-
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginEnd="@dimen/cardview_default_margin"
+        android:layout_marginLeft="@dimen/cardview_default_margin"
+        android:layout_marginRight="@dimen/cardview_default_margin"
+        android:layout_marginStart="@dimen/cardview_default_margin"
 
         android:clipToPadding="false"
         android:padding="0dp"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="@dimen/cardview_default_radius"
-        app:cardElevation="2dp"
+        app:cardElevation="@dimen/cardview_default_elevation"
         app:cardUseCompatPadding="true"
         app:layout_constraintBottom_toTopOf="@+id/edit_card_images"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_card_basic"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@+id/edit_card_basic">
 
         <EditText
             android:id="@+id/edit_description"
@@ -167,6 +170,7 @@
             android:layout_height="match_parent"
             android:background="@color/transparent"
             android:gravity="top|left"
+            android:inputType="text"
             android:padding="16dp"
             android:textColor="@color/secondary_text"
             android:textSize="18sp" />
@@ -181,17 +185,15 @@
         android:id="@+id/edit_card_images"
         android:layout_width="0dp"
         android:layout_height="70dp"
-        android:layout_marginLeft="6dp"
-
-        android:layout_marginRight="6dp"
+        android:layout_marginLeft="@dimen/cardview_default_margin"
+        android:layout_marginRight="@dimen/cardview_default_margin"
         android:clipToPadding="false"
-        android:padding="4dp"
+        android:padding="@dimen/item_date_default_padding"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="@dimen/cardview_default_radius"
-        app:cardElevation="2dp"
+        app:cardElevation="@dimen/cardview_default_elevation"
         app:cardUseCompatPadding="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
 

@@ -5,7 +5,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -23,6 +26,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -33,6 +37,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -41,44 +46,66 @@ import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.codetail.animation.ViewAnimationUtils;
 
+import static com.theandroiddev.mywins.Constants.ADD_ON_TOP;
+import static com.theandroiddev.mywins.Constants.CATEGORY_JOURNEY;
+import static com.theandroiddev.mywins.Constants.CATEGORY_LEARN;
+import static com.theandroiddev.mywins.Constants.CATEGORY_MONEY;
+import static com.theandroiddev.mywins.Constants.CATEGORY_SPORT;
+import static com.theandroiddev.mywins.Constants.CATEGORY_VALUE;
+import static com.theandroiddev.mywins.Constants.CATEGORY_VIDEO;
+import static com.theandroiddev.mywins.Constants.DATE_ENDED_VALUE;
+import static com.theandroiddev.mywins.Constants.DATE_STARTED_VALUE;
+import static com.theandroiddev.mywins.Constants.DESCRIPTION_VALUE;
+import static com.theandroiddev.mywins.Constants.EXTRA_INSERT_SUCCESS_ITEM;
+import static com.theandroiddev.mywins.Constants.EXTRA_SUCCESS_CARD_VIEW;
+import static com.theandroiddev.mywins.Constants.EXTRA_SUCCESS_CATEGORY;
+import static com.theandroiddev.mywins.Constants.EXTRA_SUCCESS_CATEGORY_IV;
+import static com.theandroiddev.mywins.Constants.EXTRA_SUCCESS_DATE_ENDED;
+import static com.theandroiddev.mywins.Constants.EXTRA_SUCCESS_DATE_STARTED;
+import static com.theandroiddev.mywins.Constants.EXTRA_SUCCESS_IMPORTANCE_IV;
+import static com.theandroiddev.mywins.Constants.EXTRA_SUCCESS_ITEM;
+import static com.theandroiddev.mywins.Constants.EXTRA_SUCCESS_TITLE;
+import static com.theandroiddev.mywins.Constants.IMPORTANCE_VALUE;
+import static com.theandroiddev.mywins.Constants.INSERT_SUCCESS_REQUEST;
+import static com.theandroiddev.mywins.Constants.NOT_ACTIVE;
+import static com.theandroiddev.mywins.Constants.PACKAGE_NAME;
+import static com.theandroiddev.mywins.Constants.SNACK_SUCCESS_NOT_ADDED;
+import static com.theandroiddev.mywins.Constants.SNACK_SUCCESS_REMOVED;
+import static com.theandroiddev.mywins.Constants.SNACK_UNDO;
+import static com.theandroiddev.mywins.Constants.SUCCESS_ID_VALUE;
+import static com.theandroiddev.mywins.Constants.TITLE_VALUE;
+import static com.theandroiddev.mywins.Constants.dummyCategory;
+import static com.theandroiddev.mywins.Constants.dummyDescription;
+import static com.theandroiddev.mywins.Constants.dummyEndDate;
+import static com.theandroiddev.mywins.Constants.dummyImportance;
+import static com.theandroiddev.mywins.Constants.dummyStartDate;
+import static com.theandroiddev.mywins.Constants.dummySuccessesSize;
+import static com.theandroiddev.mywins.Constants.dummyTitle;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, SuccessAdapter.OnItemClickListener {
 
-    public static final String EXTRA_SUCCESS_ITEM = "success_item";
 
-    public static final String EXTRA_INSERT_SUCCESS_ITEM = "insert_success_item";
-    public static final String EXTRA_SHOW_SUCCESS_ITEM = "show_success_item";
-    public static final String EXTRA_SHOW_SUCCESS_IMAGES = "show_success_images";
-    public static final String EXTRA_EDIT_SUCCESS_ITEM = "edit_success_item";
-
-    public static final String EXTRA_SUCCESS_TITLE = "title";
-    public static final String EXTRA_SUCCESS_CATEGORY_IV = "category_iv";
-    public static final String EXTRA_SUCCESS_CATEGORY = "category";
-    public static final String EXTRA_SUCCESS_DATE_STARTED = "date_started";
-    public static final String EXTRA_SUCCESS_DATE_ENDED = "date_ended";
-    public static final String EXTRA_SUCCESS_IMPORTANCE_IV = "importance_iv";
-    public static final String EXTRA_SUCCESS_CONSTRAINT = "success_constraint";
-    public static final String EXTRA_SUCCESS_CARD_VIEW = "success_card_view";
-
-
-    static final int INSERT_SUCCESS_REQUEST = 1;
-    static final int SHOW_SUCCESS_REQUEST = 2;
-    private static final int EDIT_SUCCESS_REQUEST = 3;
     private static final String TAG = "MainActivity";
     public static boolean dbUpdate;
     SharedPreferences prefs = null;
     FloatingActionsMenu floatingActionsMenu;
+    boolean isSortingAscending;
+    DBAdapter dbAdapter;
     private MenuItem mSearchAction;
     private boolean isSearchOpened = false;
-    private EditText edtSeach;
-    private CardView loginCard;
+    private EditText searchBox;
+    private ConstraintLayout mainConstraint;
     private RecyclerView recyclerView;
     private List<Success> successes;
     private List<Success> successesToRemove;
+    private List<SuccessImage> dummySuccessImages;
     private SuccessAdapter successAdapter;
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
@@ -97,12 +124,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     };
     private View shadowView;
     private String sortType;
+    private int clickedPosition = NOT_ACTIVE;
 
     @Override
     protected void onPause() {
         super.onPause();
         remove();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateSuccess(clickedPosition);
+    }
+
+    private void updateSuccess(int clickedPosition) {
+
+        if (clickedPosition != NOT_ACTIVE) {
+            int id = successes.get(clickedPosition).getId();
+            dbAdapter.openDB();
+            successes.set(clickedPosition, dbAdapter.getSuccess(id));
+            dbAdapter.closeDB();
+            successAdapter.notifyItemChanged(clickedPosition);
+        }
 
     }
 
@@ -132,24 +177,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.show_toolbar);
         setSupportActionBar(toolbar);
         initFABs();
-        initLogin();
         initRecycler();
         initCircularReveal();
         initVariables();
-        prefs = getSharedPreferences("example.jakubchmiel.mywins", MODE_PRIVATE);
+        prefs = getSharedPreferences(PACKAGE_NAME, MODE_PRIVATE);
 
-    }
-
-    private void initLogin() {
-        loginCard = (CardView) findViewById(R.id.main_login_card);
-        loginCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar snackbar = Snackbar
-                        .make(recyclerView, "NOT READY YET", Snackbar.LENGTH_LONG);
-                snackbar.show();
-            }
-        });
     }
 
     @Override
@@ -159,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (prefs.getBoolean("firstrun", true)) {
             insertDummyData();
             prefs.edit().putBoolean("firstrun", false).apply();
+            Log.e(TAG, "onPostResume: " + 123);
         }
         if (dbUpdate) {
             insertDummyData();
@@ -167,18 +200,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void insertDummyData() {
-        Success video = new Success("Recorded First Video", "Video", 3, "I always wanted to create youtube video and finally Hot Shitty Challenge is live...", "17-05-20", "17-05-25");
-        Success money = new Success("25.000$ Sale", "Money", 4, "It's my first sold company. I grew it in 10 years. I denied first offer which was 5.000$ and it's one of my the best choices in my life. I...", "17-05-22", "17-05-30");
-        Success journey = new Success("Visited Wroclaw", "Journey", 2, "I travel now and then. Met girl but she introduced me her friend: 'Zoned'. Guess I've got to try again in 2018.", "16-04-15", "16-04-20");
-        Success learn = new Success("Learned Java", "Learn", 3, "This language is easier than I thought and now I'm multilingual! :O", "15-03-12", "15-05-01");
-        Success sport = new Success("20 km marathon", "Sport", 4, "I burned a lot of calories. Fridge is empty tonight...", "16-02-21", "16-02-21");
-        save(video);
-        save(money);
-        save(journey);
-        save(learn);
-        save(sport);
-        getSuccesses(null, sortType);
+
+        successes.clear();
+        new Constants();
+
+        for (int i = 0; i < dummySuccessesSize; i++) {
+            save(new Success(dummyTitle.get(i), dummyCategory.get(i), dummyImportance.get(i), dummyDescription.get(i),
+                    dummyStartDate.get(i), dummyEndDate.get(i)));
+            Log.e(TAG, "insertDummyData: " + i);
+        }
+
+        dummySuccessImages = new ArrayList<>();
+
+//        for(int i = 0; i < dummySuccessImagesSize; i++) {
+//            SuccessImage successImage = new SuccessImage(dummyImageSuccessId.get(i));
+//            successImage.setImagePath(dummyImagePath.get(i));
+//            dummySuccessImages.add(successImage);
+//        }
+
+        //successImage.setImagePath();
+        //dummySuccessImages.add();
+//        dbAdapter.openDB();
+//        dbAdapter.addSuccessImages(dummySuccessImages);
+//        dbAdapter.closeDB();
+
+        getSuccesses();
         successAdapter.notifyDataSetChanged();
+    }
+
+    private Bitmap getBitmapFromAsset(String strName) {
+        AssetManager assetManager = getAssets();
+        InputStream istr = null;
+        try {
+            istr = assetManager.open(strName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return BitmapFactory.decodeStream(istr);
     }
 
     private void save(Success success) {
@@ -186,8 +244,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         DBAdapter dbAdapter = new DBAdapter(this);
         dbAdapter.openDB();
         dbAdapter.addSuccess(success);
-        Log.e(TAG, "save: " + success);
-        getSuccesses(null, sortType);
+        getSuccesses();
         dbAdapter.closeDB();
 
     }
@@ -202,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onMenuExpanded() {
 
 
-                if (edtSeach != null) {
+                if (searchBox != null) {
                     handleMenuSearch();
                 }
                 showCircularReveal(shadowView);
@@ -290,13 +347,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.e(TAG, "onResume: " + "RESUME");
-        getSuccesses(null, sortType);
-
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        Log.e(TAG, "onResume: " + "RESUME");
+//        getSuccesses();
+//
+//    }
 
 
     private void initFABs() {
@@ -364,6 +421,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initRecycler() {
 
+        mainConstraint = (ConstraintLayout) findViewById(R.id.main_constraint);
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -376,26 +434,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initVariables() {
 
-        sortType = Constants.DATE_STARTED_DESC;
-        getSuccesses(null, sortType);
+        dbAdapter = new DBAdapter(this);
+        sortType = Constants.SORT_DATE_ADDED;
+        isSortingAscending = true;
+        getSuccesses();
+    }
+
+    private String getSearchText() {
+        if (searchBox != null) {
+            return searchBox.getText().toString();
+        }
+        return "";
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        int id = item.getItemId();
 
         if (id == R.id.action_search) {
             handleMenuSearch();
@@ -404,123 +466,118 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (id == R.id.action_date_started) {
 
-
-            if (!sortType.equals(Constants.DATE_STARTED_ASC)) {
-                sortType = Constants.DATE_STARTED_ASC;
-                getSuccesses(null, sortType);
-                return true;
+            if (!sortType.equals(Constants.SORT_DATE_STARTED)) {
+                sortType = Constants.SORT_DATE_STARTED;
+            } else {
+                isSortingAscending = !isSortingAscending;
             }
-
-            if (!sortType.equals(Constants.DATE_STARTED_DESC)) {
-                sortType = Constants.DATE_STARTED_DESC;
-                getSuccesses(null, sortType);
-                return true;
-            }
+            getSuccesses();
+            return true;
 
         }
 
         if (id == R.id.action_date_ended) {
 
-            if (!sortType.equals(Constants.DATE_ENDED_ASC)) {
-                sortType = Constants.DATE_ENDED_ASC;
-                getSuccesses(null, sortType);
-                return true;
+            if (!sortType.equals(Constants.SORT_DATE_ENDED)) {
+                sortType = Constants.SORT_DATE_ENDED;
+            } else {
+                isSortingAscending = !isSortingAscending;
             }
-
-            if (!sortType.equals(Constants.DATE_ENDED_DESC)) {
-                sortType = Constants.DATE_ENDED_DESC;
-                getSuccesses(null, sortType);
-                return true;
-            }
+            getSuccesses();
+            return true;
 
         }
 
         if (id == R.id.action_title) {
 
-            if (!sortType.equals(Constants.TITLE_ASC)) {
-                sortType = Constants.TITLE_ASC;
-                getSuccesses(null, sortType);
-                return true;
+            if (!sortType.equals(Constants.SORT_TITLE)) {
+                sortType = Constants.SORT_TITLE;
+            } else {
+                isSortingAscending = !isSortingAscending;
             }
+            getSuccesses();
+            return true;
 
-            if (!sortType.equals(Constants.TITLE_DESC)) {
-                sortType = Constants.TITLE_DESC;
-                getSuccesses(null, sortType);
-                return true;
+        }
+
+        if (id == R.id.action_date_added) {
+
+            if (!sortType.equals(Constants.SORT_DATE_ADDED)) {
+                sortType = Constants.SORT_DATE_ADDED;
+            } else {
+                isSortingAscending = !isSortingAscending;
             }
+            getSuccesses();
+            return true;
+
         }
 
         if (id == R.id.action_importance) {
 
-            if (!sortType.equals(Constants.IMPORTANCE_ASC)) {
-                sortType = Constants.IMPORTANCE_ASC;
-                getSuccesses(null, sortType);
-                return true;
+            if (!sortType.equals(Constants.SORT_IMPORTANCE)) {
+                sortType = Constants.SORT_IMPORTANCE;
+            } else {
+                isSortingAscending = !isSortingAscending;
             }
-
-            if (!sortType.equals(Constants.IMPORTANCE_DESC)) {
-                sortType = Constants.IMPORTANCE_DESC;
-                getSuccesses(null, sortType);
-                return true;
-            }
+            getSuccesses();
+            return true;
 
         }
 
         if (id == R.id.action_description) {
 
-            if (!sortType.equals(Constants.DESCRIPTION_ASC)) {
-                sortType = Constants.DESCRIPTION_ASC;
-                getSuccesses(null, sortType);
-                return true;
+            if (!sortType.equals(Constants.SORT_DESCRIPTION)) {
+                sortType = Constants.SORT_DESCRIPTION;
+            } else {
+                isSortingAscending = !isSortingAscending;
             }
-
-            if (!sortType.equals(Constants.DESCRIPTION_DESC)) {
-                sortType = Constants.DESCRIPTION_DESC;
-                getSuccesses(null, sortType);
-                return true;
-            }
+            getSuccesses();
+            return true;
 
         }
-
 
         return super.onOptionsItemSelected(item);
     }
 
 
     protected void handleMenuSearch() {
-        ActionBar action = getSupportActionBar(); //get the actionbar
+        ActionBar action = getSupportActionBar();
 
-        if (isSearchOpened) { //test if the search is open
+        if (isSearchOpened) {
 
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(edtSeach.getWindowToken(), 0);
+            imm.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);
 
-            action.setDisplayShowCustomEnabled(false); //disable a custom view inside the actionbar
-            action.setDisplayShowTitleEnabled(true); //show the title in the action bar
+            if (action != null) {
+                action.setDisplayShowCustomEnabled(false);
+                action.setDisplayShowTitleEnabled(true);
 
-            //hides the keyboard
+            }
 
-
-            //addSuccess the search icon in the action bar
             mSearchAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_search));
 
             isSearchOpened = false;
-            edtSeach = null;
-            getSuccesses(null, sortType);
+            searchBox = null;
+            getSuccesses();
 
-        } else { //open the search entry
+        } else {
 
-            action.setDisplayShowCustomEnabled(true); //enable it to display a
-            // custom view in the action bar.
-            View view = getLayoutInflater().inflate(R.layout.search_bar,
-                    null);
+            if (action != null) {
+                action.setDisplayShowCustomEnabled(true);
+            }
+
+            final ViewGroup nullParent = null;
+            View view = getLayoutInflater().inflate(R.layout.search_bar, nullParent);
             ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,
                     ActionBar.LayoutParams.MATCH_PARENT);
-            action.setCustomView(view, layoutParams);
-            action.setDisplayShowTitleEnabled(false); //hide the title
+            if (action != null) {
+                action.setCustomView(view, layoutParams);
+                action.setDisplayShowTitleEnabled(false);
+                searchBox = action.getCustomView().findViewById(R.id.edtSearch);
 
-            edtSeach = action.getCustomView().findViewById(R.id.edtSearch); //the text editor
-            edtSeach.addTextChangedListener(new TextWatcher() {
+            }
+
+            searchBox.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -528,7 +585,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    doSearch(String.valueOf(charSequence));
+                    getSuccesses();
                 }
 
                 @Override
@@ -536,36 +593,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 }
             });
-            //this is a listener to do a search when the user clicks on search button
-            edtSeach.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    doSearch(edtSeach.getText().toString());
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(edtSeach.getWindowToken(), 0);
+            searchBox.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                                                    @Override
+                                                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                                                        getSuccesses();
+                                                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                                                        imm.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);
 
-                    return true;
-                }
+                                                        return true;
+                                                    }
 
-                                               }
+                                                }
             );
 
-            edtSeach.requestFocus();
+            searchBox.requestFocus();
 
-            //open the keyboard focused in the edtSearch
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(edtSeach, InputMethodManager.SHOW_IMPLICIT);
+            imm.showSoftInput(searchBox, InputMethodManager.SHOW_IMPLICIT);
 
-
-            //addSuccess the close icon
             mSearchAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_close));
 
             isSearchOpened = true;
         }
-    }
-
-    private void doSearch(String s) {
-        getSuccesses(s, sortType);
     }
 
     @Override
@@ -575,19 +624,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (fab.getId()) {
 
             case R.id.action_learn:
-                categoryPicked("Learn");
+                categoryPicked(CATEGORY_LEARN);
                 break;
             case R.id.action_sport:
-                categoryPicked("Sport");
+                categoryPicked(CATEGORY_SPORT);
                 break;
             case R.id.action_journey:
-                categoryPicked("Journey");
+                categoryPicked(CATEGORY_JOURNEY);
                 break;
             case R.id.action_money:
-                categoryPicked("Money");
+                categoryPicked(CATEGORY_MONEY);
                 break;
             case R.id.action_video:
-                categoryPicked("Video");
+                categoryPicked(CATEGORY_VIDEO);
                 break;
 
             default:
@@ -601,7 +650,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Intent intent = new Intent(MainActivity.this, InsertSuccess.class);
         intent.putExtra("categoryName", categoryName);
-        startActivityForResult(intent, EDIT_SUCCESS_REQUEST);
+        startActivityForResult(intent, INSERT_SUCCESS_REQUEST);
         floatingActionsMenu.collapse();
 
     }
@@ -610,34 +659,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == EDIT_SUCCESS_REQUEST) {
+        if (requestCode == INSERT_SUCCESS_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
 
 
-                Success s = data.getExtras().getParcelable(MainActivity.EXTRA_INSERT_SUCCESS_ITEM);
+                Success s = data.getExtras().getParcelable(EXTRA_INSERT_SUCCESS_ITEM);
                 save(s);
 
                 successAdapter.notifyDataSetChanged();
 
             }
             if (resultCode == Activity.RESULT_CANCELED) {
-                //TODO handle
+                Snackbar.make(mainConstraint, SNACK_SUCCESS_NOT_ADDED, Snackbar.LENGTH_SHORT).show();
+
             }
         }
 
     }
 
-
     private void toRemove(int position) {
-        showSnackbar(position);
+        showUndoSnackbar(position);
 
     }
 
-    private void showSnackbar(final int position) {
+    private void showUndoSnackbar(final int position) {
         final Success success = successes.get(position);
         Snackbar snackbar = Snackbar
-                .make(recyclerView, "SUCCESS REMOVED", Snackbar.LENGTH_LONG)
-                .setAction("UNDO", new View.OnClickListener() {
+                .make(recyclerView, SNACK_SUCCESS_REMOVED, Snackbar.LENGTH_LONG)
+                .setAction(SNACK_UNDO, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         undoToRemove(success, position);
@@ -663,13 +712,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private void remove() {
-        DBAdapter dbAdapter = new DBAdapter(this);
+        dbAdapter = new DBAdapter(this);
         dbAdapter.openDB();
         dbAdapter.removeSuccess(successesToRemove);
         dbAdapter.closeDB();
     }
 
-    private void getSuccesses(String searchTerm, String sort) {
+    private void getSuccesses() {
+
+        String searchTerm = getSearchText();
 
         successes = new ArrayList<>();
         successesToRemove = new ArrayList<>();
@@ -678,20 +729,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         DBAdapter dbAdapter = new DBAdapter(this);
         dbAdapter.openDB();
         Success success;
-        Cursor cursor = dbAdapter.retrieveSuccess(searchTerm, sort);
+        Cursor cursor = dbAdapter.retrieveSuccess(searchTerm, sortType);
 
         while (cursor.moveToNext()) {
-            int id = cursor.getInt(0);
-            String title = cursor.getString(1);
-            String category = cursor.getString(2);
-            int importance = cursor.getInt(3);
-            String description = cursor.getString(4);
-            String dateStarted = cursor.getString(5);
-            String dateEnded = cursor.getString(6);
+            int id = cursor.getInt(SUCCESS_ID_VALUE);
+            String title = cursor.getString(TITLE_VALUE);
+            String category = cursor.getString(CATEGORY_VALUE);
+            int importance = cursor.getInt(IMPORTANCE_VALUE);
+            String description = cursor.getString(DESCRIPTION_VALUE);
+            String dateStarted = cursor.getString(DATE_STARTED_VALUE);
+            String dateEnded = cursor.getString(DATE_ENDED_VALUE);
 
             success = new Success(title, category, importance, description, dateStarted, dateEnded);
             success.setId(id);
-            successes.add(success);
+            if (isSortingAscending) {
+                successes.add(ADD_ON_TOP, success);
+            } else {
+                successes.add(success); //default = add on bottom
+            }
 
         }
 
@@ -704,16 +759,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onItemClick(Success success, TextView titleTv, TextView categoryTv, TextView dateStartedTv, TextView dateEndedTv, ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView) {
+    public void onItemClick(Success success, int position, TextView titleTv, TextView categoryTv, TextView dateStartedTv, TextView dateEndedTv, ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             showSuccessAnimation(success, titleTv, categoryTv, dateStartedTv, dateEndedTv, categoryIv, importanceIv, constraintLayout, cardView);
 
         } else {
-            Log.e(TAG, "onItemClick: " + success.getId());
             showSuccess(success);
         }
+        this.clickedPosition = position;
 
     }
+
+    @Override
+    public void onLongItemClick(final int position, CardView cardview) {
+        PopupMenu popupMenu;
+        popupMenu = new PopupMenu(MainActivity.this, cardview);
+
+        popupMenu.getMenuInflater().inflate(R.menu.menu_item, popupMenu.getMenu());
+        popupMenu.show();
+
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() == R.id.remove_item_menu) {
+
+                    toRemove(position);
+
+                }
+
+                return true;
+            }
+        });
+    }
+
 
     private void showSuccess(Success success) {
 
@@ -743,8 +821,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         p6 = Pair.create((View) importanceIv, EXTRA_SUCCESS_IMPORTANCE_IV);
         p7 = Pair.create((View) cardView, EXTRA_SUCCESS_CARD_VIEW);
 
-//        getWindow().setEnterTransition(new Fade(Fade.IN));
-//        getWindow().setExitTransition(new Fade(Fade.IN));
         ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
                 this,
                 p1, p2, p3, p4, p5, p6, p7);
@@ -752,9 +828,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(showSuccessIntent, activityOptionsCompat.toBundle());
 
     }
-
-
-
-
 
 }

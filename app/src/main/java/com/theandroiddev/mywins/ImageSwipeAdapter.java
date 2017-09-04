@@ -7,7 +7,6 @@ import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,15 +20,14 @@ import java.util.ArrayList;
  * Created by jakub on 30.08.17.
  */
 
-public class ImageSwipeAdapter extends PagerAdapter {
+class ImageSwipeAdapter extends PagerAdapter {
     private static final String TAG = "ImageSwipeAdapter";
 
     private Context context;
-    private LayoutInflater layoutInflater;
     private ArrayList<String> imagePaths;
 
 
-    public ImageSwipeAdapter(Context context, ArrayList<String> imagePaths) {
+    ImageSwipeAdapter(Context context, ArrayList<String> imagePaths) {
         this.context = context;
         this.imagePaths = imagePaths;
     }
@@ -47,11 +45,9 @@ public class ImageSwipeAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View item_view = layoutInflater.inflate(R.layout.image_big, container, false);
         ImageView imageView = item_view.findViewById(R.id.image_big);
-
-        Log.e(TAG, "instantiateItem: " + imagePaths);
 
         String path = imagePaths.get(position);
         ExifInterface exif;
@@ -62,9 +58,6 @@ public class ImageSwipeAdapter extends PagerAdapter {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 40, byteArrayOutputStream);
         byte[] BYTE = byteArrayOutputStream.toByteArray();
         Bitmap bitmap2 = BitmapFactory.decodeByteArray(BYTE, 0, BYTE.length);
-
-// Write 'bitmap' to file using JPEG and 80% quality hint for JPEG:
-
 
         try {
             exif = new ExifInterface(path);
@@ -82,7 +75,6 @@ public class ImageSwipeAdapter extends PagerAdapter {
         } catch (IOException | OutOfMemoryError e) {
             e.printStackTrace();
         }
-        //Bitmap orientedBitmap = ExifUtil.rotateBitmap(imagePaths.get(position), bitmap);
 
         imageView.setImageBitmap(bitmap2);
         container.addView(item_view);
@@ -100,7 +92,6 @@ public class ImageSwipeAdapter extends PagerAdapter {
             bitmapDrawable.getBitmap().recycle();
         }
         container.removeView(view);
-        view = null;
 
     }
 

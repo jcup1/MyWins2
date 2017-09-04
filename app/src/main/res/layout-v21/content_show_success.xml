@@ -2,7 +2,6 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/click_reveal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,162 +10,36 @@
     android:orientation="vertical"
     >
 
-    <android.support.v7.widget.CardView
-
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/edit_card_basic"
+    <include
+        android:id="@+id/show_card_basic"
+        layout="@layout/success_layout"
         android:layout_width="0dp"
-        android:layout_height="98dp"
-        android:layout_marginEnd="6dp"
-        android:layout_marginLeft="6dp"
-        android:layout_marginRight="6dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="0dp"
-        android:clipToPadding="false"
-        android:padding="0dp"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="@dimen/cardview_default_radius"
-        app:cardElevation="2dp"
-        app:cardUseCompatPadding="true"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/show_content_constraint_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/show_title"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="24dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="8dp"
-                android:gravity="left|center"
-                android:textColor="@color/primary_text"
-                android:textSize="18sp"
-                android:transitionName="@string/transition_title"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintLeft_toRightOf="@+id/show_category_iv"
-                app:layout_constraintRight_toLeftOf="@+id/show_date_started"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"
-                tools:text="@string/dummy_title" />
-
-            <ImageView
-                android:id="@+id/show_category_iv"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="20dp"
-                android:contentDescription="@string/category_description"
-                android:transitionName="@string/transition_category_iv"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@mipmap/ic_launcher" />
-
-            <TextView
-                android:id="@+id/show_category"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:gravity="center"
-                android:maxLines="1"
-                android:text="@string/dummy_category"
-                android:textAlignment="center"
-                android:textColor="@color/secondary_text"
-                android:transitionName="@string/transition_category"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.444"
-                app:layout_constraintLeft_toLeftOf="@+id/show_category_iv"
-                app:layout_constraintRight_toRightOf="@+id/show_category_iv"
-                app:layout_constraintTop_toBottomOf="@+id/show_category_iv"
-                app:layout_constraintVertical_bias="0.0"/>
-
-            <TextView
-                android:id="@+id/show_date_started"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginTop="8dp"
-                android:padding="4dp"
-                android:text="@string/dummy_date"
-                android:textColor="@color/secondary_text"
-                android:textSize="14sp"
-                android:transitionName="@string/transition_date_started"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/show_date_ended"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:padding="4dp"
-                android:text="@string/dummy_date"
-                android:textColor="@color/secondary_text"
-                android:textSize="14sp"
-                android:transitionName="@string/transition_date_ended"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/show_importance_iv" />
-
-            <ImageView
-                android:id="@+id/show_importance_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:contentDescription="@string/importance_description"
-                android:padding="8dp"
-                android:transitionName="@string/transition_importance_iv"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/show_date_started"
-                app:srcCompat="@drawable/importance_huge" />
-
-        </android.support.constraint.ConstraintLayout>
-
-
-    </android.support.v7.widget.CardView>
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <android.support.v7.widget.CardView
 
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/show_card_description"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="0dp"
 
-        android:layout_marginEnd="6dp"
-        android:layout_marginLeft="6dp"
-        android:layout_marginRight="6dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginEnd="@dimen/cardview_default_margin"
+        android:layout_marginLeft="@dimen/cardview_default_margin"
+        android:layout_marginRight="@dimen/cardview_default_margin"
+        android:layout_marginStart="@dimen/cardview_default_margin"
         android:clipToPadding="false"
-        android:padding="0dp"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="@dimen/cardview_default_radius"
-        app:cardElevation="2dp"
+        app:cardElevation="@dimen/cardview_default_elevation"
         app:cardUseCompatPadding="true"
         app:layout_constraintBottom_toTopOf="@+id/show_card_images"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_card_basic"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@+id/show_card_basic">
 
         <TextView
             android:id="@+id/show_description"
@@ -183,21 +56,21 @@
 
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/show_card_images"
         android:layout_width="0dp"
         android:layout_height="70dp"
-        android:layout_marginLeft="6dp"
+        android:layout_marginEnd="@dimen/cardview_default_margin"
 
-        android:layout_marginRight="6dp"
+        android:layout_marginLeft="@dimen/cardview_default_margin"
+        android:layout_marginRight="@dimen/cardview_default_margin"
+        android:layout_marginStart="@dimen/cardview_default_margin"
         android:clipToPadding="false"
-        android:padding="4dp"
+        android:padding="@dimen/item_date_default_padding"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="@dimen/cardview_default_radius"
-        app:cardElevation="2dp"
+        app:cardElevation="@dimen/cardview_default_elevation"
         app:cardUseCompatPadding="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
 

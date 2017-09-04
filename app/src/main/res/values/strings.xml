@@ -10,10 +10,12 @@
     <string name="importance_description">importance</string>
     <string name="title_activity_show_success">ShowSuccess</string>
     <string name="title_activity_edit_success">EditSuccess</string>
-    <string name="action_date_desc">Sort by oldest</string>
-    <string name="action_date_asc">Sort by newest</string>
-    <string name="action_title_desc">Sort by title desc</string>
-    <string name="action_title_asc">Sort by title asc</string>
+    <string name="action_date_added">Sort by recent added</string>
+    <string name="action_description">Sort by description length</string>
+    <string name="action_date_started">Sort by date started</string>
+    <string name="action_date_ended">Sort by date ended</string>
+    <string name="action_title">Sort by title</string>
+
 
     <string name="transition_title">title</string>
     <string name="transition_category_iv">category_iv</string>
@@ -22,13 +24,19 @@
     <string name="transition_date_started">date_started</string>
     <string name="transition_date_ended">date_ended</string>
     <string name="transition_importance_iv">importance_iv</string>
-    <string name="action_title">Sort by title</string>
-    <string name="action_description">Sort by description length</string>
-    <string name="action_date_started">Sort by date started</string>
-    <string name="action_date_ended">Sort by date ended</string>
+
     <string name="importance">Sort by importance</string>
     <string name="search">Search</string>
     <string name="default_description">Default description</string>
-
+    <string name="edit_date_menu_title">Edit Date</string>
+    <string name="remove_date_menu">Remove date</string>
+    <string name="remove_item_menu">Remove success</string>
+    <string name="remove_image_menu">Remove image</string>
+    <string name="importance_huge">Huge</string>
+    <string name="importance_big">Big</string>
+    <string name="importance_medium">Medium</string>
+    <string name="importance_small">Small</string>
+    <string name="date_started_empty">Start Date</string>
+    <string name="date_ended_empty">End Date</string>
 
 </resources>
