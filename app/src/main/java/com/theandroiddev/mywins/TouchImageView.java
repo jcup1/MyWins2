@@ -9,6 +9,7 @@ package com.theandroiddev.mywins;
  * Updated By: @ipsilondev
  * Updated By: hank-cp
  * Updated By: singpolyma
+ * Updated By: theandroiddev.com
  * -------------------
  * Extends Android ImageView to include pinch zooming, panning, fling and double tap zoom.
  */
