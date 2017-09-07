@@ -337,9 +337,21 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
 
         if (requestCode == REQUEST_CODE_GALLERY) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, REQUEST_CODE_GALLERY);
+                Intent pickIntent = new Intent();
+                pickIntent.setType("image/*");
+                pickIntent.setAction(Intent.ACTION_GET_CONTENT);
 
+                Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+                String pickTitle = "Select or take a new Picture";
+                Intent chooserIntent = Intent.createChooser(pickIntent, pickTitle);
+                chooserIntent.putExtra
+                        (
+                                Intent.EXTRA_INITIAL_INTENTS,
+                                new Intent[]{takePhotoIntent}
+                        );
+
+                startActivityForResult(chooserIntent, REQUEST_CODE_GALLERY);
             } else {
                 Toast.makeText(this, TOAST_PERMISSION_DENIED, Toast.LENGTH_SHORT).show();
             }
@@ -352,7 +364,7 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
 
         ActivityCompat.requestPermissions(
                 EditSuccess.this,
-                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, MediaStore.ACTION_IMAGE_CAPTURE},
                 REQUEST_CODE_GALLERY
         );
     }
