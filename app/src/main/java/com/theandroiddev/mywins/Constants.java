@@ -21,15 +21,17 @@ class Constants {
     static final List<String> dummyStartDate = new ArrayList<>();
     static final List<String> dummyEndDate = new ArrayList<>();
 
-    static final int INSERT_SUCCESS_REQUEST = 1;
-    static final int EDIT_SUCCESS_REQUEST = 2;
-    static final int IMPORTANCE_SUCCESS_REQUEST = 3;
+    static final int REQUEST_CODE_INSERT = 1;
+    static final int REQUEST_CODE_EDIT = 2;
+    static final int REQUEST_CODE_IMPORTANCE = 3;
     static final int REQUEST_CODE_GALLERY = 4;
+    static final int REQUEST_CODE_DESCRIPTION = 4;
 
     //REQUESTS
     static final String EXTRA_SUCCESS_ITEM = "success_item";
     static final String EXTRA_INSERT_SUCCESS_ITEM = "insert_success_item";
     static final String EXTRA_SHOW_SUCCESS_ITEM = "show_success_item";
+    static final String EXTRA_DESCRIPTION = "edit_description";
 
     //EXTRA DATA
     static final String EXTRA_SHOW_SUCCESS_IMAGES = "show_success_images";

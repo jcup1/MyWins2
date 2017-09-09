@@ -13,12 +13,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import static com.theandroiddev.mywins.Constants.DATE_ENDED;
 import static com.theandroiddev.mywins.Constants.DATE_STARTED;
+import static com.theandroiddev.mywins.Constants.EXTRA_DESCRIPTION;
 import static com.theandroiddev.mywins.Constants.EXTRA_INSERT_SUCCESS_ITEM;
-import static com.theandroiddev.mywins.Constants.SNACK_DESCRIPTION_TODO;
+import static com.theandroiddev.mywins.Constants.REQUEST_CODE_DESCRIPTION;
 import static com.theandroiddev.mywins.Constants.dummyImportanceDefault;
 
 public class InsertSuccess extends AppCompatActivity implements View.OnClickListener {
@@ -148,7 +148,7 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
                 setDesc();
                 break;
             case R.id.insert_add_btn:
-                addSuccess();
+                insertSuccess();
                 break;
 
             default:
@@ -156,7 +156,7 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void addSuccess() {
+    private void insertSuccess() {
 
         if (dateHelper.validateData(titleEt, dateStartedTv, dateEndedTv)) {
 
@@ -182,7 +182,23 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
 
 
     private void setDesc() {
-        Toast.makeText(this, SNACK_DESCRIPTION_TODO, Toast.LENGTH_SHORT).show();
+
+        Intent intent = new Intent(InsertSuccess.this, EditDescription.class);
+        intent.putExtra("description", description_et.getText().toString());
+        startActivityForResult(intent, REQUEST_CODE_DESCRIPTION);
+
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_DESCRIPTION) {
+            if (resultCode == RESULT_OK) {
+                String description = data.getExtras().getString(EXTRA_DESCRIPTION);
+                description_et.setText(description);
+
+            }
+        }
+    }
 }

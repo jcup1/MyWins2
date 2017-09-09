@@ -27,7 +27,7 @@ import static com.theandroiddev.mywins.Constants.EXTRA_EDIT_SUCCESS_ITEM;
 import static com.theandroiddev.mywins.Constants.EXTRA_SHOW_SUCCESS_IMAGES;
 import static com.theandroiddev.mywins.Constants.EXTRA_SHOW_SUCCESS_ITEM;
 import static com.theandroiddev.mywins.Constants.EXTRA_SUCCESS_ITEM;
-import static com.theandroiddev.mywins.Constants.INSERT_SUCCESS_REQUEST;
+import static com.theandroiddev.mywins.Constants.REQUEST_CODE_INSERT;
 import static com.theandroiddev.mywins.Constants.SNACK_SAVED;
 
 public class ShowSuccess extends AppCompatActivity implements SuccessImageAdapter.OnSuccessImageClickListener {
@@ -130,7 +130,7 @@ public class ShowSuccess extends AppCompatActivity implements SuccessImageAdapte
         editSuccessIntent.putExtra(EXTRA_SHOW_SUCCESS_ITEM, showSuccess);
         editSuccessIntent.putParcelableArrayListExtra(EXTRA_SHOW_SUCCESS_IMAGES, successImages);
 
-        startActivityForResult(editSuccessIntent, INSERT_SUCCESS_REQUEST);
+        startActivityForResult(editSuccessIntent, REQUEST_CODE_INSERT);
     }
 
     private void initViews() {
@@ -193,7 +193,7 @@ public class ShowSuccess extends AppCompatActivity implements SuccessImageAdapte
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == INSERT_SUCCESS_REQUEST) {
+        if (requestCode == REQUEST_CODE_INSERT) {
             if (resultCode == Activity.RESULT_OK) {
 
                 Success s = data.getExtras().getParcelable(EXTRA_EDIT_SUCCESS_ITEM);

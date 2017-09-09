@@ -40,8 +40,8 @@ import static com.theandroiddev.mywins.Constants.DATE_STARTED_EMPTY;
 import static com.theandroiddev.mywins.Constants.EXTRA_EDIT_SUCCESS_ITEM;
 import static com.theandroiddev.mywins.Constants.EXTRA_SHOW_SUCCESS_IMAGES;
 import static com.theandroiddev.mywins.Constants.EXTRA_SHOW_SUCCESS_ITEM;
-import static com.theandroiddev.mywins.Constants.IMPORTANCE_SUCCESS_REQUEST;
 import static com.theandroiddev.mywins.Constants.REQUEST_CODE_GALLERY;
+import static com.theandroiddev.mywins.Constants.REQUEST_CODE_IMPORTANCE;
 import static com.theandroiddev.mywins.Constants.SNACK_IMAGE_REMOVED;
 import static com.theandroiddev.mywins.Constants.SNACK_UNDO;
 import static com.theandroiddev.mywins.Constants.TOAST_PERMISSION_DENIED;
@@ -282,7 +282,7 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
         Intent importanceIntent = new Intent(EditSuccess.this, ImportancePopup.class);
 
         importanceIntent.putExtra("importance", (int) editImportanceIv.getTag());
-        startActivityForResult(importanceIntent, IMPORTANCE_SUCCESS_REQUEST);
+        startActivityForResult(importanceIntent, REQUEST_CODE_IMPORTANCE);
 
     }
 
@@ -297,7 +297,7 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == IMPORTANCE_SUCCESS_REQUEST) {
+        if (requestCode == REQUEST_CODE_IMPORTANCE) {
             if (resultCode == Activity.RESULT_OK) {
 
                 int importance = data.getIntExtra("importance", dummyImportanceDefault);

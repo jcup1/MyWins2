@@ -45,6 +45,8 @@
             android:name=".ImageActivity"
             android:theme="@style/AppTheme.Dialog.No.Bg">
         </activity>
+        <activity android:name=".EditDescription">
+        </activity>
     </application>
 
 </manifest>

@@ -73,9 +73,9 @@ import static com.theandroiddev.mywins.Constants.EXTRA_SUCCESS_IMPORTANCE_IV;
 import static com.theandroiddev.mywins.Constants.EXTRA_SUCCESS_ITEM;
 import static com.theandroiddev.mywins.Constants.EXTRA_SUCCESS_TITLE;
 import static com.theandroiddev.mywins.Constants.IMPORTANCE_VALUE;
-import static com.theandroiddev.mywins.Constants.INSERT_SUCCESS_REQUEST;
 import static com.theandroiddev.mywins.Constants.NOT_ACTIVE;
 import static com.theandroiddev.mywins.Constants.PACKAGE_NAME;
+import static com.theandroiddev.mywins.Constants.REQUEST_CODE_INSERT;
 import static com.theandroiddev.mywins.Constants.SNACK_SUCCESS_NOT_ADDED;
 import static com.theandroiddev.mywins.Constants.SNACK_SUCCESS_REMOVED;
 import static com.theandroiddev.mywins.Constants.SNACK_UNDO;
@@ -650,7 +650,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Intent intent = new Intent(MainActivity.this, InsertSuccess.class);
         intent.putExtra("categoryName", categoryName);
-        startActivityForResult(intent, INSERT_SUCCESS_REQUEST);
+        startActivityForResult(intent, REQUEST_CODE_INSERT);
         floatingActionsMenu.collapse();
 
     }
@@ -659,7 +659,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == INSERT_SUCCESS_REQUEST) {
+        if (requestCode == REQUEST_CODE_INSERT) {
             if (resultCode == Activity.RESULT_OK) {
 
 
