@@ -37,6 +37,7 @@ dependencies {
     compile 'com.github.ozodrukh.CircularReveal:circualreveal:2.1.0'
     compile 'com.jakewharton:butterknife:8.5.1'
     compile 'com.mcxiaoke.volley:library:1.0.19'
+    compile 'com.squareup.picasso:picasso:2.5.2'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 }

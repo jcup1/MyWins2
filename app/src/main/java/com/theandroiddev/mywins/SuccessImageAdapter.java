@@ -1,7 +1,7 @@
 package com.theandroiddev.mywins;
 
+import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -11,8 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -26,12 +27,14 @@ class SuccessImageAdapter extends RecyclerView.Adapter<SuccessImageAdapter.ViewH
     private List<SuccessImage> successImages;
     private OnSuccessImageClickListener listener;
     private int successImageLayout;
+    private Context context;
 
 
-    SuccessImageAdapter(List<SuccessImage> successImages, OnSuccessImageClickListener listener, int successImageLayout) {
+    SuccessImageAdapter(List<SuccessImage> successImages, OnSuccessImageClickListener listener, int successImageLayout, Context context) {
         this.successImages = successImages;
         this.listener = listener;
         this.successImageLayout = successImageLayout;
+        this.context = context;
     }
 
     @Override
@@ -51,9 +54,7 @@ class SuccessImageAdapter extends RecyclerView.Adapter<SuccessImageAdapter.ViewH
             }
         } else {
 
-            Bitmap thumbnail = getbitpam(successImages.get(position).getImagePath());
-            Bitmap orientedBitmap = ExifUtil.rotateBitmap(successImages.get(position).getImagePath(), thumbnail);
-            holder.successImageIv.setImageBitmap(orientedBitmap);
+            Picasso.with(context).load(new File(successImages.get(position).getImagePath())).resize(256, 256).centerCrop().into(holder.successImageIv);
             holder.bind(successImages.get(position), position, listener);
 
         }
@@ -63,17 +64,6 @@ class SuccessImageAdapter extends RecyclerView.Adapter<SuccessImageAdapter.ViewH
     private Bitmap getbitpam(String path) {
         Bitmap imgthumBitmap = null;
         try {
-
-            final int THUMBNAIL_SIZE = 256;
-
-            FileInputStream fis = new FileInputStream(path);
-            imgthumBitmap = BitmapFactory.decodeStream(fis);
-
-            imgthumBitmap = Bitmap.createScaledBitmap(imgthumBitmap,
-                    THUMBNAIL_SIZE, THUMBNAIL_SIZE, false);
-
-            ByteArrayOutputStream bytearroutstream = new ByteArrayOutputStream();
-            imgthumBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytearroutstream);
 
 
         } catch (Exception ex) {

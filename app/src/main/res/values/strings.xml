@@ -38,5 +38,6 @@
     <string name="importance_small">Small</string>
     <string name="date_started_empty">Start Date</string>
     <string name="date_ended_empty">End Date</string>
+    <string name="edit_success_pick_both">Take or pick photo</string>
 
 </resources>

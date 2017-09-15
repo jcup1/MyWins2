@@ -212,18 +212,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         dummySuccessImages = new ArrayList<>();
 
-//        for(int i = 0; i < dummySuccessImagesSize; i++) {
-//            SuccessImage successImage = new SuccessImage(dummyImageSuccessId.get(i));
-//            successImage.setImagePath(dummyImagePath.get(i));
-//            dummySuccessImages.add(successImage);
-//        }
-
-        //successImage.setImagePath();
-        //dummySuccessImages.add();
-//        dbAdapter.openDB();
-//        dbAdapter.addSuccessImages(dummySuccessImages);
-//        dbAdapter.closeDB();
-
         getSuccesses();
         successAdapter.notifyDataSetChanged();
     }

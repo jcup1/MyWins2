@@ -103,7 +103,7 @@ public class ShowSuccess extends AppCompatActivity implements SuccessImageAdapte
         dbAdapter.openDB();
         successImages.addAll(dbAdapter.retrieveSuccessImages(successId));
         dbAdapter.closeDB();
-        successImageAdapter = new SuccessImageAdapter(successImages, this, R.layout.success_image_layout);
+        successImageAdapter = new SuccessImageAdapter(successImages, this, R.layout.success_image_layout, this);
         recyclerView.setAdapter(successImageAdapter);
         successImageAdapter.notifyDataSetChanged();
     }
