@@ -2,6 +2,7 @@ package com.theandroiddev.mywins;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -28,6 +29,9 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -62,10 +66,14 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
     TextView editCategoryTv, dateStartedTv, dateEndedTv;
     EditText editTitleEt, editDescriptionEt;
     ImageView editCategoryIv, editImportanceIv;
+    CardView editCardBasics, editCardImages;
 
     DrawableSelector drawableSelector;
     DateHelper dateHelper;
 
+    private Animation animShow, animHide;
+
+    private boolean noDistractionMode;
     private int selectedImageNumber = -1;
     private RecyclerView recyclerView;
     private List<SuccessImage> successImages;
@@ -93,8 +101,11 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
     private void toRemove(int position) {
         showSnackbar(position);
         successImageAdapter.notifyDataSetChanged();
+    }
 
-
+    private void initAnimation() {
+        animShow = AnimationUtils.loadAnimation(this, R.anim.view_show);
+        animHide = AnimationUtils.loadAnimation(this, R.anim.view_hide);
     }
 
     private void showSnackbar(final int position) {
@@ -129,12 +140,19 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
         setContentView(R.layout.activity_edit_success);
         Toolbar toolbar = (Toolbar) findViewById(R.id.edit_toolbar);
         setSupportActionBar(toolbar);
+        noDistractionMode = false;
+        initAnimation();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.edit_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveChanges();
+                if (noDistractionMode) {
+                    editDescriptionEt.clearFocus();
+
+                } else {
+                    saveChanges();
+                }
             }
         });
 
@@ -226,6 +244,9 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
         dateStartedTv = (TextView) findViewById(R.id.edit_date_started);
         dateEndedTv = (TextView) findViewById(R.id.edit_date_ended);
 
+        editCardBasics = (CardView) findViewById(R.id.edit_card_basic);
+        editCardImages = (CardView) findViewById(R.id.edit_card_images);
+
         editSuccess = getIntent().getParcelableExtra(EXTRA_SHOW_SUCCESS_ITEM);
         successImages = getIntent().getParcelableArrayListExtra(EXTRA_SHOW_SUCCESS_IMAGES);
 
@@ -254,6 +275,33 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
             @Override
             public void onClick(View view) {
                 dateHelper.setDate(DATE_ENDED_EMPTY, dateStartedTv, dateEndedTv);
+            }
+        });
+
+        editDescriptionEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                if (hasFocus) {
+
+                    editCardBasics.startAnimation(animHide);
+                    editCardBasics.setVisibility(View.GONE);
+                    editCardImages.startAnimation(animHide);
+                    editCardImages.setVisibility(View.GONE);
+                    noDistractionMode = true;
+
+                } else {
+
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+                    editCardImages.setVisibility(View.VISIBLE);
+                    editCardImages.startAnimation(animShow);
+                    editCardBasics.setVisibility(View.VISIBLE);
+                    editCardBasics.startAnimation(animShow);
+
+                    noDistractionMode = false;
+                }
             }
         });
 

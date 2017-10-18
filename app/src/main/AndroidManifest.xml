@@ -40,7 +40,8 @@
         <activity
             android:name=".EditSuccess"
             android:label="@string/title_activity_edit_success"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize">
         </activity>
         <activity
             android:name=".ImportancePopup"
