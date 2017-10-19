@@ -1,14 +1,17 @@
-package com.theandroiddev.mywins;
+package com.theandroiddev.mywins.Storage;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.theandroiddev.mywins.UI.Activities.MainActivity;
+import com.theandroiddev.mywins.UI.Helpers.Constants;
+
 /**
  * Created by jakub on 14.08.17.
  */
 
-class DBHelper extends SQLiteOpenHelper {
+public class DBHelper extends SQLiteOpenHelper {
 
     DBHelper(Context context) {
         super(context, Constants.DB_NAME, null, Constants.DB_VERSION);

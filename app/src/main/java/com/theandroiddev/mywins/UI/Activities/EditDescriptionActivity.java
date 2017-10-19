@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins;
+package com.theandroiddev.mywins.UI.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,9 +11,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 
-import static com.theandroiddev.mywins.Constants.EXTRA_DESCRIPTION;
+import com.theandroiddev.mywins.R;
 
-public class EditDescription extends AppCompatActivity {
+import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_DESCRIPTION;
+
+public class EditDescriptionActivity extends AppCompatActivity {
 
     EditText descriptionEt;
 

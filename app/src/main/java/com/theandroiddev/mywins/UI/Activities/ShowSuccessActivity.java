@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins;
+package com.theandroiddev.mywins.UI.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -21,17 +21,24 @@ import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.theandroiddev.mywins.R;
+import com.theandroiddev.mywins.Storage.DBAdapter;
+import com.theandroiddev.mywins.UI.Adapters.SuccessImageAdapter;
+import com.theandroiddev.mywins.UI.Helpers.DrawableSelector;
+import com.theandroiddev.mywins.UI.Models.Success;
+import com.theandroiddev.mywins.UI.Models.SuccessImage;
+
 import java.util.ArrayList;
 
-import static com.theandroiddev.mywins.Constants.EXTRA_EDIT_SUCCESS_ITEM;
-import static com.theandroiddev.mywins.Constants.EXTRA_SHOW_SUCCESS_IMAGES;
-import static com.theandroiddev.mywins.Constants.EXTRA_SHOW_SUCCESS_ITEM;
-import static com.theandroiddev.mywins.Constants.EXTRA_SUCCESS_ITEM;
-import static com.theandroiddev.mywins.Constants.REQUEST_CODE_INSERT;
-import static com.theandroiddev.mywins.Constants.SNACK_SAVED;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_EDIT_SUCCESS_ITEM;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_SHOW_SUCCESS_IMAGES;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_SHOW_SUCCESS_ITEM;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_SUCCESS_ITEM;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.REQUEST_CODE_INSERT;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.SNACK_SAVED;
 
-public class ShowSuccess extends AppCompatActivity implements SuccessImageAdapter.OnSuccessImageClickListener {
-    private static final String TAG = "ShowSuccess";
+public class ShowSuccessActivity extends AppCompatActivity implements SuccessImageAdapter.OnSuccessImageClickListener {
+    private static final String TAG = "ShowSuccessActivity";
 
     int id;
     int color;
@@ -45,7 +52,7 @@ public class ShowSuccess extends AppCompatActivity implements SuccessImageAdapte
     private ArrayList<SuccessImage> successImages;
     private SuccessImageAdapter successImageAdapter;
 
-    public ShowSuccess() {
+    public ShowSuccessActivity() {
         this.drawableSelector = new DrawableSelector(this);
     }
 
@@ -121,7 +128,7 @@ public class ShowSuccess extends AppCompatActivity implements SuccessImageAdapte
 
     private void editSuccess() {
 
-        Intent editSuccessIntent = new Intent(ShowSuccess.this, EditSuccess.class);
+        Intent editSuccessIntent = new Intent(ShowSuccessActivity.this, EditSuccessActivity.class);
 
         Success showSuccess = new Success(showTitle.getText().toString(), showCategory.getText().toString(),
                 (int) showImportanceIv.getTag(), showDescription.getText().toString(), showDateStarted.getText().toString(), showDateEnded.getText().toString());

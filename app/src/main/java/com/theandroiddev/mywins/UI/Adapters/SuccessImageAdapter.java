@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins;
+package com.theandroiddev.mywins.UI.Adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
+import com.theandroiddev.mywins.R;
+import com.theandroiddev.mywins.UI.Models.SuccessImage;
 
 import java.io.File;
 import java.util.List;
@@ -22,7 +24,7 @@ import static android.content.ContentValues.TAG;
  * Created by grazyna on 2017-08-23.
  */
 
-class SuccessImageAdapter extends RecyclerView.Adapter<SuccessImageAdapter.ViewHolder> {
+public class SuccessImageAdapter extends RecyclerView.Adapter<SuccessImageAdapter.ViewHolder> {
 
     private List<SuccessImage> successImages;
     private OnSuccessImageClickListener listener;
@@ -30,7 +32,7 @@ class SuccessImageAdapter extends RecyclerView.Adapter<SuccessImageAdapter.ViewH
     private Context context;
 
 
-    SuccessImageAdapter(List<SuccessImage> successImages, OnSuccessImageClickListener listener, int successImageLayout, Context context) {
+    public SuccessImageAdapter(List<SuccessImage> successImages, OnSuccessImageClickListener listener, int successImageLayout, Context context) {
         this.successImages = successImages;
         this.listener = listener;
         this.successImageLayout = successImageLayout;
@@ -79,7 +81,7 @@ class SuccessImageAdapter extends RecyclerView.Adapter<SuccessImageAdapter.ViewH
         return successImages.size();
     }
 
-    interface OnSuccessImageClickListener {
+    public interface OnSuccessImageClickListener {
         void onSuccessImageClick(SuccessImage successImage, ImageView successImageIv, int position, ConstraintLayout constraintLayout,
                                  CardView cardView);
 

@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins;
+package com.theandroiddev.mywins.UI.Adapters;
 
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
@@ -10,6 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.theandroiddev.mywins.R;
+import com.theandroiddev.mywins.UI.Helpers.DrawableSelector;
+import com.theandroiddev.mywins.UI.Models.Success;
+
 import java.util.List;
 
 /**
@@ -17,7 +21,7 @@ import java.util.List;
  * https://github.com/jcup1/MyWins-CardView/blob/master/app/src/main/java/com/example/jakubchmiel/mywins/SuccessAdapter.java
  */
 
-class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
+public class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
 
     private List<Success> successes;
     private OnItemClickListener listener;
@@ -25,7 +29,7 @@ class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
     private Context context;
     private DrawableSelector drawableSelector;
 
-    SuccessAdapter(List<Success> successes, int itemLayout, Context context, OnItemClickListener listener) {
+    public SuccessAdapter(List<Success> successes, int itemLayout, Context context, OnItemClickListener listener) {
         this.successes = successes;
         this.itemLayout = itemLayout;
         this.context = context;
@@ -60,7 +64,7 @@ class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
     }
 
 
-    interface OnItemClickListener {
+    public interface OnItemClickListener {
         void onItemClick(Success success, int position, TextView titleTv, TextView categoryTv, TextView dateStartedTv, TextView dateEndedTv,
                          ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView);
 

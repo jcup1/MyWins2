@@ -1,10 +1,14 @@
-package com.theandroiddev.mywins;
+package com.theandroiddev.mywins.Storage;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+
+import com.theandroiddev.mywins.UI.Helpers.Constants;
+import com.theandroiddev.mywins.UI.Models.Success;
+import com.theandroiddev.mywins.UI.Models.SuccessImage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,30 +18,30 @@ import java.util.List;
  * Created by jakub on 14.08.17.
  */
 
-class DBAdapter {
+public class DBAdapter {
     private static final String TAG = "DBAdapter";
     private Context context;
     private SQLiteDatabase sqLiteDatabase;
     private DBHelper dbHelper;
 
-    DBAdapter(Context context) {
+    public DBAdapter(Context context) {
 
         this.context = context;
         dbHelper = new DBHelper(context);
 
     }
 
-    void openDB() {
+    public void openDB() {
 
         sqLiteDatabase = dbHelper.getWritableDatabase();
 
     }
 
-    void closeDB() {
+    public void closeDB() {
         dbHelper.close();
     }
 
-    void addSuccess(Success success) {
+    public void addSuccess(Success success) {
         Log.d(TAG, "addSuccess: " + success);
 
         ContentValues contentValues = new ContentValues();
@@ -53,7 +57,7 @@ class DBAdapter {
         sqLiteDatabase.insert(Constants.TB_NAME_SUCCESSES, Constants.SUCCESS_ID, contentValues);
     }
 
-    Cursor retrieveSuccess(String searchTerm, String sort) {
+    public Cursor retrieveSuccess(String searchTerm, String sort) {
 
         String[] columns = {Constants.SUCCESS_ID, Constants.TITLE, Constants.CATEGORY, Constants.IMPORTANCE, Constants.DESCRIPTION, Constants.DATE_STARTED, Constants.DATE_ENDED};
         Cursor cursor;
@@ -66,7 +70,7 @@ class DBAdapter {
         return cursor;
     }
 
-    void removeSuccess(List<Success> successesToRemove) {
+    public void removeSuccess(List<Success> successesToRemove) {
         Log.d(TAG, "toRemove:" + Arrays.toString(successesToRemove.toArray()));
 
 
@@ -79,7 +83,7 @@ class DBAdapter {
 
     }
 
-    void editSuccess(Success showSuccess) {
+    public void editSuccess(Success showSuccess) {
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(Constants.TITLE, showSuccess.getTitle());
@@ -105,7 +109,7 @@ class DBAdapter {
 
     }
 
-    List<SuccessImage> retrieveSuccessImages(int successId) {
+    public List<SuccessImage> retrieveSuccessImages(int successId) {
 
         List<SuccessImage> successImages = new ArrayList<>();
 
@@ -124,7 +128,7 @@ class DBAdapter {
         return successImages;
     }
 
-    void editSuccessImages(List<SuccessImage> successImages, int successId) {
+    public void editSuccessImages(List<SuccessImage> successImages, int successId) {
 
         deleteImages(successId);
         addSuccessImages(successImages);
@@ -136,7 +140,7 @@ class DBAdapter {
 
     }
 
-    Success getSuccess(int id) {
+    public Success getSuccess(int id) {
 
         String sql = "SELECT * FROM " + Constants.TB_NAME_SUCCESSES + " WHERE " + Constants.SUCCESS_ID + " = " + id;
         Cursor cursor = sqLiteDatabase.rawQuery(sql, null);

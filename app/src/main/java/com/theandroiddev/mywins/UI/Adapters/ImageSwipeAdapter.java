@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins;
+package com.theandroiddev.mywins.UI.Adapters;
 
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
+import com.theandroiddev.mywins.R;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -17,14 +18,14 @@ import java.util.ArrayList;
  * Created by jakub on 30.08.17.
  */
 
-class ImageSwipeAdapter extends PagerAdapter {
+public class ImageSwipeAdapter extends PagerAdapter {
     private static final String TAG = "ImageSwipeAdapter";
 
     private Context context;
     private ArrayList<String> imagePaths;
 
 
-    ImageSwipeAdapter(Context context, ArrayList<String> imagePaths) {
+    public ImageSwipeAdapter(Context context, ArrayList<String> imagePaths) {
         this.context = context;
         this.imagePaths = imagePaths;
     }

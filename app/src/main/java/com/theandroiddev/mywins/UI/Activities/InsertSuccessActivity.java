@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins;
+package com.theandroiddev.mywins.UI.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -14,14 +14,19 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import static com.theandroiddev.mywins.Constants.DATE_ENDED;
-import static com.theandroiddev.mywins.Constants.DATE_STARTED;
-import static com.theandroiddev.mywins.Constants.EXTRA_DESCRIPTION;
-import static com.theandroiddev.mywins.Constants.EXTRA_INSERT_SUCCESS_ITEM;
-import static com.theandroiddev.mywins.Constants.REQUEST_CODE_DESCRIPTION;
-import static com.theandroiddev.mywins.Constants.dummyImportanceDefault;
+import com.theandroiddev.mywins.R;
+import com.theandroiddev.mywins.UI.Helpers.DateHelper;
+import com.theandroiddev.mywins.UI.Helpers.DrawableSelector;
+import com.theandroiddev.mywins.UI.Models.Success;
 
-public class InsertSuccess extends AppCompatActivity implements View.OnClickListener {
+import static com.theandroiddev.mywins.UI.Helpers.Constants.DATE_ENDED;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.DATE_STARTED;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_DESCRIPTION;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_INSERT_SUCCESS_ITEM;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.REQUEST_CODE_DESCRIPTION;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyImportanceDefault;
+
+public class InsertSuccessActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     TextView categoryTv, importanceTv, dateStartedTv, dateEndedTv;
@@ -183,7 +188,7 @@ public class InsertSuccess extends AppCompatActivity implements View.OnClickList
 
     private void setDesc() {
 
-        Intent intent = new Intent(InsertSuccess.this, EditDescription.class);
+        Intent intent = new Intent(InsertSuccessActivity.this, EditDescriptionActivity.class);
         intent.putExtra("description", description_et.getText().toString());
         startActivityForResult(intent, REQUEST_CODE_DESCRIPTION);
 

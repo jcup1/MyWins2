@@ -19,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".UI.Activities.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -29,29 +29,30 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".InsertSuccess"
+            android:name=".UI.Activities.InsertSuccessActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dialog"/>
+            android:theme="@style/AppTheme.Dialog"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
-            android:name=".ShowSuccess"
+            android:name=".UI.Activities.ShowSuccessActivity"
             android:label="@string/title_activity_show_success"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".EditSuccess"
+            android:name=".UI.Activities.EditSuccessActivity"
             android:label="@string/title_activity_edit_success"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize">
         </activity>
         <activity
-            android:name=".ImportancePopup"
+            android:name=".UI.Activities.ImportancePopupActivity"
             android:theme="@style/AppTheme.Dialog">
         </activity>
         <activity
-            android:name=".ImageActivity"
+            android:name=".UI.Activities.ImageActivity"
             android:theme="@style/AppTheme.Dialog.No.Bg">
         </activity>
-        <activity android:name=".EditDescription">
+        <activity android:name=".UI.Activities.EditDescriptionActivity">
         </activity>
 
         <provider

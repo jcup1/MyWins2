@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins;
+package com.theandroiddev.mywins.UI.Activities;
 
 import android.Manifest;
 import android.app.Activity;
@@ -37,6 +37,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.theandroiddev.mywins.R;
+import com.theandroiddev.mywins.Storage.DBAdapter;
+import com.theandroiddev.mywins.UI.Adapters.SuccessImageAdapter;
+import com.theandroiddev.mywins.UI.Helpers.DateHelper;
+import com.theandroiddev.mywins.UI.Helpers.DrawableSelector;
+import com.theandroiddev.mywins.UI.Models.Success;
+import com.theandroiddev.mywins.UI.Models.SuccessImage;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -44,22 +52,22 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.theandroiddev.mywins.Constants.CLICK_LONG;
-import static com.theandroiddev.mywins.Constants.CLICK_SHORT;
-import static com.theandroiddev.mywins.Constants.DATE_ENDED_EMPTY;
-import static com.theandroiddev.mywins.Constants.DATE_STARTED_EMPTY;
-import static com.theandroiddev.mywins.Constants.EXTRA_EDIT_SUCCESS_ITEM;
-import static com.theandroiddev.mywins.Constants.EXTRA_SHOW_SUCCESS_IMAGES;
-import static com.theandroiddev.mywins.Constants.EXTRA_SHOW_SUCCESS_ITEM;
-import static com.theandroiddev.mywins.Constants.REQUEST_CODE_GALLERY;
-import static com.theandroiddev.mywins.Constants.REQUEST_CODE_IMPORTANCE;
-import static com.theandroiddev.mywins.Constants.SNACK_IMAGE_REMOVED;
-import static com.theandroiddev.mywins.Constants.SNACK_UNDO;
-import static com.theandroiddev.mywins.Constants.TOAST_PERMISSION_DENIED;
-import static com.theandroiddev.mywins.Constants.dummyImportanceDefault;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.CLICK_LONG;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.CLICK_SHORT;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.DATE_ENDED_EMPTY;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.DATE_STARTED_EMPTY;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_EDIT_SUCCESS_ITEM;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_SHOW_SUCCESS_IMAGES;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_SHOW_SUCCESS_ITEM;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.REQUEST_CODE_GALLERY;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.REQUEST_CODE_IMPORTANCE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.SNACK_IMAGE_REMOVED;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.SNACK_UNDO;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.TOAST_PERMISSION_DENIED;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyImportanceDefault;
 
-public class EditSuccess extends AppCompatActivity implements SuccessImageAdapter.OnSuccessImageClickListener, View.OnLongClickListener {
-    private static final String TAG = "EditSuccess";
+public class EditSuccessActivity extends AppCompatActivity implements SuccessImageAdapter.OnSuccessImageClickListener, View.OnLongClickListener {
+    private static final String TAG = "EditSuccessActivity";
 
 
     Success editSuccess;
@@ -337,7 +345,7 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
 
     private void setImportance() {
 
-        Intent importanceIntent = new Intent(EditSuccess.this, ImportancePopup.class);
+        Intent importanceIntent = new Intent(EditSuccessActivity.this, ImportancePopupActivity.class);
 
         importanceIntent.putExtra("importance", (int) editImportanceIv.getTag());
         startActivityForResult(importanceIntent, REQUEST_CODE_GALLERY);
@@ -503,7 +511,7 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
     public void openGallery() {
 
         ActivityCompat.requestPermissions(
-                EditSuccess.this,
+                EditSuccessActivity.this,
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, MediaStore.ACTION_IMAGE_CAPTURE, MediaStore.EXTRA_OUTPUT},
                 REQUEST_CODE_GALLERY
         );
@@ -524,7 +532,7 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
     private void openDeleteMenu(final int position, CardView cardView) {
 
         PopupMenu popupMenu;
-        popupMenu = new PopupMenu(EditSuccess.this, cardView);
+        popupMenu = new PopupMenu(EditSuccessActivity.this, cardView);
 
         popupMenu.getMenuInflater().inflate(R.menu.menu_images, popupMenu.getMenu());
         popupMenu.show();
@@ -579,9 +587,9 @@ public class EditSuccess extends AppCompatActivity implements SuccessImageAdapte
 
         PopupMenu popupMenu = null;
         if (s.equals(DATE_STARTED_EMPTY)) {
-            popupMenu = new PopupMenu(EditSuccess.this, dateStartedTv);
+            popupMenu = new PopupMenu(EditSuccessActivity.this, dateStartedTv);
         } else if (s.equals(DATE_ENDED_EMPTY)) {
-            popupMenu = new PopupMenu(EditSuccess.this, dateEndedTv);
+            popupMenu = new PopupMenu(EditSuccessActivity.this, dateEndedTv);
         }
 
         if (popupMenu != null) {

@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins;
+package com.theandroiddev.mywins.UI.Models;
 
 import android.os.Parcel;
 import android.os.Parcelable;

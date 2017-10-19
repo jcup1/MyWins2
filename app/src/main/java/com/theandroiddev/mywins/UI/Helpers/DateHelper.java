@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins;
+package com.theandroiddev.mywins.UI.Helpers;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
@@ -13,26 +13,26 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.theandroiddev.mywins.Constants.DATE_ENDED_EMPTY;
-import static com.theandroiddev.mywins.Constants.DATE_FORMAT;
-import static com.theandroiddev.mywins.Constants.DATE_STARTED_EMPTY;
-import static com.theandroiddev.mywins.Constants.ERROR_DATE_ENDED;
-import static com.theandroiddev.mywins.Constants.ERROR_TITLE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.DATE_ENDED_EMPTY;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.DATE_FORMAT;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.DATE_STARTED_EMPTY;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.ERROR_DATE_ENDED;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.ERROR_TITLE;
 
 /**
  * Created by jakub on 03.09.17.
  */
 
-class DateHelper {
+public class DateHelper {
 
     private Calendar myCalendar;
     private Context context;
 
-    DateHelper(Context context) {
+    public DateHelper(Context context) {
         this.context = context;
     }
 
-    void setDate(final String d, final TextView dateStarted, final TextView dateEnded) {
+    public void setDate(final String d, final TextView dateStarted, final TextView dateEnded) {
 
         myCalendar = Calendar.getInstance();
 
@@ -72,13 +72,13 @@ class DateHelper {
 
     }
 
-    String checkBlankDate(String s) {
+    public String checkBlankDate(String s) {
         if (s.contains("Date")) {
             return "";
         } else return s;
     }
 
-    boolean validateData(EditText titleEt, TextView dateStartedTv, TextView dateEndedTv) {
+    public boolean validateData(EditText titleEt, TextView dateStartedTv, TextView dateEndedTv) {
 
         int cnt = 0;
 

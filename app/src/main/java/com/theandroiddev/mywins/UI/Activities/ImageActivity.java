@@ -1,8 +1,11 @@
-package com.theandroiddev.mywins;
+package com.theandroiddev.mywins.UI.Activities;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+
+import com.theandroiddev.mywins.R;
+import com.theandroiddev.mywins.UI.Adapters.ImageSwipeAdapter;
 
 import java.util.ArrayList;
 

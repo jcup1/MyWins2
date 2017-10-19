@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins;
+package com.theandroiddev.mywins.UI.Activities;
 
 import android.animation.Animator;
 import android.app.Activity;
@@ -45,6 +45,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.theandroiddev.mywins.R;
+import com.theandroiddev.mywins.Storage.DBAdapter;
+import com.theandroiddev.mywins.UI.Adapters.SuccessAdapter;
+import com.theandroiddev.mywins.UI.Helpers.Constants;
+import com.theandroiddev.mywins.UI.Models.Success;
+import com.theandroiddev.mywins.UI.Models.SuccessImage;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,41 +59,41 @@ import java.util.List;
 
 import io.codetail.animation.ViewAnimationUtils;
 
-import static com.theandroiddev.mywins.Constants.ADD_ON_TOP;
-import static com.theandroiddev.mywins.Constants.CATEGORY_JOURNEY;
-import static com.theandroiddev.mywins.Constants.CATEGORY_LEARN;
-import static com.theandroiddev.mywins.Constants.CATEGORY_MONEY;
-import static com.theandroiddev.mywins.Constants.CATEGORY_SPORT;
-import static com.theandroiddev.mywins.Constants.CATEGORY_VALUE;
-import static com.theandroiddev.mywins.Constants.CATEGORY_VIDEO;
-import static com.theandroiddev.mywins.Constants.DATE_ENDED_VALUE;
-import static com.theandroiddev.mywins.Constants.DATE_STARTED_VALUE;
-import static com.theandroiddev.mywins.Constants.DESCRIPTION_VALUE;
-import static com.theandroiddev.mywins.Constants.EXTRA_INSERT_SUCCESS_ITEM;
-import static com.theandroiddev.mywins.Constants.EXTRA_SUCCESS_CARD_VIEW;
-import static com.theandroiddev.mywins.Constants.EXTRA_SUCCESS_CATEGORY;
-import static com.theandroiddev.mywins.Constants.EXTRA_SUCCESS_CATEGORY_IV;
-import static com.theandroiddev.mywins.Constants.EXTRA_SUCCESS_DATE_ENDED;
-import static com.theandroiddev.mywins.Constants.EXTRA_SUCCESS_DATE_STARTED;
-import static com.theandroiddev.mywins.Constants.EXTRA_SUCCESS_IMPORTANCE_IV;
-import static com.theandroiddev.mywins.Constants.EXTRA_SUCCESS_ITEM;
-import static com.theandroiddev.mywins.Constants.EXTRA_SUCCESS_TITLE;
-import static com.theandroiddev.mywins.Constants.IMPORTANCE_VALUE;
-import static com.theandroiddev.mywins.Constants.NOT_ACTIVE;
-import static com.theandroiddev.mywins.Constants.PACKAGE_NAME;
-import static com.theandroiddev.mywins.Constants.REQUEST_CODE_INSERT;
-import static com.theandroiddev.mywins.Constants.SNACK_SUCCESS_NOT_ADDED;
-import static com.theandroiddev.mywins.Constants.SNACK_SUCCESS_REMOVED;
-import static com.theandroiddev.mywins.Constants.SNACK_UNDO;
-import static com.theandroiddev.mywins.Constants.SUCCESS_ID_VALUE;
-import static com.theandroiddev.mywins.Constants.TITLE_VALUE;
-import static com.theandroiddev.mywins.Constants.dummyCategory;
-import static com.theandroiddev.mywins.Constants.dummyDescription;
-import static com.theandroiddev.mywins.Constants.dummyEndDate;
-import static com.theandroiddev.mywins.Constants.dummyImportance;
-import static com.theandroiddev.mywins.Constants.dummyStartDate;
-import static com.theandroiddev.mywins.Constants.dummySuccessesSize;
-import static com.theandroiddev.mywins.Constants.dummyTitle;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.ADD_ON_TOP;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.CATEGORY_JOURNEY;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.CATEGORY_LEARN;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.CATEGORY_MONEY;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.CATEGORY_SPORT;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.CATEGORY_VALUE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.CATEGORY_VIDEO;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.DATE_ENDED_VALUE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.DATE_STARTED_VALUE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.DESCRIPTION_VALUE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_INSERT_SUCCESS_ITEM;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_SUCCESS_CARD_VIEW;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_SUCCESS_CATEGORY;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_SUCCESS_CATEGORY_IV;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_SUCCESS_DATE_ENDED;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_SUCCESS_DATE_STARTED;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_SUCCESS_IMPORTANCE_IV;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_SUCCESS_ITEM;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_SUCCESS_TITLE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.IMPORTANCE_VALUE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.NOT_ACTIVE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.PACKAGE_NAME;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.REQUEST_CODE_INSERT;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.SNACK_SUCCESS_NOT_ADDED;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.SNACK_SUCCESS_REMOVED;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.SNACK_UNDO;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.SUCCESS_ID_VALUE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.TITLE_VALUE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyCategory;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyDescription;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyEndDate;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyImportance;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyStartDate;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.dummySuccessesSize;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyTitle;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, SuccessAdapter.OnItemClickListener {
 
@@ -636,7 +642,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     void categoryPicked(String categoryName) {
 
-        Intent intent = new Intent(MainActivity.this, InsertSuccess.class);
+        Intent intent = new Intent(MainActivity.this, InsertSuccessActivity.class);
         intent.putExtra("categoryName", categoryName);
         startActivityForResult(intent, REQUEST_CODE_INSERT);
         floatingActionsMenu.collapse();
@@ -783,7 +789,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void showSuccess(Success success) {
 
-        Intent showSuccessIntent = new Intent(MainActivity.this, ShowSuccess.class);
+        Intent showSuccessIntent = new Intent(MainActivity.this, ShowSuccessActivity.class);
 
         showSuccessIntent.putExtra(EXTRA_SUCCESS_ITEM, success);
 
@@ -795,7 +801,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void showSuccessAnimation(Success success, TextView titleTv, TextView categoryTv, TextView dateStartedTv, TextView dateEndedTv, ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView) {
 
 
-        Intent showSuccessIntent = new Intent(MainActivity.this, ShowSuccess.class);
+        Intent showSuccessIntent = new Intent(MainActivity.this, ShowSuccessActivity.class);
 
 
         showSuccessIntent.putExtra(EXTRA_SUCCESS_ITEM, success);

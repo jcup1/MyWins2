@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins;
+package com.theandroiddev.mywins.UI.Helpers;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -7,54 +7,42 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import static com.theandroiddev.mywins.Constants.CATEGORY_JOURNEY;
-import static com.theandroiddev.mywins.Constants.CATEGORY_LEARN;
-import static com.theandroiddev.mywins.Constants.CATEGORY_MONEY;
-import static com.theandroiddev.mywins.Constants.CATEGORY_SPORT;
-import static com.theandroiddev.mywins.Constants.CATEGORY_VIDEO;
-import static com.theandroiddev.mywins.Constants.IMPORTANCE_BIG;
-import static com.theandroiddev.mywins.Constants.IMPORTANCE_BIG_VALUE;
-import static com.theandroiddev.mywins.Constants.IMPORTANCE_HUGE;
-import static com.theandroiddev.mywins.Constants.IMPORTANCE_HUGE_VALUE;
-import static com.theandroiddev.mywins.Constants.IMPORTANCE_MEDIUM;
-import static com.theandroiddev.mywins.Constants.IMPORTANCE_MEDIUM_VALUE;
-import static com.theandroiddev.mywins.Constants.IMPORTANCE_SMALL;
-import static com.theandroiddev.mywins.Constants.IMPORTANCE_SMALL_VALUE;
+import com.theandroiddev.mywins.R;
 
 /**
  * Created by jakub on 15.08.17.
  */
 
-class DrawableSelector {
+public class DrawableSelector {
 
     private Context context;
 
-    DrawableSelector(Context context) {
+    public DrawableSelector(Context context) {
 
         this.context = context;
     }
 
-    void selectCategoryImage(ImageView image, String category, TextView categoryTv) {
+    public void selectCategoryImage(ImageView image, String category, TextView categoryTv) {
         int id = R.drawable.ic_other; //default: other
         int color = R.color.other;
 
-        if (category.equalsIgnoreCase(CATEGORY_VIDEO)) {
+        if (category.equalsIgnoreCase(Constants.CATEGORY_VIDEO)) {
             id = R.drawable.ic_video;
             color = R.color.video;
         }
-        if (category.equalsIgnoreCase(CATEGORY_SPORT)) {
+        if (category.equalsIgnoreCase(Constants.CATEGORY_SPORT)) {
             id = R.drawable.ic_sport;
             color = R.color.sport;
         }
-        if (category.equalsIgnoreCase(CATEGORY_MONEY)) {
+        if (category.equalsIgnoreCase(Constants.CATEGORY_MONEY)) {
             id = R.drawable.ic_money;
             color = R.color.money;
         }
-        if (category.equalsIgnoreCase(CATEGORY_JOURNEY)) {
+        if (category.equalsIgnoreCase(Constants.CATEGORY_JOURNEY)) {
             id = R.drawable.ic_journey;
             color = R.color.journey;
         }
-        if (category.equalsIgnoreCase(CATEGORY_LEARN)) {
+        if (category.equalsIgnoreCase(Constants.CATEGORY_LEARN)) {
             id = R.drawable.ic_learn;
             color = R.color.learn;
         }
@@ -66,20 +54,20 @@ class DrawableSelector {
 
     }
 
-    void selectImportanceImage(ImageView importanceIv, int importance) {
+    public void selectImportanceImage(ImageView importanceIv, int importance) {
 
         int id = R.drawable.importance_medium; //default: other
 
-        if (importance == IMPORTANCE_HUGE_VALUE) {
+        if (importance == Constants.IMPORTANCE_HUGE_VALUE) {
             id = R.drawable.importance_huge;
         }
-        if (importance == IMPORTANCE_BIG_VALUE) {
+        if (importance == Constants.IMPORTANCE_BIG_VALUE) {
             id = R.drawable.importance_big;
         }
-        if (importance == IMPORTANCE_MEDIUM_VALUE) {
+        if (importance == Constants.IMPORTANCE_MEDIUM_VALUE) {
             id = R.drawable.importance_medium;
         }
-        if (importance == IMPORTANCE_SMALL_VALUE) {
+        if (importance == Constants.IMPORTANCE_SMALL_VALUE) {
             id = R.drawable.importance_small;
         }
 
@@ -88,7 +76,7 @@ class DrawableSelector {
 
     }
 
-    void setImportance(int importance, TextView importanceTv, ImageView importance1Tv, ImageView importance2Tv, ImageView importance3Tv, ImageView importance4Tv) {
+    public void setImportance(int importance, TextView importanceTv, ImageView importance1Tv, ImageView importance2Tv, ImageView importance3Tv, ImageView importance4Tv) {
 
         switch (importance) {
 
@@ -112,7 +100,7 @@ class DrawableSelector {
 
     }
 
-    void setHugeImportance(TextView importanceTv, ImageView importance1Iv, ImageView importance2Iv, ImageView importance3Iv, ImageView importance4Iv) {
+    public void setHugeImportance(TextView importanceTv, ImageView importance1Iv, ImageView importance2Iv, ImageView importance3Iv, ImageView importance4Iv) {
         importanceTv.setText(R.string.importance_huge);
         int hugeColor = ResourcesCompat.getColor(context.getResources(), R.color.huge, null);
         importance1Iv.setColorFilter(hugeColor);
@@ -122,7 +110,7 @@ class DrawableSelector {
 
     }
 
-    void setBigImportance(TextView importanceTv, ImageView importance1Iv, ImageView importance2Iv, ImageView importance3Iv, ImageView importance4Iv) {
+    public void setBigImportance(TextView importanceTv, ImageView importance1Iv, ImageView importance2Iv, ImageView importance3Iv, ImageView importance4Iv) {
         importanceTv.setText(R.string.importance_big);
         int almostNoColor = ResourcesCompat.getColor(context.getResources(), R.color.white_pressed, null);
         int bigColor = ResourcesCompat.getColor(context.getResources(), R.color.big, null);
@@ -133,7 +121,7 @@ class DrawableSelector {
 
     }
 
-    void setMediumImportance(TextView importanceTv, ImageView importance1Iv, ImageView importance2Iv, ImageView importance3Iv, ImageView importance4Iv) {
+    public void setMediumImportance(TextView importanceTv, ImageView importance1Iv, ImageView importance2Iv, ImageView importance3Iv, ImageView importance4Iv) {
         importanceTv.setText(R.string.importance_medium);
         int almostNoColor = ResourcesCompat.getColor(context.getResources(), R.color.white_pressed, null);
         int mediumColor = ResourcesCompat.getColor(context.getResources(), R.color.medium, null);
@@ -144,7 +132,7 @@ class DrawableSelector {
 
     }
 
-    void setSmallImportance(TextView importanceTv, ImageView importance1Iv, ImageView importance2Iv, ImageView importance3Iv, ImageView importance4Iv) {
+    public void setSmallImportance(TextView importanceTv, ImageView importance1Iv, ImageView importance2Iv, ImageView importance3Iv, ImageView importance4Iv) {
         importanceTv.setText(R.string.importance_small);
         int almostNoColor = ResourcesCompat.getColor(context.getResources(), R.color.white_pressed, null);
         int smallColor = ResourcesCompat.getColor(context.getResources(), R.color.small, null);
@@ -154,19 +142,19 @@ class DrawableSelector {
         importance4Iv.setColorFilter(almostNoColor);
     }
 
-    int getImportance(String s) {
+    public int getImportance(String s) {
 
-        if (s.equals(IMPORTANCE_HUGE)) {
-            return IMPORTANCE_HUGE_VALUE;
+        if (s.equals(Constants.IMPORTANCE_HUGE)) {
+            return Constants.IMPORTANCE_HUGE_VALUE;
         }
-        if (s.equals(IMPORTANCE_BIG)) {
-            return IMPORTANCE_BIG_VALUE;
+        if (s.equals(Constants.IMPORTANCE_BIG)) {
+            return Constants.IMPORTANCE_BIG_VALUE;
         }
-        if (s.equals(IMPORTANCE_MEDIUM)) {
-            return IMPORTANCE_MEDIUM_VALUE;
+        if (s.equals(Constants.IMPORTANCE_MEDIUM)) {
+            return Constants.IMPORTANCE_MEDIUM_VALUE;
         }
-        if (s.equals(IMPORTANCE_SMALL)) {
-            return IMPORTANCE_SMALL_VALUE;
+        if (s.equals(Constants.IMPORTANCE_SMALL)) {
+            return Constants.IMPORTANCE_SMALL_VALUE;
         }
         return 3;
     }

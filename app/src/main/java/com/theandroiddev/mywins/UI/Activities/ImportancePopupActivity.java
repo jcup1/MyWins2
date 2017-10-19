@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins;
+package com.theandroiddev.mywins.UI.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,10 +12,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import static com.theandroiddev.mywins.Constants.dummyImportanceDefault;
+import com.theandroiddev.mywins.R;
+import com.theandroiddev.mywins.UI.Helpers.DrawableSelector;
 
-public class ImportancePopup extends AppCompatActivity implements View.OnClickListener {
-    private static final String TAG = "ImportancePopup";
+import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyImportanceDefault;
+
+public class ImportancePopupActivity extends AppCompatActivity implements View.OnClickListener {
+    private static final String TAG = "ImportancePopupActivity";
 
     TextView popupImportance;
     Button popupDone;
@@ -23,7 +26,7 @@ public class ImportancePopup extends AppCompatActivity implements View.OnClickLi
     private DisplayMetrics displayMetrics;
     private DrawableSelector drawableSelector;
 
-    public ImportancePopup() {
+    public ImportancePopupActivity() {
         this.drawableSelector = new DrawableSelector(this);
     }
 

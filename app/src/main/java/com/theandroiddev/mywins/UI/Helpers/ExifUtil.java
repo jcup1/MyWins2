@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins;
+package com.theandroiddev.mywins.UI.Helpers;
 
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
