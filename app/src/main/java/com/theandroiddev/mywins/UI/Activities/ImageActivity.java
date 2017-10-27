@@ -28,7 +28,7 @@ public class ImageActivity extends AppCompatActivity {
         imageSwipeAdapter = new ImageSwipeAdapter(this, imagePaths);
         viewPager.setAdapter(imageSwipeAdapter);
         viewPager.setCurrentItem(pos);
-        viewPager.setOffscreenPageLimit(3);
+        viewPager.setOffscreenPageLimit(2);
 
     }
 

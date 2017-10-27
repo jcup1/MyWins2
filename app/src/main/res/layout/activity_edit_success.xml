@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/edit_success_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".UI.Activities.EditSuccessActivity">
@@ -12,9 +13,8 @@
         android:layout_width="0dp"
         android:layout_height="6dp"
         app:layout_constraintBottom_toTopOf="@+id/include3"
-        app:layout_constraintTop_toBottomOf="@+id/edit_toolbar"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="50dp"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_toolbar"/>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/edit_toolbar"

@@ -1,11 +1,11 @@
 package com.theandroiddev.mywins.UI.Activities;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,9 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -26,32 +24,34 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.esafirm.imagepicker.features.ImagePicker;
+import com.esafirm.imagepicker.features.camera.CameraModule;
+import com.esafirm.imagepicker.features.camera.ImmediateCameraModule;
+import com.esafirm.imagepicker.features.camera.OnImageReadyListener;
 import com.theandroiddev.mywins.R;
 import com.theandroiddev.mywins.Storage.DBAdapter;
+import com.theandroiddev.mywins.UI.Adapters.CustomImagePickerAdapter;
 import com.theandroiddev.mywins.UI.Adapters.SuccessImageAdapter;
 import com.theandroiddev.mywins.UI.Helpers.DateHelper;
 import com.theandroiddev.mywins.UI.Helpers.DrawableSelector;
 import com.theandroiddev.mywins.UI.Models.Success;
 import com.theandroiddev.mywins.UI.Models.SuccessImage;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
+import static android.view.Gravity.TOP;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.CLICK_LONG;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.CLICK_SHORT;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.DATE_ENDED_EMPTY;
@@ -63,23 +63,25 @@ import static com.theandroiddev.mywins.UI.Helpers.Constants.REQUEST_CODE_GALLERY
 import static com.theandroiddev.mywins.UI.Helpers.Constants.REQUEST_CODE_IMPORTANCE;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.SNACK_IMAGE_REMOVED;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.SNACK_UNDO;
-import static com.theandroiddev.mywins.UI.Helpers.Constants.TOAST_PERMISSION_DENIED;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyImportanceDefault;
 
 public class EditSuccessActivity extends AppCompatActivity implements SuccessImageAdapter.OnSuccessImageClickListener, View.OnLongClickListener {
     private static final String TAG = "EditSuccessActivity";
-
-
+    private static final int RC_CODE_PICKER = 2000;
+    private static final int RC_CAMERA = 3000;
     Success editSuccess;
     TextView editCategoryTv, dateStartedTv, dateEndedTv;
     EditText editTitleEt, editDescriptionEt;
     ImageView editCategoryIv, editImportanceIv;
-    CardView editCardBasics, editCardImages;
-
+    CardView editCardBasics, editCardImages, editCardDescription;
+    ConstraintLayout editSuccessLayout;
     DrawableSelector drawableSelector;
     DateHelper dateHelper;
-
+    ImagePicker imagePicker;
     private Animation animShow, animHide;
+    private ArrayList<com.esafirm.imagepicker.model.Image> images = new ArrayList<>();
+    private CameraModule cameraModule;
+
 
     private boolean noDistractionMode;
     private int selectedImageNumber = -1;
@@ -118,9 +120,15 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
 
     private void showSnackbar(final int position) {
         final SuccessImage successImage = successImages.get(position);
+
+
         Snackbar snackbar = Snackbar
-                .make(recyclerView, SNACK_IMAGE_REMOVED, Snackbar.LENGTH_LONG)
-                .setAction(SNACK_UNDO, new View.OnClickListener() {
+                .make(editSuccessLayout, SNACK_IMAGE_REMOVED, Snackbar.LENGTH_LONG);
+        View view = snackbar.getView();
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) view.getLayoutParams();
+        params.gravity = TOP;
+        view.setLayoutParams(params);
+        snackbar.setAction(SNACK_UNDO, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         undoToRemove(successImage, position);
@@ -254,6 +262,7 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
 
         editCardBasics = (CardView) findViewById(R.id.edit_card_basic);
         editCardImages = (CardView) findViewById(R.id.edit_card_images);
+        editSuccessLayout = findViewById(R.id.edit_success_layout);
 
         editSuccess = getIntent().getParcelableExtra(EXTRA_SHOW_SUCCESS_ITEM);
         successImages = getIntent().getParcelableArrayListExtra(EXTRA_SHOW_SUCCESS_IMAGES);
@@ -372,124 +381,70 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
             }
         }
 
-        if (requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK && data != null) {
-            Uri uri = data.getData();
-            Log.d("SWAS", "onActivityResult: " + uri);
-            String[] filePathColumn = {MediaStore.Images.Media.DATA};
-            Cursor cursor = getContentResolver().query(uri, filePathColumn, null, null, null);
-            if (cursor != null) {
-                cursor.moveToFirst();
-
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                String imagePath = cursor.getString(columnIndex);
-                cursor.close();
-
-                if (selectedImageNumber != 0) {
-                    successImages.get(selectedImageNumber).setImagePath(imagePath);
-                } else {//selected = 0
-                    SuccessImage successImage = new SuccessImage(editSuccess.getId());
-                    successImage.setImagePath(imagePath);
-                    successImages.add(successImage);
-                }
-
-                successImageAdapter.notifyDataSetChanged();
-            }
-
+        if (requestCode == RC_CODE_PICKER && resultCode == RESULT_OK && data != null) {
+            images = (ArrayList<com.esafirm.imagepicker.model.Image>) ImagePicker.getImages(data);
+            printImages(images);
+            CustomImagePickerAdapter imagePickerAdapter = new CustomImagePickerAdapter(this);
+            imagePickerAdapter.removeAllSelectedSingleClick();
+            return;
         }
 
-        if (requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK && data == null) {
-            galleryAddPic();
-
-            String[] filePathColumn = {MediaStore.Images.Media.DATA};
-            Cursor cursor = getContentResolver().query(contentUri, filePathColumn, null, null, null);
-            if (cursor != null) {
-                cursor.moveToFirst();
-
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                String imagePath = cursor.getString(columnIndex);
-                cursor.close();
-
-                if (selectedImageNumber != 0) {
-                    successImages.get(selectedImageNumber).setImagePath(imagePath);
-                } else {//selected = 0
-                    SuccessImage successImage = new SuccessImage(editSuccess.getId());
-                    successImage.setImagePath(imagePath);
-                    successImages.add(successImage);
+        if (requestCode == RC_CAMERA && resultCode == RESULT_OK) {
+            getCameraModule().getImage(this, data, new OnImageReadyListener() {
+                @Override
+                public void onImageReady(List<com.esafirm.imagepicker.model.Image> resultImages) {
+                    images = (ArrayList<com.esafirm.imagepicker.model.Image>) resultImages;
+                    printImages(images);
                 }
-
-                successImageAdapter.notifyDataSetChanged();
-            }
-
+            });
         }
 
     }
 
-    private void galleryAddPic() {
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(mCurrentPhotoPath);
-        contentUri = Uri.fromFile(f);
-        mediaScanIntent.setData(contentUri);
-        this.sendBroadcast(mediaScanIntent);
+    private void captureImage() {
+        startActivityForResult(
+                getCameraModule().getCameraIntent(EditSuccessActivity.this), RC_CAMERA);
     }
 
+    private ImmediateCameraModule getCameraModule() {
+        if (cameraModule == null) {
+            cameraModule = new ImmediateCameraModule();
+        }
+        return (ImmediateCameraModule) cameraModule;
+    }
+
+    private void printImages(List<com.esafirm.imagepicker.model.Image> images) {
+        if (images == null) return;
+
+        if (selectedImageNumber != 0) {
+            successImages.get(selectedImageNumber).setImagePath(images.get(0).getPath());
+
+
+        } else {//selected = 0
+            if (imagePicker != null)
+                for (com.esafirm.imagepicker.model.Image i : images) {
+
+                    SuccessImage successImage = new SuccessImage(editSuccess.getId());
+                    successImage.setImagePath(i.getPath());
+                    successImages.add(1, successImage);
+                }
+
+            successImageAdapter.notifyDataSetChanged();
+        }
+        successImageAdapter.notifyDataSetChanged();
+
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
-        if (requestCode == REQUEST_CODE_GALLERY) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                startActivityForResult(intent, REQUEST_CODE_GALLERY);
-
-                Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-                Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-                if (takePhotoIntent.resolveActivity(getPackageManager()) != null) {
-                    // Create the File where the photo should go
-                    File photoFile = null;
-                    try {
-                        photoFile = createImageFile();
-                    } catch (IOException ex) {
-                        // Error occurred while creating the File
-                    }
-                    // Continue only if the File was successfully created
-                    if (photoFile != null) {
-                        Uri photoURI = FileProvider.getUriForFile(this,
-                                "com.example.android.fileprovider",
-                                photoFile);
-                        takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                    }
-                }
-
-
-                Intent mergeIntent = Intent.createChooser(pickIntent, getString(R.string.edit_success_pick_both));
-                mergeIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,
-                        new Intent[]{takePhotoIntent});
-                startActivityForResult(mergeIntent, REQUEST_CODE_GALLERY);
-            } else {
-                Toast.makeText(this, TOAST_PERMISSION_DENIED, Toast.LENGTH_SHORT).show();
+        if (requestCode == RC_CAMERA) {
+            if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                captureImage();
             }
-            return;
         }
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
     }
 
     @Override
@@ -509,12 +464,35 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
     }
 
     public void openGallery() {
+        imagePicker = ImagePicker.create(this)
+                .theme(R.style.ImagePickerTheme)
+                .returnAfterFirst(true) // set whether pick action or camera action should return immediate result or not. Only works in single mode for image picker
+                .folderMode(false) // set folder mode (false by default)
+                .folderTitle("Folder") // folder selection title
+                .imageTitle("Tap to select")
+                .single();
+        //TODO make it .multi() without selection bug
+        imagePicker.limit(10) // max images can be selected (99 by default)
+                .showCamera(true) // show camera or not (true by default)
+                .imageDirectory("Camera")   // captured image directory name ("Camera" folder by default)
+                .imageFullDirectory(Environment.getExternalStorageDirectory().getPath()) // can be full path
+                .origin(images) // original selected images, used in multi mode
+                .start(RC_CODE_PICKER); // start image picker activity with request code
+    }
 
-        ActivityCompat.requestPermissions(
-                EditSuccessActivity.this,
-                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, MediaStore.ACTION_IMAGE_CAPTURE, MediaStore.EXTRA_OUTPUT},
-                REQUEST_CODE_GALLERY
-        );
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+    public String getRealPathFromURI(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+        return cursor.getString(idx);
     }
 
     private void handleImage(int i, String clickLength, CardView cardView) {

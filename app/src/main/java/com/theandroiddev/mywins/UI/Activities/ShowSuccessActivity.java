@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.AlphaAnimation;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,6 +31,7 @@ import com.theandroiddev.mywins.UI.Models.SuccessImage;
 
 import java.util.ArrayList;
 
+import static android.view.Gravity.TOP;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_EDIT_SUCCESS_ITEM;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_SHOW_SUCCESS_IMAGES;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_SHOW_SUCCESS_ITEM;
@@ -226,7 +228,13 @@ public class ShowSuccessActivity extends AppCompatActivity implements SuccessIma
     }
 
     public void makeSnackbar(String s) {
-        Snackbar.make(showConstraintLayout, s, Snackbar.LENGTH_SHORT).show();
+
+        Snackbar snackbar = Snackbar.make(showConstraintLayout, s, Snackbar.LENGTH_SHORT);
+        View view = snackbar.getView();
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) view.getLayoutParams();
+        params.gravity = TOP;
+        view.setLayoutParams(params);
+        snackbar.show();
     }
 
     @Override

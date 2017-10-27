@@ -42,6 +42,9 @@ dependencies {
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile 'com.github.esafirm.android-image-picker:imagepicker:1.9.0'
+    compile 'com.androidadvance:topsnackbar:1.1.1'
+
 }
 repositories {
     mavenCentral()
