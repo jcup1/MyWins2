@@ -15,6 +15,7 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText searchBox;
     private ConstraintLayout mainConstraint;
     private RecyclerView recyclerView;
-    private List<Success> successes;
+    private ArrayList<Success> successes;
     private List<Success> successesToRemove;
     private List<SuccessImage> dummySuccessImages;
     private SuccessAdapter successAdapter;
@@ -128,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     };
+
     private View shadowView;
     private String sortType;
     private int clickedPosition = NOT_ACTIVE;
@@ -754,12 +756,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onItemClick(Success success, int position, TextView titleTv, TextView categoryTv, TextView dateStartedTv, TextView dateEndedTv, ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            showSuccessAnimation(success, titleTv, categoryTv, dateStartedTv, dateEndedTv, categoryIv, importanceIv, constraintLayout, cardView);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            showSuccessAnimation(success, titleTv, categoryTv, dateStartedTv, dateEndedTv, categoryIv, importanceIv, constraintLayout, cardView);
+//
+//        } else {
+//            showSuccess(success);
+//        }
+        Intent intent = new Intent(MainActivity.this, ScreenSlidePagerActivity.class);
+        intent.putParcelableArrayListExtra("SUCCESSES", (ArrayList<? extends Parcelable>) successes);
+        startActivity(intent);
 
-        } else {
-            showSuccess(success);
-        }
+        //TODO change fragment
+
         this.clickedPosition = position;
 
     }

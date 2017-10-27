@@ -1,11 +1,9 @@
 package com.theandroiddev.mywins.UI.Adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +15,6 @@ import com.theandroiddev.mywins.UI.Models.SuccessImage;
 
 import java.io.File;
 import java.util.List;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by grazyna on 2017-08-23.
@@ -51,6 +47,7 @@ public class SuccessImageAdapter extends RecyclerView.Adapter<SuccessImageAdapte
         if (successImages.get(position).getImagePath() == null) {
             if (position == 0) {
                 holder.successImageIv.setImageResource(R.drawable.ic_action_add);
+                //holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary));
                 holder.bind(successImages.get(position), position, listener);
 
             }
@@ -61,18 +58,6 @@ public class SuccessImageAdapter extends RecyclerView.Adapter<SuccessImageAdapte
 
         }
 
-    }
-
-    private Bitmap getbitpam(String path) {
-        Bitmap imgthumBitmap = null;
-        try {
-
-
-        } catch (Exception ex) {
-            Log.d(TAG, Log.getStackTraceString(ex));
-
-        }
-        return imgthumBitmap;
     }
 
 

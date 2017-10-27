@@ -30,7 +30,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -51,7 +50,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.view.Gravity.TOP;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.CLICK_LONG;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.CLICK_SHORT;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.DATE_ENDED_EMPTY;
@@ -124,10 +122,10 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
 
         Snackbar snackbar = Snackbar
                 .make(editSuccessLayout, SNACK_IMAGE_REMOVED, Snackbar.LENGTH_LONG);
-        View view = snackbar.getView();
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) view.getLayoutParams();
-        params.gravity = TOP;
-        view.setLayoutParams(params);
+//        View view = snackbar.getView();
+//        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) view.getLayoutParams();
+//        params.gravity = TOP;
+//        view.setLayoutParams(params);
         snackbar.setAction(SNACK_UNDO, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -176,6 +174,16 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         initRecycler();
         initViews();
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (editDescriptionEt.hasFocus()) {
+            editDescriptionEt.clearFocus();
+        } else {
+            super.onBackPressed();
+
+        }
     }
 
     private void getSuccessImages(int successId, String searchTerm, String sort) {

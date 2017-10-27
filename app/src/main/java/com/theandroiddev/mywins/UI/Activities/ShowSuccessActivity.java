@@ -1,6 +1,7 @@
 package com.theandroiddev.mywins.UI.Activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -22,6 +23,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.theandroiddev.mywins.R;
 import com.theandroiddev.mywins.Storage.DBAdapter;
 import com.theandroiddev.mywins.UI.Adapters.SuccessImageAdapter;
@@ -58,6 +63,16 @@ public class ShowSuccessActivity extends AppCompatActivity implements SuccessIma
         this.drawableSelector = new DrawableSelector(this);
     }
 
+    public static void initImageLoader(Context context) {
+        ImageLoaderConfiguration.Builder config = new ImageLoaderConfiguration.Builder(context);
+        config.threadPriority(Thread.NORM_PRIORITY - 2);
+        config.denyCacheImageMultipleSizesInMemory();
+        config.diskCacheFileNameGenerator(new Md5FileNameGenerator());
+        config.diskCacheSize(50 * 1024 * 1024);
+        config.tasksProcessingOrder(QueueProcessingType.LIFO);
+        ImageLoader.getInstance().init(config.build());
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -82,6 +97,8 @@ public class ShowSuccessActivity extends AppCompatActivity implements SuccessIma
                 editSuccess();
             }
         });
+
+        initImageLoader(this);
 
         initFab(fab);
         initRecycler();
@@ -196,7 +213,6 @@ public class ShowSuccessActivity extends AppCompatActivity implements SuccessIma
         dbAdapter.editSuccess(showSuccess);
         dbAdapter.closeDB();
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
