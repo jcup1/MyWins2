@@ -16,6 +16,8 @@
     <string name="action_date_ended">Sort by date ended</string>
     <string name="action_title">Sort by title</string>
 
+    <string name="descr_image">image</string>
+
 
     <string name="transition_title">title</string>
     <string name="transition_category_iv">category_iv</string>

@@ -1,4 +1,8 @@
 <resources>
+    <dimen name="filter_size">74dp</dimen>
+    <dimen name="text_size">12sp</dimen>
+    <dimen name="touch_default">45dp</dimen>
+
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="single_margin">8dp</dimen>
 
