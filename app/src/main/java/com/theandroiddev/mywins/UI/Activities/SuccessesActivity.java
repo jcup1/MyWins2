@@ -15,7 +15,6 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
@@ -52,6 +51,7 @@ import com.theandroiddev.mywins.UI.Adapters.SuccessAdapter;
 import com.theandroiddev.mywins.UI.Helpers.Constants;
 import com.theandroiddev.mywins.UI.Models.Success;
 import com.theandroiddev.mywins.UI.Models.SuccessImage;
+import com.theandroiddev.mywins.UI.Views.SuccessesActivityView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -96,10 +96,10 @@ import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyStartDate;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.dummySuccessesSize;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyTitle;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, SuccessAdapter.OnItemClickListener {
+public class SuccessesActivity extends AppCompatActivity implements View.OnClickListener, SuccessAdapter.OnItemClickListener, SuccessesActivityView {
 
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "SuccessesActivityActivi";
     public static boolean dbUpdate;
     SharedPreferences prefs = null;
     FloatingActionsMenu floatingActionsMenu;
@@ -133,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private View shadowView;
     private String sortType;
     private int clickedPosition = NOT_ACTIVE;
+    private SuccessesActivityPresenter presenter;
 
     @Override
     protected void onPause() {
@@ -182,13 +183,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.show_toolbar);
+        Toolbar toolbar = findViewById(R.id.show_toolbar);
         setSupportActionBar(toolbar);
         initFABs();
         initRecycler();
         initCircularReveal();
         initVariables();
         prefs = getSharedPreferences(PACKAGE_NAME, MODE_PRIVATE);
+
+        presenter = new SuccessesActivityPresenter(this, null);
 
     }
 
@@ -249,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         shadowView = findViewById(R.id.shadow_view);
         shadowView.setVisibility(View.GONE);
 
-        floatingActionsMenu = (FloatingActionsMenu) findViewById(R.id.multiple_actions);
+        floatingActionsMenu = findViewById(R.id.multiple_actions);
         floatingActionsMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
             @Override
             public void onMenuExpanded() {
@@ -343,22 +346,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        Log.e(TAG, "onResume: " + "RESUME");
-//        getSuccesses();
-//
-//    }
-
 
     private void initFABs() {
 
-        final com.getbase.floatingactionbutton.FloatingActionButton actionLearn = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.action_learn);
-        final com.getbase.floatingactionbutton.FloatingActionButton actionSport = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.action_sport);
-        final com.getbase.floatingactionbutton.FloatingActionButton actionJourney = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.action_journey);
-        final com.getbase.floatingactionbutton.FloatingActionButton actionBusiness = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.action_money);
-        final com.getbase.floatingactionbutton.FloatingActionButton actionVideo = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.action_video);
+        final com.getbase.floatingactionbutton.FloatingActionButton actionLearn = findViewById(R.id.action_learn);
+        final com.getbase.floatingactionbutton.FloatingActionButton actionSport = findViewById(R.id.action_sport);
+        final com.getbase.floatingactionbutton.FloatingActionButton actionJourney = findViewById(R.id.action_journey);
+        final com.getbase.floatingactionbutton.FloatingActionButton actionBusiness = findViewById(R.id.action_money);
+        final com.getbase.floatingactionbutton.FloatingActionButton actionVideo = findViewById(R.id.action_video);
 
         actionLearn.setSize(com.getbase.floatingactionbutton.FloatingActionButton.SIZE_MINI);
         actionSport.setSize(com.getbase.floatingactionbutton.FloatingActionButton.SIZE_MINI);
@@ -417,8 +412,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initRecycler() {
 
-        mainConstraint = (ConstraintLayout) findViewById(R.id.main_constraint);
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        mainConstraint = findViewById(R.id.main_constraint);
+        recyclerView = findViewById(R.id.recycler_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
@@ -644,7 +639,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     void categoryPicked(String categoryName) {
 
-        Intent intent = new Intent(MainActivity.this, InsertSuccessActivity.class);
+        Intent intent = new Intent(SuccessesActivity.this, InsertSuccessActivity.class);
         intent.putExtra("categoryName", categoryName);
         startActivityForResult(intent, REQUEST_CODE_INSERT);
         floatingActionsMenu.collapse();
@@ -762,8 +757,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        } else {
 //            showSuccess(success);
 //        }
-        Intent intent = new Intent(MainActivity.this, ScreenSlidePagerActivity.class);
-        intent.putParcelableArrayListExtra("SUCCESSES", (ArrayList<? extends Parcelable>) successes);
+        Intent intent = new Intent(SuccessesActivity.this, ScreenSlidePagerActivity.class);
+        intent.putParcelableArrayListExtra("SUCCESSES", successes);
         startActivity(intent);
 
         //TODO change fragment
@@ -775,7 +770,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onLongItemClick(final int position, CardView cardview) {
         PopupMenu popupMenu;
-        popupMenu = new PopupMenu(MainActivity.this, cardview);
+        popupMenu = new PopupMenu(SuccessesActivity.this, cardview);
 
         popupMenu.getMenuInflater().inflate(R.menu.menu_item, popupMenu.getMenu());
         popupMenu.show();
@@ -797,7 +792,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void showSuccess(Success success) {
 
-        Intent showSuccessIntent = new Intent(MainActivity.this, ShowSuccessActivity.class);
+        Intent showSuccessIntent = new Intent(SuccessesActivity.this, ShowSuccessActivity.class);
 
         showSuccessIntent.putExtra(EXTRA_SUCCESS_ITEM, success);
 
@@ -809,7 +804,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void showSuccessAnimation(Success success, TextView titleTv, TextView categoryTv, TextView dateStartedTv, TextView dateEndedTv, ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView) {
 
 
-        Intent showSuccessIntent = new Intent(MainActivity.this, ShowSuccessActivity.class);
+        Intent showSuccessIntent = new Intent(SuccessesActivity.this, ShowSuccessActivity.class);
 
 
         showSuccessIntent.putExtra(EXTRA_SUCCESS_ITEM, success);
@@ -831,4 +826,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    @Override
+    public void displaySuccesses(List<Success> successList) {
+
+    }
+
+    @Override
+    public void displayNoSuccesses() {
+
+    }
 }
