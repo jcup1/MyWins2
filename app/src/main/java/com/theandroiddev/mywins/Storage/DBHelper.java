@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.theandroiddev.mywins.UI.Activities.MainActivity;
+import com.theandroiddev.mywins.UI.Activities.SuccessesActivity;
 import com.theandroiddev.mywins.UI.Helpers.Constants;
 
 /**
@@ -30,7 +30,7 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(Constants.DROP_TB_IMAGES);
         onCreate(sqLiteDatabase);
 
-        MainActivity.dbUpdate = true;
+        SuccessesActivity.dbUpdate = true;
 
     }
 

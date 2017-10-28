@@ -42,6 +42,10 @@ public class Success implements Parcelable {
         id = in.readInt();
     }
 
+    public Success() {
+
+    }
+
     public String getTitle() {
         return title;
     }
