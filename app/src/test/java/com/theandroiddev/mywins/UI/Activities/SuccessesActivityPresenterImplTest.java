@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 /**
  * Created by jakub on 28.10.17.
  */
-public class SuccessesActivityPresenterTest {
+public class SuccessesActivityPresenterImplTest {
 
     private final ArrayList<Success> successList = new ArrayList<>();
     @Rule
@@ -30,11 +30,11 @@ public class SuccessesActivityPresenterTest {
     SuccessesRepository successesRepository;
     @Mock
     SuccessesActivityView view;
-    SuccessesActivityPresenter presenter;
+    SuccessesActivityPresenterImpl presenter;
 
     @Before
     public void setUp() {
-        presenter = new SuccessesActivityPresenter(view, successesRepository);
+        presenter = new SuccessesActivityPresenterImpl(view, successesRepository);
         successList.add(new Success());
         successList.add(new Success());
     }
@@ -44,7 +44,7 @@ public class SuccessesActivityPresenterTest {
 
         when(successesRepository.getSuccessesWithNewSorting("", SORT_DATE_ADDED, true)).thenReturn(new ArrayList<Success>());
 
-        presenter.loadDefaultSuccesses();
+        presenter.loadSuccesses();
 
         verify(view).displayNoDefaultSuccesses();
 
@@ -55,7 +55,7 @@ public class SuccessesActivityPresenterTest {
 
         when(successesRepository.getSuccessesWithNewSorting("", SORT_DATE_ADDED, true)).thenReturn(successList);
 
-        presenter.loadDefaultSuccesses();
+        presenter.loadSuccesses();
 
         verify(view).displayDefaultSuccesses(successList);
 

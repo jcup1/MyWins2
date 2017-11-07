@@ -10,33 +10,33 @@ import java.util.ArrayList;
 
 public class SuccessListInfo {
 
-    private ArrayList<Success> mSuccessList;
-    private ArrayList<Success> mSuccessToRemoveList;
+    private ArrayList<Success> successList;
+    private ArrayList<Success> successToRemoveList;
 
     public SuccessListInfo() {
-        mSuccessList = new ArrayList<>();
-        mSuccessToRemoveList = new ArrayList<>();
+        successList = new ArrayList<>();
+        successToRemoveList = new ArrayList<>();
     }
 
     public void clearAll() {
-        mSuccessList.clear();
-        mSuccessToRemoveList.clear();
+        successList.clear();
+        successToRemoveList.clear();
     }
 
     public ArrayList<Success> getSuccessList() {
-        return mSuccessList;
+        return successList;
     }
 
     public void setSuccessList(ArrayList<Success> successList) {
-        this.mSuccessList = successList;
+        this.successList = successList;
     }
 
     public ArrayList<Success> getSuccessToRemoveList() {
-        return mSuccessToRemoveList;
+        return successToRemoveList;
     }
 
     public void setSuccessToRemoveList(ArrayList<Success> successToRemoveList) {
-        this.mSuccessToRemoveList = successToRemoveList;
+        this.successToRemoveList = successToRemoveList;
     }
 
 
