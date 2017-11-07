@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins.Storage;
+package com.theandroiddev.mywins.local;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -12,7 +12,22 @@ import com.theandroiddev.mywins.UI.Models.SuccessImage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+
+import static com.theandroiddev.mywins.UI.Helpers.Constants.ADD_ON_TOP;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.CATEGORY_VALUE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.DATE_ENDED_VALUE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.DATE_STARTED_VALUE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.DESCRIPTION_VALUE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.IMPORTANCE_VALUE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.SUCCESS_ID_VALUE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.TITLE_VALUE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyCategory;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyDescription;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyEndDate;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyImportance;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyStartDate;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.dummySuccessesSize;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyTitle;
 
 /**
  * Created by jakub on 14.08.17.
@@ -28,6 +43,7 @@ public class DBAdapter {
 
         this.context = context;
         dbHelper = new DBHelper(context);
+        openDB();
 
     }
 
@@ -70,7 +86,7 @@ public class DBAdapter {
         return cursor;
     }
 
-    public void removeSuccess(List<Success> successesToRemove) {
+    public void removeSuccess(ArrayList<Success> successesToRemove) {
         Log.d(TAG, "toRemove:" + Arrays.toString(successesToRemove.toArray()));
 
 
@@ -96,7 +112,7 @@ public class DBAdapter {
         sqLiteDatabase.update(Constants.TB_NAME_SUCCESSES, contentValues, Constants.SUCCESS_ID + "=" + showSuccess.getId(), null);
     }
 
-    private void addSuccessImages(List<SuccessImage> successImage) {
+    private void addSuccessImages(ArrayList<SuccessImage> successImage) {
 
         for (int i = 1; i < successImage.size(); i++) {
 
@@ -109,9 +125,9 @@ public class DBAdapter {
 
     }
 
-    public List<SuccessImage> retrieveSuccessImages(int successId) {
+    public ArrayList<SuccessImage> retrieveSuccessImages(int successId) {
 
-        List<SuccessImage> successImages = new ArrayList<>();
+        ArrayList<SuccessImage> successImages = new ArrayList<>();
 
         String sql = "SELECT * FROM " + Constants.TB_NAME_IMAGES + " WHERE " + Constants.SUCCESS_ID + "=" + successId;
         Cursor cursor = sqLiteDatabase.rawQuery(sql, null);
@@ -128,7 +144,7 @@ public class DBAdapter {
         return successImages;
     }
 
-    public void editSuccessImages(List<SuccessImage> successImages, int successId) {
+    public void editSuccessImages(ArrayList<SuccessImage> successImages, int successId) {
 
         deleteImages(successId);
         addSuccessImages(successImages);
@@ -161,6 +177,51 @@ public class DBAdapter {
 
 
         return null;
+    }
+
+    public ArrayList<Success> getDefaultSuccesses() {
+
+        ArrayList<Success> successList = new ArrayList<>();
+        new Constants();
+
+        for (int i = 0; i < dummySuccessesSize; i++) {
+            successList.add(new Success(dummyTitle.get(i), dummyCategory.get(i), dummyImportance.get(i), dummyDescription.get(i),
+                    dummyStartDate.get(i), dummyEndDate.get(i)));
+            Log.e(TAG, "insertDummyData: " + i);
+        }
+
+        return successList;
+    }
+
+    public ArrayList<Success> getSuccesses(String searchTerm, String sortType,
+                                           boolean isSortingAscending) {
+
+        Success success;
+        ArrayList<Success> successList = new ArrayList<>();
+        Cursor cursor = retrieveSuccess(searchTerm, sortType);
+
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(SUCCESS_ID_VALUE);
+            String title = cursor.getString(TITLE_VALUE);
+            String category = cursor.getString(CATEGORY_VALUE);
+            int importance = cursor.getInt(IMPORTANCE_VALUE);
+            String description = cursor.getString(DESCRIPTION_VALUE);
+            String dateStarted = cursor.getString(DATE_STARTED_VALUE);
+            String dateEnded = cursor.getString(DATE_ENDED_VALUE);
+
+            success = new Success(title, category, importance, description, dateStarted, dateEnded);
+            success.setId(id);
+            if (isSortingAscending) {
+                successList.add(ADD_ON_TOP, success);
+            } else {
+                successList.add(success); //default = add on bottom
+            }
+
+        }
+
+        cursor.close();
+
+        return successList;
     }
 
 }
