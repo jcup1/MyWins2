@@ -4,82 +4,61 @@ import com.theandroiddev.mywins.UI.Models.Success;
 import com.theandroiddev.mywins.UI.Views.SuccessesActivityView;
 import com.theandroiddev.mywins.UI.repositories.SuccessesRepository;
 
-import junit.framework.Assert;
-
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.ArrayList;
+
+import static com.theandroiddev.mywins.UI.Helpers.Constants.SORT_DATE_ADDED;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by jakub on 28.10.17.
  */
 public class SuccessesActivityPresenterTest {
 
-    @Test
-    public void shouldPassSuccessesToView() {
+    private final ArrayList<Success> successList = new ArrayList<>();
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
 
-        //given
-        SuccessesActivityView view = new MockView();
-        SuccessesRepository successesRepository = new MockSuccessesRepository(true);
+    @Mock
+    SuccessesRepository successesRepository;
+    @Mock
+    SuccessesActivityView view;
+    SuccessesActivityPresenter presenter;
 
-        //when
-        SuccessesActivityPresenter presenter = new SuccessesActivityPresenter(view, successesRepository);
-        presenter.loadSuccesses();
-
-        //then
-        Assert.assertEquals(true, ((MockView) view).displaySuccessesWithSuccessesCalled);
-
-
+    @Before
+    public void setUp() {
+        presenter = new SuccessesActivityPresenter(view, successesRepository);
+        successList.add(new Success());
+        successList.add(new Success());
     }
 
     @Test
-    public void shouldHandleNoSuccessesFound() {
+    public void shouldNotPassDefaultSuccessesToView() {
 
-        SuccessesActivityView view = new MockView();
-        SuccessesRepository successesRepository = new MockSuccessesRepository(false);
+        when(successesRepository.getSuccessesWithNewSorting("", SORT_DATE_ADDED, true)).thenReturn(new ArrayList<Success>());
 
-        SuccessesActivityPresenter presenter = new SuccessesActivityPresenter(view, successesRepository);
-        presenter.loadSuccesses();
+        presenter.loadDefaultSuccesses();
 
-        Assert.assertEquals(true, ((MockView) view).displaySuccessesWithNoSuccessesCalled);
+        verify(view).displayNoDefaultSuccesses();
 
     }
 
-    private class MockView implements SuccessesActivityView {
+    @Test
+    public void shouldPassDefaultSuccessesToView() {
 
-        boolean displaySuccessesWithSuccessesCalled;
-        boolean displaySuccessesWithNoSuccessesCalled;
+        when(successesRepository.getSuccessesWithNewSorting("", SORT_DATE_ADDED, true)).thenReturn(successList);
 
-        @Override
-        public void displaySuccesses(List<Success> successList) {
-            if (successList.size() == 3) displaySuccessesWithSuccessesCalled = true;
-        }
+        presenter.loadDefaultSuccesses();
 
-        @Override
-        public void displayNoSuccesses() {
-            displaySuccessesWithNoSuccessesCalled = true;
-        }
-    }
+        verify(view).displayDefaultSuccesses(successList);
 
-    private class MockSuccessesRepository implements SuccessesRepository {
-
-        private boolean returnSomeBooks;
-
-        public MockSuccessesRepository(boolean returnSomeBooks) {
-            this.returnSomeBooks = returnSomeBooks;
-        }
-
-        @Override
-        public List<Success> getSuccesses() {
-
-            if (returnSomeBooks) {
-                return Arrays.asList(new Success(), new Success(), new Success());
-            } else {
-                return Collections.emptyList();
-            }
-        }
     }
 
 

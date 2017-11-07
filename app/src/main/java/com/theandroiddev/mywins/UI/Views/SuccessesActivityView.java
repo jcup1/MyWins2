@@ -2,7 +2,7 @@ package com.theandroiddev.mywins.UI.Views;
 
 import com.theandroiddev.mywins.UI.Models.Success;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by jakub on 28.10.17.
@@ -10,7 +10,11 @@ import java.util.List;
 
 public interface SuccessesActivityView {
 
-    void displaySuccesses(List<Success> successList);
+    void displayDefaultSuccesses(ArrayList<Success> successList);
+
+    void displayNoDefaultSuccesses();
 
     void displayNoSuccesses();
+
+    void displaySuccesses(ArrayList<Success> successList);
 }

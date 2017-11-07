@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins.Storage;
+package com.theandroiddev.mywins.local;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,7 +13,7 @@ import com.theandroiddev.mywins.UI.Helpers.Constants;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    DBHelper(Context context) {
+    public DBHelper(Context context) {
         super(context, Constants.DB_NAME, null, Constants.DB_VERSION);
     }
 

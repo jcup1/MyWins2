@@ -28,11 +28,11 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.theandroiddev.mywins.R;
-import com.theandroiddev.mywins.Storage.DBAdapter;
 import com.theandroiddev.mywins.UI.Adapters.SuccessImageAdapter;
 import com.theandroiddev.mywins.UI.Helpers.DrawableSelector;
 import com.theandroiddev.mywins.UI.Models.Success;
 import com.theandroiddev.mywins.UI.Models.SuccessImage;
+import com.theandroiddev.mywins.local.DBAdapter;
 
 import java.util.ArrayList;
 
@@ -87,10 +87,10 @@ public class ShowSuccessActivity extends AppCompatActivity implements SuccessIma
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_success);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.show_toolbar);
+        Toolbar toolbar = findViewById(R.id.show_toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.show_fab);
+        FloatingActionButton fab = findViewById(R.id.show_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -111,7 +111,7 @@ public class ShowSuccessActivity extends AppCompatActivity implements SuccessIma
 
     private void initRecycler() {
 
-        recyclerView = (RecyclerView) findViewById(R.id.show_image_recycler_view);
+        recyclerView = findViewById(R.id.show_image_recycler_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
@@ -161,14 +161,14 @@ public class ShowSuccessActivity extends AppCompatActivity implements SuccessIma
 
     private void initViews() {
 
-        showConstraintLayout = (ConstraintLayout) findViewById(R.id.show_constraint_layout);
-        showTitle = (TextView) findViewById(R.id.item_title);
-        showCategory = (TextView) findViewById(R.id.item_category);
-        showCategoryIv = (ImageView) findViewById(R.id.item_category_iv);
-        showImportanceIv = (ImageView) findViewById(R.id.item_importance_iv);
-        showDescription = (TextView) findViewById(R.id.show_description);
-        showDateStarted = (TextView) findViewById(R.id.item_date_started);
-        showDateEnded = (TextView) findViewById(R.id.item_date_ended);
+        showConstraintLayout = findViewById(R.id.show_constraint_layout);
+        showTitle = findViewById(R.id.item_title);
+        showCategory = findViewById(R.id.item_category);
+        showCategoryIv = findViewById(R.id.item_category_iv);
+        showImportanceIv = findViewById(R.id.item_importance_iv);
+        showDescription = findViewById(R.id.show_description);
+        showDateStarted = findViewById(R.id.item_date_started);
+        showDateEnded = findViewById(R.id.item_date_ended);
 
         s = getIntent().getParcelableExtra(EXTRA_SUCCESS_ITEM);
 

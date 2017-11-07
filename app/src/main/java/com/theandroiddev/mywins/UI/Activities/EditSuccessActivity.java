@@ -38,13 +38,13 @@ import com.esafirm.imagepicker.features.camera.CameraModule;
 import com.esafirm.imagepicker.features.camera.ImmediateCameraModule;
 import com.esafirm.imagepicker.features.camera.OnImageReadyListener;
 import com.theandroiddev.mywins.R;
-import com.theandroiddev.mywins.Storage.DBAdapter;
 import com.theandroiddev.mywins.UI.Adapters.CustomImagePickerAdapter;
 import com.theandroiddev.mywins.UI.Adapters.SuccessImageAdapter;
 import com.theandroiddev.mywins.UI.Helpers.DateHelper;
 import com.theandroiddev.mywins.UI.Helpers.DrawableSelector;
 import com.theandroiddev.mywins.UI.Models.Success;
 import com.theandroiddev.mywins.UI.Models.SuccessImage;
+import com.theandroiddev.mywins.local.DBAdapter;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -84,7 +84,7 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
     private boolean noDistractionMode;
     private int selectedImageNumber = -1;
     private RecyclerView recyclerView;
-    private List<SuccessImage> successImages;
+    private ArrayList<SuccessImage> successImages;
     private SuccessImageAdapter successImageAdapter;
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.UP | ItemTouchHelper.DOWN) {
 
@@ -152,12 +152,12 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_success);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.edit_toolbar);
+        Toolbar toolbar = findViewById(R.id.edit_toolbar);
         setSupportActionBar(toolbar);
         noDistractionMode = false;
         initAnimation();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.edit_fab);
+        FloatingActionButton fab = findViewById(R.id.edit_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -244,7 +244,7 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
 
     private void initRecycler() {
 
-        recyclerView = (RecyclerView) findViewById(R.id.edit_image_recycler_view);
+        recyclerView = findViewById(R.id.edit_image_recycler_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
@@ -260,16 +260,16 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         this.dateHelper = new DateHelper(this);
         this.dbAdapter = new DBAdapter(this);
 
-        editTitleEt = (EditText) findViewById(R.id.edit_title);
-        editCategoryTv = (TextView) findViewById(R.id.edit_category);
-        editCategoryIv = (ImageView) findViewById(R.id.edit_category_iv);
-        editImportanceIv = (ImageView) findViewById(R.id.edit_importance_iv);
-        editDescriptionEt = (EditText) findViewById(R.id.edit_description);
-        dateStartedTv = (TextView) findViewById(R.id.edit_date_started);
-        dateEndedTv = (TextView) findViewById(R.id.edit_date_ended);
+        editTitleEt = findViewById(R.id.edit_title);
+        editCategoryTv = findViewById(R.id.edit_category);
+        editCategoryIv = findViewById(R.id.edit_category_iv);
+        editImportanceIv = findViewById(R.id.edit_importance_iv);
+        editDescriptionEt = findViewById(R.id.edit_description);
+        dateStartedTv = findViewById(R.id.edit_date_started);
+        dateEndedTv = findViewById(R.id.edit_date_ended);
 
-        editCardBasics = (CardView) findViewById(R.id.edit_card_basic);
-        editCardImages = (CardView) findViewById(R.id.edit_card_images);
+        editCardBasics = findViewById(R.id.edit_card_basic);
+        editCardImages = findViewById(R.id.edit_card_images);
         editSuccessLayout = findViewById(R.id.edit_success_layout);
 
         editSuccess = getIntent().getParcelableExtra(EXTRA_SHOW_SUCCESS_ITEM);
@@ -421,7 +421,7 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         return (ImmediateCameraModule) cameraModule;
     }
 
-    private void printImages(List<com.esafirm.imagepicker.model.Image> images) {
+    private void printImages(ArrayList<com.esafirm.imagepicker.model.Image> images) {
         if (images == null) return;
 
         if (selectedImageNumber != 0) {
