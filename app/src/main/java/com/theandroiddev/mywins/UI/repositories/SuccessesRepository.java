@@ -2,7 +2,7 @@ package com.theandroiddev.mywins.UI.repositories;
 
 import com.theandroiddev.mywins.UI.Models.Success;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by jakub on 28.10.17.
@@ -10,7 +10,15 @@ import java.util.List;
 
 public interface SuccessesRepository {
 
-    List<Success> getSuccesses();
+//    ArrayList<Success> getDefaultSuccesses();
+//
+//    ArrayList<Success> getSuccesses(String searchText, String sortType, boolean isAscending);
 
+    void updateForDeleteSuccess(ArrayList<Success> successToRemoveList);
 
+    ArrayList<Success> getSuccessesWithNewSorting(String searchTerm, String sortType, boolean isAscending);
+
+    void registerRepository(DatabaseSuccessesRepository databaseSuccessesRepository);
+
+    void unRegisterRepository();
 }

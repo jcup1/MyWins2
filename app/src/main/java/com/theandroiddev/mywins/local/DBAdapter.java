@@ -14,12 +14,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static com.theandroiddev.mywins.UI.Helpers.Constants.ADD_ON_TOP;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.CATEGORY;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.CATEGORY_VALUE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.DATE_ENDED;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.DATE_ENDED_VALUE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.DATE_STARTED;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.DATE_STARTED_VALUE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.DESCRIPTION;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.DESCRIPTION_VALUE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.IMAGE_ID;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.IMAGE_PATH;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.IMPORTANCE;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.IMPORTANCE_VALUE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.SUCCESS_ID;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.SUCCESS_ID_VALUE;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.TB_NAME_IMAGES;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.TB_NAME_SUCCESSES;
+import static com.theandroiddev.mywins.UI.Helpers.Constants.TITLE;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.TITLE_VALUE;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyCategory;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyDescription;
@@ -58,31 +69,20 @@ public class DBAdapter {
     }
 
     public void addSuccess(Success success) {
-        Log.d(TAG, "addSuccess: " + success);
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(Constants.TITLE, success.getTitle());
-        contentValues.put(Constants.CATEGORY, success.getCategory());
-        contentValues.put(Constants.IMPORTANCE, success.getImportance());
-        contentValues.put(Constants.DESCRIPTION, success.getDescription());
-
-
-        contentValues.put(Constants.DATE_STARTED, success.getDateStarted());
-        contentValues.put(Constants.DATE_ENDED, success.getDateEnded());
-
-        sqLiteDatabase.insert(Constants.TB_NAME_SUCCESSES, Constants.SUCCESS_ID, contentValues);
+        sqLiteDatabase.insert(TB_NAME_SUCCESSES, SUCCESS_ID, getSuccessContentValues(success));
     }
 
     public Cursor retrieveSuccess(String searchTerm, String sort) {
 
-        String[] columns = {Constants.SUCCESS_ID, Constants.TITLE, Constants.CATEGORY, Constants.IMPORTANCE, Constants.DESCRIPTION, Constants.DATE_STARTED, Constants.DATE_ENDED};
+        String[] columns = {SUCCESS_ID, TITLE, CATEGORY, IMPORTANCE, DESCRIPTION, DATE_STARTED, DATE_ENDED};
         Cursor cursor;
         if (searchTerm != null && searchTerm.length() > 0) {
-            String sql = "SELECT * FROM " + Constants.TB_NAME_SUCCESSES + " WHERE " + Constants.TITLE + " LIKE '%" + searchTerm + "%'";
+            String sql = "SELECT * FROM " + TB_NAME_SUCCESSES + " WHERE " + TITLE + " LIKE '%" + searchTerm + "%'";
             cursor = sqLiteDatabase.rawQuery(sql, null);
             return cursor;
         }
-        cursor = sqLiteDatabase.query(Constants.TB_NAME_SUCCESSES, columns, null, null, null, null, sort);
+        cursor = sqLiteDatabase.query(TB_NAME_SUCCESSES, columns, null, null, null, null, sort);
         return cursor;
     }
 
@@ -92,7 +92,7 @@ public class DBAdapter {
 
         for (int i = 0; i < successesToRemove.size(); i++) {
             Log.d(TAG, "removeSuccess: " + successesToRemove.get(i).getTitle());
-            sqLiteDatabase.delete(Constants.TB_NAME_SUCCESSES, Constants.SUCCESS_ID + "=? and " + Constants.TITLE + "=?", new String[]{String.valueOf(successesToRemove.get(i).getId()), successesToRemove.get(i).getTitle()});
+            sqLiteDatabase.delete(TB_NAME_SUCCESSES, SUCCESS_ID + "=? and " + TITLE + "=?", new String[]{String.valueOf(successesToRemove.get(i).getId()), successesToRemove.get(i).getTitle()});
 
         }
         Log.d(TAG, "removeSuccess: after");
@@ -101,15 +101,7 @@ public class DBAdapter {
 
     public void editSuccess(Success showSuccess) {
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(Constants.TITLE, showSuccess.getTitle());
-        contentValues.put(Constants.CATEGORY, showSuccess.getCategory());
-        contentValues.put(Constants.IMPORTANCE, showSuccess.getImportance());
-        contentValues.put(Constants.DESCRIPTION, showSuccess.getDescription());
-        contentValues.put(Constants.DATE_STARTED, showSuccess.getDateStarted());
-        contentValues.put(Constants.DATE_ENDED, showSuccess.getDateEnded());
-
-        sqLiteDatabase.update(Constants.TB_NAME_SUCCESSES, contentValues, Constants.SUCCESS_ID + "=" + showSuccess.getId(), null);
+        sqLiteDatabase.update(TB_NAME_SUCCESSES, getSuccessContentValues(showSuccess), SUCCESS_ID + "=" + showSuccess.getId(), null);
     }
 
     private void addSuccessImages(ArrayList<SuccessImage> successImage) {
@@ -117,9 +109,9 @@ public class DBAdapter {
         for (int i = 1; i < successImage.size(); i++) {
 
             ContentValues contentValues = new ContentValues();
-            contentValues.put(Constants.IMAGE_PATH, successImage.get(i).getImagePath());
-            contentValues.put(Constants.SUCCESS_ID, successImage.get(i).getSuccessId());
-            sqLiteDatabase.insert(Constants.TB_NAME_IMAGES, Constants.IMAGE_ID, contentValues);
+            contentValues.put(IMAGE_PATH, successImage.get(i).getImagePath());
+            contentValues.put(SUCCESS_ID, successImage.get(i).getSuccessId());
+            sqLiteDatabase.insert(TB_NAME_IMAGES, IMAGE_ID, contentValues);
 
         }
 
@@ -129,7 +121,7 @@ public class DBAdapter {
 
         ArrayList<SuccessImage> successImages = new ArrayList<>();
 
-        String sql = "SELECT * FROM " + Constants.TB_NAME_IMAGES + " WHERE " + Constants.SUCCESS_ID + "=" + successId;
+        String sql = "SELECT * FROM " + TB_NAME_IMAGES + " WHERE " + SUCCESS_ID + "=" + successId;
         Cursor cursor = sqLiteDatabase.rawQuery(sql, null);
         if (cursor.moveToFirst()) {
             do {
@@ -152,13 +144,27 @@ public class DBAdapter {
     }
 
     private void deleteImages(int successId) {
-        sqLiteDatabase.execSQL("DELETE FROM " + Constants.TB_NAME_IMAGES + " WHERE " + Constants.SUCCESS_ID + " = " + successId);
+        sqLiteDatabase.execSQL("DELETE FROM " + TB_NAME_IMAGES + " WHERE " + SUCCESS_ID + " = " + successId);
 
+    }
+
+    public ArrayList<Success> getDefaultSuccesses() {
+
+        ArrayList<Success> successList = new ArrayList<>();
+        new Constants();
+
+        for (int i = 0; i < dummySuccessesSize; i++) {
+            successList.add(new Success(dummyTitle.get(i), dummyCategory.get(i), dummyImportance.get(i), dummyDescription.get(i),
+                    dummyStartDate.get(i), dummyEndDate.get(i)));
+            Log.e(TAG, "insertDummyData: " + i);
+        }
+
+        return successList;
     }
 
     public Success getSuccess(int id) {
 
-        String sql = "SELECT * FROM " + Constants.TB_NAME_SUCCESSES + " WHERE " + Constants.SUCCESS_ID + " = " + id;
+        String sql = "SELECT * FROM " + TB_NAME_SUCCESSES + " WHERE " + SUCCESS_ID + " = " + id;
         Cursor cursor = sqLiteDatabase.rawQuery(sql, null);
 
         if (cursor.moveToFirst()) {
@@ -177,20 +183,6 @@ public class DBAdapter {
 
 
         return null;
-    }
-
-    public ArrayList<Success> getDefaultSuccesses() {
-
-        ArrayList<Success> successList = new ArrayList<>();
-        new Constants();
-
-        for (int i = 0; i < dummySuccessesSize; i++) {
-            successList.add(new Success(dummyTitle.get(i), dummyCategory.get(i), dummyImportance.get(i), dummyDescription.get(i),
-                    dummyStartDate.get(i), dummyEndDate.get(i)));
-            Log.e(TAG, "insertDummyData: " + i);
-        }
-
-        return successList;
     }
 
     public ArrayList<Success> getSuccesses(String searchTerm, String sortType,
@@ -223,5 +215,17 @@ public class DBAdapter {
 
         return successList;
     }
+
+    private ContentValues getSuccessContentValues(Success success) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(TITLE, success.getTitle());
+        contentValues.put(CATEGORY, success.getCategory());
+        contentValues.put(IMPORTANCE, success.getImportance());
+        contentValues.put(DESCRIPTION, success.getDescription());
+        contentValues.put(DATE_STARTED, success.getDateStarted());
+        contentValues.put(DATE_ENDED, success.getDateEnded());
+        return contentValues;
+    }
+
 
 }
