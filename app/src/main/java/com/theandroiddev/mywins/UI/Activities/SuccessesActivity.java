@@ -41,6 +41,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.theandroiddev.mywins.MyWinsApplication;
 import com.theandroiddev.mywins.R;
 import com.theandroiddev.mywins.SuccessListInfo;
 import com.theandroiddev.mywins.UI.Adapters.SuccessAdapter;
@@ -53,6 +54,10 @@ import com.theandroiddev.mywins.local.DBAdapter;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.codetail.animation.ViewAnimationUtils;
 
 import static com.theandroiddev.mywins.UI.Helpers.Constants.CATEGORY_JOURNEY;
@@ -85,21 +90,28 @@ import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyTitle;
 
 public class SuccessesActivity extends AppCompatActivity implements View.OnClickListener, SuccessAdapter.OnItemClickListener, SuccessesActivityView {
 
+    private static final String EXTRA_TRIGGER_SYNC_FLAG =
+            "com.theandroiddev.mywins.UI.Activities.SuccessesActivity.EXTRA_TRIGGER_SYNC_FLAG";
+
     private static final String TAG = "SuccessesActivityActivi";
     public static boolean dbUpdate;
     SharedPreferences prefs = null;
     FloatingActionsMenu floatingActionsMenu;
     boolean isSortingAscending;
     DBAdapter dbAdapter;
-    private MenuItem mSearchAction;
+    SuccessAdapter successAdapter;
+    @Inject
+    SuccessesActivityPresenter presenter;
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
+    @BindView(R.id.main_constraint)
+    ConstraintLayout constraintLayout;
+    private MenuItem searchAction;
     private boolean isSearchOpened = false;
     private EditText searchBox;
     private ConstraintLayout mainConstraint;
-    private RecyclerView recyclerView;
     private ArrayList<Success> successList;
     private ArrayList<Success> successToRemoveList;
-    private ArrayList<SuccessImage> dummySuccessImages;
-    private SuccessAdapter successAdapter;
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
         @Override
@@ -115,12 +127,25 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
         }
     };
-
+    private ArrayList<SuccessImage> dummySuccessImageList;
     private View shadowView;
     private String sortType;
     private int clickedPosition = NOT_ACTIVE;
-    private SuccessesActivityPresenter presenter;
     private SuccessListInfo mSuccessListInfo;
+
+    /**
+     * Return an Intent to start this Activity.
+     * triggerDataSyncOnCreate allows disabling the background sync service onCreate. Should
+     * only be set to false during testing.
+     */
+    public static Intent getStartIntent(Context context, boolean triggerDataSyncOnCreate) {
+        Intent intent = new Intent(context, SuccessesActivity.class);
+        intent.putExtra(EXTRA_TRIGGER_SYNC_FLAG, triggerDataSyncOnCreate);
+        return intent;
+    }
+
+
+
 
     @Override
     protected void onPause() {
@@ -150,7 +175,7 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        mSearchAction = menu.findItem(R.id.action_search);
+        searchAction = menu.findItem(R.id.action_search);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -173,17 +198,29 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.show_toolbar);
 
+        ((MyWinsApplication) getApplication()).getAppComponent().inject(this);
+
+        ButterKnife.bind(this);
+
         dbAdapter = new DBAdapter(this);
         setSupportActionBar(toolbar);//1
         initFABs();
         initCircularReveal();
         initRecycler();
+
+        presenter.setView(this);
+
+        //TODO TO FIX METHOD
+        //presenter.loadSuccesses();
+
+
         initVariables();
 
-        successAdapter = new SuccessAdapter(successList, R.layout.success_layout, getApplicationContext(), this);
+        successAdapter = new SuccessAdapter(R.layout.success_layout, getApplicationContext(), this);
         recyclerView.setAdapter(successAdapter);
         prefs = getSharedPreferences(PACKAGE_NAME, MODE_PRIVATE);
-        presenter = new SuccessesActivityPresenter(this, new DatabaseSuccessesRepository(getApplication()));
+        presenter = new SuccessesActivityPresenterImpl(this, new DatabaseSuccessesRepository(getApplication()));
+
 
     }
 
@@ -212,7 +249,7 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
                     dummyStartDate.get(i), dummyEndDate.get(i)));
         }
 
-        dummySuccessImages = new ArrayList<>();
+        dummySuccessImageList = new ArrayList<>();
 
         updateSuccesses();
         successAdapter.notifyDataSetChanged();
@@ -393,18 +430,9 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
     private void initRecycler() {
 
-        mainConstraint = findViewById(R.id.main_constraint);
-        recyclerView = findViewById(R.id.recycler_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
-
-        successList = new ArrayList<>();
-        successToRemoveList = new ArrayList<>();
-
-        successAdapter = new SuccessAdapter(successList, R.layout.success_layout, getApplicationContext(), this);
-        recyclerView.setAdapter(successAdapter);
-
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
@@ -537,7 +565,7 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
             }
 
-            mSearchAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_search));
+            searchAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_search));
 
             isSearchOpened = false;
             searchBox = null;
@@ -594,7 +622,7 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.showSoftInput(searchBox, InputMethodManager.SHOW_IMPLICIT);
 
-            mSearchAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_close));
+            searchAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_close));
 
             isSearchOpened = true;
         }
@@ -720,6 +748,7 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
         startActivity(intent);
 
         //TODO change fragment
+        //APP won't work because there is no adapter. I have to implement this in Activity and logic in Presenter
 
         this.clickedPosition = position;
 
@@ -802,6 +831,11 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void displaySuccesses(ArrayList<Success> successList) {
 
+    }
+
+    @Override
+    public void updateAdapterList(ArrayList<Success> successList) {
+        successAdapter.updateSuccessList(successList);
     }
 
 }

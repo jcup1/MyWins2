@@ -17,4 +17,6 @@ public interface SuccessesActivityView {
     void displayNoSuccesses();
 
     void displaySuccesses(ArrayList<Success> successList);
+
+    void updateAdapterList(ArrayList<Success> successList);
 }

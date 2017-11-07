@@ -14,6 +14,7 @@ import com.theandroiddev.mywins.R;
 import com.theandroiddev.mywins.UI.Helpers.DrawableSelector;
 import com.theandroiddev.mywins.UI.Models.Success;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,14 +24,14 @@ import java.util.List;
 
 public class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {
 
-    private List<Success> successes;
+    private List<Success> successList;
     private OnItemClickListener listener;
     private int itemLayout;
     private Context context;
     private DrawableSelector drawableSelector;
 
-    public SuccessAdapter(List<Success> successes, int itemLayout, Context context, OnItemClickListener listener) {
-        this.successes = successes;
+    public SuccessAdapter(int itemLayout, Context context, OnItemClickListener listener) {
+        this.successList = new ArrayList<>();
         this.itemLayout = itemLayout;
         this.context = context;
         this.listener = listener;
@@ -47,20 +48,25 @@ public class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        holder.titleTv.setText(successes.get(position).getTitle());
-        holder.categoryTv.setText(successes.get(position).getCategory());
-        holder.dateStartedTv.setText(successes.get(position).getDateStarted());
-        holder.dateEndedTv.setText(successes.get(position).getDateEnded());
-        drawableSelector.selectCategoryImage(holder.categoryIv, successes.get(position).getCategory(), holder.categoryTv);
-        drawableSelector.selectImportanceImage(holder.importanceIv, successes.get(position).getImportance());
-        holder.bind(successes.get(position), listener, position);
+        holder.titleTv.setText(successList.get(position).getTitle());
+        holder.categoryTv.setText(successList.get(position).getCategory());
+        holder.dateStartedTv.setText(successList.get(position).getDateStarted());
+        holder.dateEndedTv.setText(successList.get(position).getDateEnded());
+        drawableSelector.selectCategoryImage(holder.categoryIv, successList.get(position).getCategory(), holder.categoryTv);
+        drawableSelector.selectImportanceImage(holder.importanceIv, successList.get(position).getImportance());
+        holder.bind(successList.get(position), listener, position);
 
 
     }
 
     @Override
     public int getItemCount() {
-        return successes.size();
+        return successList.size();
+    }
+
+    public void updateSuccessList(ArrayList<Success> successList) {
+        this.successList = successList;
+        notifyDataSetChanged();
     }
 
 

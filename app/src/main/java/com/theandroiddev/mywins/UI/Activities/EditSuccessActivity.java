@@ -77,14 +77,14 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
     DateHelper dateHelper;
     ImagePicker imagePicker;
     private Animation animShow, animHide;
-    private ArrayList<com.esafirm.imagepicker.model.Image> images = new ArrayList<>();
+    private ArrayList<com.esafirm.imagepicker.model.Image> imageList = new ArrayList<>();
     private CameraModule cameraModule;
 
 
     private boolean noDistractionMode;
     private int selectedImageNumber = -1;
     private RecyclerView recyclerView;
-    private ArrayList<SuccessImage> successImages;
+    private ArrayList<SuccessImage> successImageList;
     private SuccessImageAdapter successImageAdapter;
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.UP | ItemTouchHelper.DOWN) {
 
@@ -117,7 +117,7 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
     }
 
     private void showSnackbar(final int position) {
-        final SuccessImage successImage = successImages.get(position);
+        final SuccessImage successImage = successImageList.get(position);
 
 
         Snackbar snackbar = Snackbar
@@ -138,12 +138,12 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
     }
 
     private void sendToRemoveQueue(SuccessImage successImage, int position) {
-        successImages.remove(position);
+        successImageList.remove(position);
         successImageAdapter.notifyItemRemoved(position);
     }
 
     private void undoToRemove(SuccessImage successImage, int position) {
-        successImages.add(position, successImage);
+        successImageList.add(position, successImage);
         successImageAdapter.notifyItemInserted(position);
         recyclerView.scrollToPosition(position);
     }
@@ -188,14 +188,14 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
 
     private void getSuccessImages(int successId, String searchTerm, String sort) {
 
-        successImages = new ArrayList<>();
-        successImages.clear();
+        successImageList = new ArrayList<>();
+        successImageList.clear();
         dbAdapter.openDB();
-        successImages.addAll(dbAdapter.retrieveSuccessImages(successId));
+        successImageList.addAll(dbAdapter.retrieveSuccessImages(successId));
         dbAdapter.closeDB();
-        successImages.add(0, addImageIv());
+        successImageList.add(0, addImageIv());
 
-        successImageAdapter = new SuccessImageAdapter(successImages, this, R.layout.success_image_layout, this);
+        successImageAdapter = new SuccessImageAdapter(successImageList, this, R.layout.success_image_layout, this);
         recyclerView.setAdapter(successImageAdapter);
         successImageAdapter.notifyDataSetChanged();
     }
@@ -273,7 +273,7 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         editSuccessLayout = findViewById(R.id.edit_success_layout);
 
         editSuccess = getIntent().getParcelableExtra(EXTRA_SHOW_SUCCESS_ITEM);
-        successImages = getIntent().getParcelableArrayListExtra(EXTRA_SHOW_SUCCESS_IMAGES);
+        successImageList = getIntent().getParcelableArrayListExtra(EXTRA_SHOW_SUCCESS_IMAGES);
 
         editTitleEt.setTag(editSuccess.getId());
         editTitleEt.setText(editSuccess.getTitle());
@@ -371,7 +371,7 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
 
     private void saveImages(int successId) {
         dbAdapter.openDB();
-        dbAdapter.editSuccessImages(successImages, successId);
+        dbAdapter.editSuccessImages(successImageList, successId);
         dbAdapter.closeDB();
     }
 
@@ -390,8 +390,8 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         }
 
         if (requestCode == RC_CODE_PICKER && resultCode == RESULT_OK && data != null) {
-            images = (ArrayList<com.esafirm.imagepicker.model.Image>) ImagePicker.getImages(data);
-            printImages(images);
+            imageList = (ArrayList<com.esafirm.imagepicker.model.Image>) ImagePicker.getImages(data);
+            printImages(imageList);
             CustomImagePickerAdapter imagePickerAdapter = new CustomImagePickerAdapter(this);
             imagePickerAdapter.removeAllSelectedSingleClick();
             return;
@@ -401,8 +401,8 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
             getCameraModule().getImage(this, data, new OnImageReadyListener() {
                 @Override
                 public void onImageReady(List<com.esafirm.imagepicker.model.Image> resultImages) {
-                    images = (ArrayList<com.esafirm.imagepicker.model.Image>) resultImages;
-                    printImages(images);
+                    imageList = (ArrayList<com.esafirm.imagepicker.model.Image>) resultImages;
+                    printImages(imageList);
                 }
             });
         }
@@ -425,7 +425,7 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         if (images == null) return;
 
         if (selectedImageNumber != 0) {
-            successImages.get(selectedImageNumber).setImagePath(images.get(0).getPath());
+            successImageList.get(selectedImageNumber).setImagePath(images.get(0).getPath());
 
 
         } else {//selected = 0
@@ -434,7 +434,7 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
 
                     SuccessImage successImage = new SuccessImage(editSuccess.getId());
                     successImage.setImagePath(i.getPath());
-                    successImages.add(1, successImage);
+                    successImageList.add(1, successImage);
                 }
 
             successImageAdapter.notifyDataSetChanged();
@@ -480,11 +480,11 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
                 .imageTitle("Tap to select")
                 .single();
         //TODO make it .multi() without selection bug
-        imagePicker.limit(10) // max images can be selected (99 by default)
+        imagePicker.limit(10) // max imageList can be selected (99 by default)
                 .showCamera(true) // show camera or not (true by default)
                 .imageDirectory("Camera")   // captured image directory name ("Camera" folder by default)
                 .imageFullDirectory(Environment.getExternalStorageDirectory().getPath()) // can be full path
-                .origin(images) // original selected images, used in multi mode
+                .origin(imageList) // original selected imageList, used in multi mode
                 .start(RC_CODE_PICKER); // start image picker activity with request code
     }
 
