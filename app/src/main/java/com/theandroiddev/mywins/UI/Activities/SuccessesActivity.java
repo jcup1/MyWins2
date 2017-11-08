@@ -106,12 +106,6 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     RecyclerView recyclerView;
     @BindView(R.id.main_constraint)
     ConstraintLayout constraintLayout;
-    private MenuItem searchAction;
-    private boolean isSearchOpened = false;
-    private EditText searchBox;
-    private ConstraintLayout mainConstraint;
-    private ArrayList<Success> successList;
-    private ArrayList<Success> successToRemoveList;
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
         @Override
@@ -123,10 +117,17 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
 
             int pos = viewHolder.getAdapterPosition();
+            Log.d(TAG, "onSwiped: " + pos);
             toRemove(pos);
 
         }
     };
+    private MenuItem searchAction;
+    private boolean isSearchOpened = false;
+    private EditText searchBox;
+    private ConstraintLayout mainConstraint;
+    private ArrayList<Success> successList;
+    private ArrayList<Success> successToRemoveList;
     private ArrayList<SuccessImage> dummySuccessImageList;
     private View shadowView;
     private String sortType;
@@ -150,7 +151,8 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onPause() {
         super.onPause();
-        remove();
+        //remove();
+        presenter.removeSuccessesFromQueue();
 
     }
 
@@ -206,20 +208,17 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
         setSupportActionBar(toolbar);//1
         initFABs();
         initCircularReveal();
+        successAdapter = new SuccessAdapter(R.layout.success_layout, getApplicationContext(), this);
+        recyclerView.setAdapter(successAdapter);
         initRecycler();
 
         presenter.setView(this);
+        presenter.setRepository(new DatabaseSuccessesRepository(getApplication()));
 
-        //TODO TO FIX METHOD
-        //presenter.loadSuccesses();
+        presenter.loadSuccesses();
 
-
-        initVariables();
-
-        successAdapter = new SuccessAdapter(R.layout.success_layout, getApplicationContext(), this);
-        recyclerView.setAdapter(successAdapter);
         prefs = getSharedPreferences(PACKAGE_NAME, MODE_PRIVATE);
-        presenter = new SuccessesActivityPresenterImpl(this, new DatabaseSuccessesRepository(getApplication()));
+        //presenter = new SuccessesActivityPresenterImpl(this, new DatabaseSuccessesRepository(getApplication()));
 
 
     }
@@ -436,13 +435,6 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
-    }
-
-    private void initVariables() {
-
-        sortType = Constants.SORT_DATE_ADDED;
-        isSortingAscending = true;
-        updateSuccesses();
     }
 
     private String getSearchText() {
@@ -694,40 +686,26 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void showUndoSnackbar(final int position) {
-        final Success success = successList.get(position);
+        presenter.backupSuccess(position);
         Snackbar snackbar = Snackbar
                 .make(recyclerView, SNACK_SUCCESS_REMOVED, Snackbar.LENGTH_LONG)
                 .setAction(SNACK_UNDO, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        undoToRemove(success, position);
+
+                        presenter.undoToRemove(position);
                     }
                 });
         snackbar.show();
 
-        sendToRemoveQueue(success, position);
+        presenter.sendToRemoveQueue(position);
     }
 
-    private void sendToRemoveQueue(Success success, int position) {
-        successList.remove(position);
-        successAdapter.notifyItemRemoved(position);
-        successToRemoveList.add(success);
-    }
-
-    private void undoToRemove(Success success, int position) {
-        successList.add(position, success);
-        successAdapter.notifyItemInserted(position);
-        recyclerView.scrollToPosition(position);
-        successToRemoveList.remove(success);
-    }
-
-
-    private void remove() {
-        dbAdapter = new DBAdapter(this);
-        //dbAdapter.openDB();
-        dbAdapter.removeSuccess(successToRemoveList);
-        //dbAdapter.closeDB();
-    }
+//
+//    private void remove() {
+//        dbAdapter = new DBAdapter(this);
+//        dbAdapter.removeSuccess(successToRemoveList);
+//    }
 
     private void updateSuccesses() {
 
@@ -815,7 +793,7 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void displayDefaultSuccesses(ArrayList<Success> successList) {
-
+        successAdapter.updateSuccessList(successList);
     }
 
     @Override
@@ -836,6 +814,17 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void updateAdapterList(ArrayList<Success> successList) {
         successAdapter.updateSuccessList(successList);
+    }
+
+    @Override
+    public void undoToRemove(int position) {
+        successAdapter.notifyItemInserted(position);
+        recyclerView.scrollToPosition(position);
+    }
+
+    @Override
+    public void successRemoved(int position) {
+        successAdapter.notifyItemRemoved(position);
     }
 
 }
