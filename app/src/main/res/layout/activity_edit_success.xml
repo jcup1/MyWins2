@@ -6,7 +6,7 @@
     android:id="@+id/edit_success_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UI.Activities.EditSuccessActivity">
+    tools:context=".UI.activities.EditSuccessActivity">
 
     <View
         android:id="@+id/edit_view_up"
