@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -45,12 +44,12 @@ import com.theandroiddev.mywins.MyWinsApplication;
 import com.theandroiddev.mywins.R;
 import com.theandroiddev.mywins.SuccessListInfo;
 import com.theandroiddev.mywins.UI.Adapters.SuccessAdapter;
-import com.theandroiddev.mywins.UI.Helpers.Constants;
 import com.theandroiddev.mywins.UI.Models.Success;
 import com.theandroiddev.mywins.UI.Models.SuccessImage;
 import com.theandroiddev.mywins.UI.Views.SuccessesActivityView;
 import com.theandroiddev.mywins.UI.repositories.DatabaseSuccessesRepository;
 import com.theandroiddev.mywins.local.DBAdapter;
+import com.theandroiddev.mywins.local.PreferencesHelper;
 
 import java.util.ArrayList;
 
@@ -75,7 +74,6 @@ import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_SUCCESS_IMPORT
 import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_SUCCESS_ITEM;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.EXTRA_SUCCESS_TITLE;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.NOT_ACTIVE;
-import static com.theandroiddev.mywins.UI.Helpers.Constants.PACKAGE_NAME;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.REQUEST_CODE_INSERT;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.SNACK_SUCCESS_NOT_ADDED;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.SNACK_SUCCESS_REMOVED;
@@ -94,8 +92,6 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
             "com.theandroiddev.mywins.UI.Activities.SuccessesActivity.EXTRA_TRIGGER_SYNC_FLAG";
 
     private static final String TAG = "SuccessesActivityActivi";
-    public static boolean dbUpdate;
-    SharedPreferences prefs = null;
     FloatingActionsMenu floatingActionsMenu;
     boolean isSortingAscending;
     DBAdapter dbAdapter;
@@ -122,8 +118,8 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
         }
     };
+    ActionBar action;
     private MenuItem searchAction;
-    private boolean isSearchOpened = false;
     private EditText searchBox;
     private ConstraintLayout mainConstraint;
     private ArrayList<Success> successList;
@@ -133,6 +129,7 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     private String sortType;
     private int clickedPosition = NOT_ACTIVE;
     private SuccessListInfo mSuccessListInfo;
+    private PreferencesHelper preferencesHelper;
 
     /**
      * Return an Intent to start this Activity.
@@ -145,35 +142,19 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
         return intent;
     }
 
-
-
-
     @Override
     protected void onPause() {
         super.onPause();
-        //remove();
         presenter.removeSuccessesFromQueue();
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         dbAdapter.openDB();
-
-        updateSuccess(clickedPosition);
+        presenter.updateSuccess(clickedPosition);
     }
 
-    private void updateSuccess(int clickedPosition) {
-
-        if (clickedPosition != NOT_ACTIVE) {
-            int id = successList.get(clickedPosition).getId();
-            successList.set(clickedPosition, dbAdapter.getSuccess(id));
-            successAdapter.notifyItemChanged(clickedPosition);
-        }
-
-    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -191,7 +172,6 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
             floatingActionsMenu.collapse();
 
         }
-
     }
 
     @Override
@@ -205,21 +185,18 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
         ButterKnife.bind(this);
 
         dbAdapter = new DBAdapter(this);
+        preferencesHelper = new PreferencesHelper(this);
         setSupportActionBar(toolbar);//1
         initFABs();
         initCircularReveal();
-        successAdapter = new SuccessAdapter(R.layout.success_layout, getApplicationContext(), this);
-        recyclerView.setAdapter(successAdapter);
         initRecycler();
 
         presenter.setView(this);
         presenter.setRepository(new DatabaseSuccessesRepository(getApplication()));
+        presenter.setPrefHelper(preferencesHelper);
+        presenter.setSearchText("");
 
         presenter.loadSuccesses();
-
-        prefs = getSharedPreferences(PACKAGE_NAME, MODE_PRIVATE);
-        //presenter = new SuccessesActivityPresenterImpl(this, new DatabaseSuccessesRepository(getApplication()));
-
 
     }
 
@@ -227,15 +204,7 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     protected void onPostResume() {
         super.onPostResume();
 
-        if (prefs.getBoolean("firstrun", true)) {
-            insertDummyData();
-            prefs.edit().putBoolean("firstrun", false).apply();
-            Log.e(TAG, "onPostResume: " + 123);
-        }
-        if (dbUpdate) {
-            insertDummyData();
-            dbUpdate = false;
-        }
+        presenter.handlePreferences();
     }
 
     public void insertDummyData() {
@@ -257,10 +226,8 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     private void save(Success success) {
 
         DBAdapter dbAdapter = new DBAdapter(this);
-        //dbAdapter.openDB();
         dbAdapter.addSuccess(success);
         updateSuccesses();
-        //dbAdapter.closeDB();
 
     }
 
@@ -276,7 +243,7 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
 
                 if (searchBox != null) {
-                    handleMenuSearch();
+                    presenter.handleMenuSearch();
                 }
                 showCircularReveal(shadowView);
             }
@@ -429,6 +396,8 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
     private void initRecycler() {
 
+        successAdapter = new SuccessAdapter(R.layout.success_layout, getApplicationContext(), this);
+        recyclerView.setAdapter(successAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
@@ -460,165 +429,14 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        int id = item.getItemId();
+        //TODO HANDLE SEARCH IN MVP
 
-        if (id == R.id.action_search) {
-            handleMenuSearch();
-            return true;
-        }
-
-        if (id == R.id.action_date_started) {
-
-            if (!sortType.equals(Constants.SORT_DATE_STARTED)) {
-                sortType = Constants.SORT_DATE_STARTED;
-            } else {
-                isSortingAscending = !isSortingAscending;
-            }
-            updateSuccesses();
-            return true;
-
-        }
-
-        if (id == R.id.action_date_ended) {
-
-            if (!sortType.equals(Constants.SORT_DATE_ENDED)) {
-                sortType = Constants.SORT_DATE_ENDED;
-            } else {
-                isSortingAscending = !isSortingAscending;
-            }
-            updateSuccesses();
-            return true;
-
-        }
-
-        if (id == R.id.action_title) {
-
-            if (!sortType.equals(Constants.SORT_TITLE)) {
-                sortType = Constants.SORT_TITLE;
-            } else {
-                isSortingAscending = !isSortingAscending;
-            }
-            updateSuccesses();
-            return true;
-
-        }
-
-        if (id == R.id.action_date_added) {
-
-            if (!sortType.equals(Constants.SORT_DATE_ADDED)) {
-                sortType = Constants.SORT_DATE_ADDED;
-            } else {
-                isSortingAscending = !isSortingAscending;
-            }
-            updateSuccesses();
-            return true;
-
-        }
-
-        if (id == R.id.action_importance) {
-
-            if (!sortType.equals(Constants.SORT_IMPORTANCE)) {
-                sortType = Constants.SORT_IMPORTANCE;
-            } else {
-                isSortingAscending = !isSortingAscending;
-            }
-            updateSuccesses();
-            return true;
-
-        }
-
-        if (id == R.id.action_description) {
-
-            if (!sortType.equals(Constants.SORT_DESCRIPTION)) {
-                sortType = Constants.SORT_DESCRIPTION;
-            } else {
-                isSortingAscending = !isSortingAscending;
-            }
-            updateSuccesses();
-            return true;
-
-        }
+        presenter.handleOptionsItemSelected(item);
 
         return super.onOptionsItemSelected(item);
     }
 
 
-    protected void handleMenuSearch() {
-        ActionBar action = getSupportActionBar();
-
-        if (isSearchOpened) {
-
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);
-
-            if (action != null) {
-                action.setDisplayShowCustomEnabled(false);
-                action.setDisplayShowTitleEnabled(true);
-
-            }
-
-            searchAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_search));
-
-            isSearchOpened = false;
-            searchBox = null;
-            updateSuccesses();
-
-        } else {
-
-            if (action != null) {
-                action.setDisplayShowCustomEnabled(true);
-            }
-
-            final ViewGroup nullParent = null;
-            View view = getLayoutInflater().inflate(R.layout.search_bar, nullParent);
-            ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,
-                    ActionBar.LayoutParams.MATCH_PARENT);
-            if (action != null) {
-                action.setCustomView(view, layoutParams);
-                action.setDisplayShowTitleEnabled(false);
-                searchBox = action.getCustomView().findViewById(R.id.edtSearch);
-
-            }
-
-            searchBox.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    updateSuccesses();
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-
-                }
-            });
-            searchBox.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                                                    @Override
-                                                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                                                        updateSuccesses();
-                                                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                                                        imm.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);
-
-                                                        return true;
-                                                    }
-
-                                                }
-            );
-
-            searchBox.requestFocus();
-
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(searchBox, InputMethodManager.SHOW_IMPLICIT);
-
-            searchAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_close));
-
-            isSearchOpened = true;
-        }
-    }
 
     @Override
     public void onClick(View shadowView) {
@@ -627,34 +445,25 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
         switch (fab.getId()) {
 
             case R.id.action_learn:
-                categoryPicked(CATEGORY_LEARN);
+                presenter.categoryPicked(CATEGORY_LEARN);
                 break;
             case R.id.action_sport:
-                categoryPicked(CATEGORY_SPORT);
+                presenter.categoryPicked(CATEGORY_SPORT);
                 break;
             case R.id.action_journey:
-                categoryPicked(CATEGORY_JOURNEY);
+                presenter.categoryPicked(CATEGORY_JOURNEY);
                 break;
             case R.id.action_money:
-                categoryPicked(CATEGORY_MONEY);
+                presenter.categoryPicked(CATEGORY_MONEY);
                 break;
             case R.id.action_video:
-                categoryPicked(CATEGORY_VIDEO);
+                presenter.categoryPicked(CATEGORY_VIDEO);
                 break;
 
             default:
                 break;
 
         }
-
-    }
-
-    void categoryPicked(String categoryName) {
-
-        Intent intent = new Intent(SuccessesActivity.this, InsertSuccessActivity.class);
-        intent.putExtra("categoryName", categoryName);
-        startActivityForResult(intent, REQUEST_CODE_INSERT);
-        floatingActionsMenu.collapse();
 
     }
 
@@ -667,9 +476,8 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
 
                 Success s = data.getExtras().getParcelable(EXTRA_INSERT_SUCCESS_ITEM);
-                save(s);
-
-                successAdapter.notifyDataSetChanged();
+                Log.d(TAG, "onActivityResult: " + s);
+                presenter.addSuccess(s);
 
             }
             if (resultCode == Activity.RESULT_CANCELED) {
@@ -797,18 +605,13 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     }
 
     @Override
-    public void displayNoDefaultSuccesses() {
-
-    }
-
-    @Override
     public void displayNoSuccesses() {
-
+        //TODO HANDLE NO SUCCESSES LAYOUT
     }
 
     @Override
     public void displaySuccesses(ArrayList<Success> successList) {
-
+        successAdapter.updateSuccessList(successList);
     }
 
     @Override
@@ -825,6 +628,101 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void successRemoved(int position) {
         successAdapter.notifyItemRemoved(position);
+    }
+
+    @Override
+    public void displaySuccessChanged() {
+        successAdapter.notifyItemChanged(clickedPosition);
+    }
+
+    @Override
+    public void displayCategory(String category) {
+
+        Intent intent = new Intent(SuccessesActivity.this, InsertSuccessActivity.class);
+        intent.putExtra("categoryName", category);
+        startActivityForResult(intent, REQUEST_CODE_INSERT);
+        floatingActionsMenu.collapse();
+
+    }
+
+    @Override
+    public void hideSearchBar() {
+        action = getSupportActionBar();
+        hideSoftKeyboard();
+        if (action != null) {
+            action.setDisplayShowCustomEnabled(false);
+            action.setDisplayShowTitleEnabled(true);
+        }
+        searchAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_search));
+        searchBox = null;
+
+    }
+
+    @Override
+    public void displaySearchBar() {
+        action = getSupportActionBar();
+
+        if (action != null) {
+            action.setDisplayShowCustomEnabled(true);
+        }
+
+        final ViewGroup nullParent = null;
+        View view = getLayoutInflater().inflate(R.layout.search_bar, nullParent);
+        ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,
+                ActionBar.LayoutParams.MATCH_PARENT);
+        if (action != null) {
+            action.setCustomView(view, layoutParams);
+            action.setDisplayShowTitleEnabled(false);
+            searchBox = action.getCustomView().findViewById(R.id.edtSearch);
+        }
+
+        searchBox.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                presenter.setSearchText(getSearchText());
+                presenter.loadSuccesses();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        searchBox.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                                                @Override
+                                                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                                                    presenter.setSearchText(getSearchText());
+                                                    presenter.loadSuccesses();
+                                                    hideSoftKeyboard();
+                                                    hideSearchBar();
+
+                                                    return true;
+                                                }
+                                            }
+        );
+
+        searchBox.requestFocus();
+
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(searchBox, InputMethodManager.SHOW_IMPLICIT);
+
+        searchAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_close));
+
+    }
+
+    @Override
+    public void displayUpdatedSuccesses() {
+        successAdapter.notifyDataSetChanged();
+    }
+
+    private void hideSoftKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);
     }
 
 }
