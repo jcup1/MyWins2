@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.theandroiddev.mywins.UI.Activities.SuccessesActivity"
+    tools:context="com.theandroiddev.mywins.UI.activities.SuccessesActivity"
     tools:showIn="@layout/activity_main">
 
     <View
@@ -27,6 +27,18 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/main_up_view">
     </android.support.v7.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/empty_list_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EMPTY :("
+        app:layout_constraintBottom_toTopOf="@+id/main_view_down"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_up_view"
+        >
+    </TextView>
 
     <View
         android:id="@+id/main_view_down"

@@ -1,7 +1,7 @@
 package com.theandroiddev.mywins.injection;
 
-import com.theandroiddev.mywins.UI.Activities.SuccessesActivity;
-import com.theandroiddev.mywins.UI.Activities.SuccessesActivityPresenterImpl;
+import com.theandroiddev.mywins.UI.activities.SuccessesActivity;
+import com.theandroiddev.mywins.UI.activities.SuccessesActivityPresenterImpl;
 
 import javax.inject.Singleton;
 

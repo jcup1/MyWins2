@@ -29,15 +29,15 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include
-        android:id="@+id/include"
-        layout="@layout/content_main"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="EMPTY :("
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.49"/>
 
     <io.codetail.widget.RevealFrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -102,7 +102,7 @@
                 android:layout_height="wrap_content"
                 fab:fab_colorNormal="@color/white"
                 fab:fab_colorPressed="@color/white_pressed"
-                fab:fab_title="Learn" />
+                fab:fab_title="Learn"/>
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/action_sport"
@@ -110,7 +110,7 @@
                 android:layout_height="wrap_content"
                 fab:fab_colorNormal="@color/white"
                 fab:fab_colorPressed="@color/white_pressed"
-                fab:fab_title="Sport" />
+                fab:fab_title="Sport"/>
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/action_journey"
@@ -118,7 +118,7 @@
                 android:layout_height="wrap_content"
                 fab:fab_colorNormal="@color/white"
                 fab:fab_colorPressed="@color/white_pressed"
-                fab:fab_title="Journey" />
+                fab:fab_title="Journey"/>
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/action_money"
@@ -126,7 +126,7 @@
                 android:layout_height="wrap_content"
                 fab:fab_colorNormal="@color/white"
                 fab:fab_colorPressed="@color/white_pressed"
-                fab:fab_title="Money" />
+                fab:fab_title="Money"/>
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/action_video"
@@ -134,7 +134,7 @@
                 android:layout_height="wrap_content"
                 fab:fab_colorNormal="@color/white"
                 fab:fab_colorPressed="@color/white_pressed"
-                fab:fab_title="Video" />
+                fab:fab_title="Video"/>
 
 
         </com.getbase.floatingactionbutton.FloatingActionsMenu>
