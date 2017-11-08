@@ -27,7 +27,6 @@ import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,13 +38,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.theandroiddev.mywins.MyWinsApplication;
 import com.theandroiddev.mywins.R;
-import com.theandroiddev.mywins.SuccessListInfo;
 import com.theandroiddev.mywins.UI.Adapters.SuccessAdapter;
 import com.theandroiddev.mywins.UI.Models.Success;
-import com.theandroiddev.mywins.UI.Models.SuccessImage;
 import com.theandroiddev.mywins.UI.Views.SuccessesActivityView;
 import com.theandroiddev.mywins.UI.repositories.DatabaseSuccessesRepository;
 import com.theandroiddev.mywins.local.DBAdapter;
@@ -78,13 +76,6 @@ import static com.theandroiddev.mywins.UI.Helpers.Constants.REQUEST_CODE_INSERT;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.SNACK_SUCCESS_NOT_ADDED;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.SNACK_SUCCESS_REMOVED;
 import static com.theandroiddev.mywins.UI.Helpers.Constants.SNACK_UNDO;
-import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyCategory;
-import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyDescription;
-import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyEndDate;
-import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyImportance;
-import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyStartDate;
-import static com.theandroiddev.mywins.UI.Helpers.Constants.dummySuccessesSize;
-import static com.theandroiddev.mywins.UI.Helpers.Constants.dummyTitle;
 
 public class SuccessesActivity extends AppCompatActivity implements View.OnClickListener, SuccessAdapter.OnItemClickListener, SuccessesActivityView {
 
@@ -101,7 +92,14 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
     @BindView(R.id.main_constraint)
-    ConstraintLayout constraintLayout;
+    ConstraintLayout mainConstraint;
+    @BindView(R.id.empty_list_text)
+    TextView emptyListTv;
+    @BindView(R.id.show_toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.shadow_view)
+    View shadowView;
+
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
         @Override
@@ -113,7 +111,6 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
 
             int pos = viewHolder.getAdapterPosition();
-            Log.d(TAG, "onSwiped: " + pos);
             toRemove(pos);
 
         }
@@ -121,14 +118,8 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     ActionBar action;
     private MenuItem searchAction;
     private EditText searchBox;
-    private ConstraintLayout mainConstraint;
     private ArrayList<Success> successList;
-    private ArrayList<Success> successToRemoveList;
-    private ArrayList<SuccessImage> dummySuccessImageList;
-    private View shadowView;
-    private String sortType;
     private int clickedPosition = NOT_ACTIVE;
-    private SuccessListInfo mSuccessListInfo;
     private PreferencesHelper preferencesHelper;
 
     /**
@@ -145,13 +136,12 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onPause() {
         super.onPause();
-        presenter.removeSuccessesFromQueue();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        dbAdapter.openDB();
+        presenter.openDB();
         presenter.updateSuccess(clickedPosition);
     }
 
@@ -166,19 +156,22 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void onBackPressed() {
 
-        if (!floatingActionsMenu.isExpanded()) {
-            super.onBackPressed();
-        } else {
+        if (searchBox != null) {
+            hideSearchBar();
+        } else if (floatingActionsMenu.isExpanded()) {
             floatingActionsMenu.collapse();
+        } else {
+
+            super.onBackPressed();
 
         }
+
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.show_toolbar);
 
         ((MyWinsApplication) getApplication()).getAppComponent().inject(this);
 
@@ -204,36 +197,10 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     protected void onPostResume() {
         super.onPostResume();
 
-        presenter.handlePreferences();
+        presenter.handleFirstSuccessPreference();
     }
-
-    public void insertDummyData() {
-
-        //TODO don't clear but handle it in mvp
-        successList.clear();
-
-        for (int i = 0; i < dummySuccessesSize; i++) {
-            save(new Success(dummyTitle.get(i), dummyCategory.get(i), dummyImportance.get(i), dummyDescription.get(i),
-                    dummyStartDate.get(i), dummyEndDate.get(i)));
-        }
-
-        dummySuccessImageList = new ArrayList<>();
-
-        updateSuccesses();
-        successAdapter.notifyDataSetChanged();
-    }
-
-    private void save(Success success) {
-
-        DBAdapter dbAdapter = new DBAdapter(this);
-        dbAdapter.addSuccess(success);
-        updateSuccesses();
-
-    }
-
 
     private void initCircularReveal() {
-        shadowView = findViewById(R.id.shadow_view);
         shadowView.setVisibility(View.GONE);
 
         floatingActionsMenu = findViewById(R.id.multiple_actions);
@@ -330,20 +297,19 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
     }
 
-
     private void initFABs() {
 
-        final com.getbase.floatingactionbutton.FloatingActionButton actionLearn = findViewById(R.id.action_learn);
-        final com.getbase.floatingactionbutton.FloatingActionButton actionSport = findViewById(R.id.action_sport);
-        final com.getbase.floatingactionbutton.FloatingActionButton actionJourney = findViewById(R.id.action_journey);
-        final com.getbase.floatingactionbutton.FloatingActionButton actionBusiness = findViewById(R.id.action_money);
-        final com.getbase.floatingactionbutton.FloatingActionButton actionVideo = findViewById(R.id.action_video);
+        final FloatingActionButton actionLearn = findViewById(R.id.action_learn);
+        final FloatingActionButton actionSport = findViewById(R.id.action_sport);
+        final FloatingActionButton actionJourney = findViewById(R.id.action_journey);
+        final FloatingActionButton actionBusiness = findViewById(R.id.action_money);
+        final FloatingActionButton actionVideo = findViewById(R.id.action_video);
 
-        actionLearn.setSize(com.getbase.floatingactionbutton.FloatingActionButton.SIZE_MINI);
-        actionSport.setSize(com.getbase.floatingactionbutton.FloatingActionButton.SIZE_MINI);
-        actionJourney.setSize(com.getbase.floatingactionbutton.FloatingActionButton.SIZE_MINI);
-        actionBusiness.setSize(com.getbase.floatingactionbutton.FloatingActionButton.SIZE_MINI);
-        actionVideo.setSize(com.getbase.floatingactionbutton.FloatingActionButton.SIZE_MINI);
+        actionLearn.setSize(FloatingActionButton.SIZE_MINI);
+        actionSport.setSize(FloatingActionButton.SIZE_MINI);
+        actionJourney.setSize(FloatingActionButton.SIZE_MINI);
+        actionBusiness.setSize(FloatingActionButton.SIZE_MINI);
+        actionVideo.setSize(FloatingActionButton.SIZE_MINI);
 
         int color_video = ResourcesCompat.getColor(getResources(), R.color.video, null);
         int color_money = ResourcesCompat.getColor(getResources(), R.color.money, null);
@@ -423,13 +389,12 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onStop() {
         super.onStop();
-        dbAdapter.closeDB();
+        presenter.removeSuccessesFromQueue();
+        presenter.closeDB();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        //TODO HANDLE SEARCH IN MVP
 
         presenter.handleOptionsItemSelected(item);
 
@@ -440,7 +405,7 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void onClick(View shadowView) {
-        com.getbase.floatingactionbutton.FloatingActionButton fab = (com.getbase.floatingactionbutton.FloatingActionButton) shadowView;
+        FloatingActionButton fab = (FloatingActionButton) shadowView;
 
         switch (fab.getId()) {
 
@@ -476,7 +441,6 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
 
                 Success s = data.getExtras().getParcelable(EXTRA_INSERT_SUCCESS_ITEM);
-                Log.d(TAG, "onActivityResult: " + s);
                 presenter.addSuccess(s);
 
             }
@@ -507,18 +471,6 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
         snackbar.show();
 
         presenter.sendToRemoveQueue(position);
-    }
-
-//
-//    private void remove() {
-//        dbAdapter = new DBAdapter(this);
-//        dbAdapter.removeSuccess(successToRemoveList);
-//    }
-
-    private void updateSuccesses() {
-
-        successList = dbAdapter.getSuccesses(getSearchText(), sortType, isSortingAscending);
-        successAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -606,12 +558,17 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void displayNoSuccesses() {
-        //TODO HANDLE NO SUCCESSES LAYOUT
+        recyclerView.setVisibility(View.INVISIBLE);
+        emptyListTv.setVisibility(View.VISIBLE);
+        //setContentView(R.layout.activity_main_empty);
+
     }
 
     @Override
     public void displaySuccesses(ArrayList<Success> successList) {
         successAdapter.updateSuccessList(successList);
+        recyclerView.setVisibility(View.VISIBLE);
+        emptyListTv.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -698,7 +655,7 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
                                                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                                                     presenter.setSearchText(getSearchText());
                                                     presenter.loadSuccesses();
-                                                    hideSoftKeyboard();
+                                                    //hideSoftKeyboard(0);
                                                     hideSearchBar();
 
                                                     return true;
@@ -707,10 +664,6 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
         );
 
         searchBox.requestFocus();
-
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(searchBox, InputMethodManager.SHOW_IMPLICIT);
-
         searchAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_close));
 
     }
@@ -722,7 +675,9 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
     private void hideSoftKeyboard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);
+        if (imm != null && searchBox != null) {
+            imm.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);
+        }
     }
 
 }
