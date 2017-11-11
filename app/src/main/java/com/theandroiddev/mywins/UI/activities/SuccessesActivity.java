@@ -81,10 +81,7 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
     private static final String EXTRA_TRIGGER_SYNC_FLAG =
             "com.theandroiddev.mywins.UI.Activities.SuccessesActivity.EXTRA_TRIGGER_SYNC_FLAG";
-
-    private static final String TAG = "SuccessesActivityActivi";
     FloatingActionsMenu floatingActionsMenu;
-    boolean isSortingAscending;
     DBAdapter dbAdapter;
     SuccessAdapter successAdapter;
     @Inject
@@ -186,7 +183,7 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
         presenter.setView(this);
         presenter.setRepository(new DatabaseSuccessesRepository(getApplication()));
         presenter.setPrefHelper(preferencesHelper);
-        presenter.setSearchText("");
+        presenter.setSearchTerm("");
 
         presenter.loadSuccesses();
 
@@ -437,18 +434,24 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
         if (requestCode == REQUEST_CODE_INSERT) {
             if (resultCode == Activity.RESULT_OK) {
-
-
-                Success s = data.getExtras().getParcelable(EXTRA_INSERT_SUCCESS_ITEM);
-                presenter.addSuccess(s);
+                onSuccessAdded(data);
 
             }
             if (resultCode == Activity.RESULT_CANCELED) {
-                Snackbar.make(mainConstraint, SNACK_SUCCESS_NOT_ADDED, Snackbar.LENGTH_SHORT).show();
-
+                onSuccessNotAdded();
             }
         }
 
+    }
+
+    public void onSuccessNotAdded() {
+        Snackbar.make(mainConstraint, SNACK_SUCCESS_NOT_ADDED, Snackbar.LENGTH_SHORT).show();
+
+    }
+
+    public void onSuccessAdded(Intent data) {
+        Success s = data.getExtras().getParcelable(EXTRA_INSERT_SUCCESS_ITEM);
+        presenter.addSuccess(s);
     }
 
     private void toRemove(int position) {
@@ -480,12 +483,9 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 //        } else {
 //            showSuccess(success);
 //        }
-        //TODO change fragment
-        Intent intent = new Intent(SuccessesActivity.this, ScreenSlidePagerActivity.class);
-        //intent.putParcelableArrayListExtra("SUCCESSES", successList);
-        startActivity(intent);
+        presenter.startSlider();
 
-
+        //TODO maybe put to presenter
         this.clickedPosition = position;
 
     }
@@ -558,7 +558,6 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     public void displayNoSuccesses() {
         recyclerView.setVisibility(View.INVISIBLE);
         emptyListTv.setVisibility(View.VISIBLE);
-        //setContentView(R.layout.activity_main_empty);
 
     }
 
@@ -588,16 +587,6 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void displaySuccessChanged() {
         successAdapter.notifyItemChanged(clickedPosition);
-    }
-
-    @Override
-    public void displayCategory(String category) {
-
-        Intent intent = new Intent(SuccessesActivity.this, InsertSuccessActivity.class);
-        intent.putExtra("categoryName", category);
-        startActivityForResult(intent, REQUEST_CODE_INSERT);
-        floatingActionsMenu.collapse();
-
     }
 
     @Override
@@ -639,7 +628,7 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                presenter.setSearchText(getSearchText());
+                presenter.setSearchTerm(getSearchText());
                 presenter.loadSuccesses();
             }
 
@@ -651,9 +640,8 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
         searchBox.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                                                 @Override
                                                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                                                    presenter.setSearchText(getSearchText());
+                                                    presenter.setSearchTerm(getSearchText());
                                                     presenter.loadSuccesses();
-                                                    //hideSoftKeyboard(0);
                                                     hideSearchBar();
 
                                                     return true;
@@ -669,6 +657,23 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void displayUpdatedSuccesses() {
         successAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void displayCategory(String category) {
+
+        Intent intent = new Intent(SuccessesActivity.this, InsertSuccessActivity.class);
+        intent.putExtra("categoryName", category);
+        startActivityForResult(intent, REQUEST_CODE_INSERT);
+        floatingActionsMenu.collapse();
+
+    }
+
+    @Override
+    public void displaySlider(ArrayList<Success> successList) {
+        Intent intent = new Intent(SuccessesActivity.this, ScreenSlidePagerActivity.class);
+        intent.putParcelableArrayListExtra("SUCCESSES", successList);
+        startActivity(intent);
     }
 
     private void hideSoftKeyboard() {
