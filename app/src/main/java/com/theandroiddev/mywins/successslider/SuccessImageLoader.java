@@ -14,7 +14,7 @@ public class SuccessImageLoader implements SuccessSliderContract.SuccessImageLoa
     private SuccessesRepository successesRepository;
 
     @Override
-    public ArrayList<SuccessImage> getSuccessImages(int id) {
+    public ArrayList<SuccessImage> getSuccessImages(String id) {
         return successesRepository.getSuccessImages(id);
     }
 
@@ -25,7 +25,7 @@ public class SuccessImageLoader implements SuccessSliderContract.SuccessImageLoa
     }
 
     @Override
-    public Success getSuccess(int id) {
+    public Success getSuccess(String id) {
         return successesRepository.getSuccess(id);
     }
 }

@@ -20,8 +20,8 @@ public class Success implements Parcelable {
             return new Success[size];
         }
     };
-    String title, category, description, date_started, date_ended;
-    int id, importance;
+    String title, category, description, date_started, date_ended, id;
+    int importance;
 
     public Success(String title, String category, int importance, String description, String date_started, String date_ended) {
         this.title = title;
@@ -39,7 +39,7 @@ public class Success implements Parcelable {
         description = in.readString();
         date_started = in.readString();
         date_ended = in.readString();
-        id = in.readInt();
+        id = in.readString();
     }
 
     public Success() {
@@ -95,11 +95,11 @@ public class Success implements Parcelable {
     }
 
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -116,6 +116,6 @@ public class Success implements Parcelable {
         parcel.writeString(description);
         parcel.writeString(date_started);
         parcel.writeString(date_ended);
-        parcel.writeInt(id);
+        parcel.writeString(id);
     }
 }
