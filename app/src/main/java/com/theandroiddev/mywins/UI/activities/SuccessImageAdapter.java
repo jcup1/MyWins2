@@ -14,7 +14,7 @@ import com.theandroiddev.mywins.R;
 import com.theandroiddev.mywins.data.models.SuccessImage;
 
 import java.io.File;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by grazyna on 2017-08-23.
@@ -22,13 +22,13 @@ import java.util.List;
 
 public class SuccessImageAdapter extends RecyclerView.Adapter<SuccessImageAdapter.ViewHolder> {
 
-    private List<SuccessImage> successImages;
+    private ArrayList<SuccessImage> successImages;
     private OnSuccessImageClickListener listener;
     private int successImageLayout;
     private Context context;
 
 
-    public SuccessImageAdapter(List<SuccessImage> successImages, OnSuccessImageClickListener listener, int successImageLayout, Context context) {
+    public SuccessImageAdapter(ArrayList<SuccessImage> successImages, OnSuccessImageClickListener listener, int successImageLayout, Context context) {
         this.successImages = successImages;
         this.listener = listener;
         this.successImageLayout = successImageLayout;

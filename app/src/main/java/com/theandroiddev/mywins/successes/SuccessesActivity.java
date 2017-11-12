@@ -27,7 +27,6 @@ import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -602,7 +601,7 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
     @Override
     public void hideSearchBar() {
         action = getSupportActionBar();
-        hideSoftKeyboard();
+        handleSoftKeyboard();
         if (action != null) {
             action.setDisplayShowCustomEnabled(false);
             action.setDisplayShowTitleEnabled(true);
@@ -619,7 +618,6 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
         if (action != null) {
             action.setDisplayShowCustomEnabled(true);
         }
-
         final ViewGroup nullParent = null;
         android.view.View view = getLayoutInflater().inflate(R.layout.search_bar, nullParent);
         ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,
@@ -628,6 +626,8 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
             action.setCustomView(view, layoutParams);
             action.setDisplayShowTitleEnabled(false);
             searchBox = action.getCustomView().findViewById(R.id.edtSearch);
+            showSoftKeyboard();
+
         }
 
         searchBox.addTextChangedListener(new TextWatcher() {
@@ -681,18 +681,27 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
 
     @Override
     public void displaySlider(ArrayList<Success> successList) {
-        Log.d(TAG, "displaySlider: " + successList.get(clickedPosition).getId());
         Intent intent = new Intent(SuccessesActivity.this, SuccessSliderActivity.class);
         intent.putExtra("searchfilter", presenter.getSearchFilter());
         intent.putExtra("position", clickedPosition);
         startActivity(intent);
     }
 
-    private void hideSoftKeyboard() {
+    private void handleSoftKeyboard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null && searchBox != null) {
             imm.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);
         }
     }
+
+    private void showSoftKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        if (imm != null) {
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.SHOW_IMPLICIT);
+        }
+    }
+
+
 
 }

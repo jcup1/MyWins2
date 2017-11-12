@@ -2,6 +2,8 @@ package com.theandroiddev.mywins.injection;
 
 import android.content.Context;
 
+import com.theandroiddev.mywins.editsuccess.EditSuccessContract;
+import com.theandroiddev.mywins.editsuccess.EditSuccessPresenter;
 import com.theandroiddev.mywins.successes.SuccessesContract;
 import com.theandroiddev.mywins.successes.SuccessesPresenter;
 import com.theandroiddev.mywins.successslider.SuccessSliderContract;
@@ -29,5 +31,11 @@ public class PresenterModule {
     @Singleton
     SuccessSliderContract.Presenter provideSuccessesSliderActivityPresenter(Context context) {
         return new SuccessSliderPresenter(context);
+    }
+
+    @Provides
+    @Singleton
+    EditSuccessContract.Presenter provideEditSuccessActivityPresenter(Context context) {
+        return new EditSuccessPresenter(context);
     }
 }

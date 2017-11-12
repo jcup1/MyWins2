@@ -33,4 +33,8 @@ public interface SuccessesRepository {
     void openDB();
 
     ArrayList<SuccessImage> getSuccessImages(String id);
+
+    void editSuccess(Success editSuccess);
+
+    void editSuccessImages(ArrayList<SuccessImage> successImageList, String successId);
 }
