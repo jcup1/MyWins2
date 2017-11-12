@@ -81,4 +81,14 @@ public class DatabaseSuccessesRepository implements SuccessesRepository {
         return dbAdapter.getSuccessImages(id);
     }
 
+    @Override
+    public void editSuccess(Success editSuccess) {
+        dbAdapter.editSuccess(editSuccess);
+    }
+
+    @Override
+    public void editSuccessImages(ArrayList<SuccessImage> successImageList, String successId) {
+        dbAdapter.editSuccessImages(successImageList, successId);
+    }
+
 }

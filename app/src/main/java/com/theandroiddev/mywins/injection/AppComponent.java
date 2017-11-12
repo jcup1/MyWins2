@@ -1,5 +1,7 @@
 package com.theandroiddev.mywins.injection;
 
+import com.theandroiddev.mywins.editsuccess.EditSuccessActivity;
+import com.theandroiddev.mywins.editsuccess.EditSuccessPresenter;
 import com.theandroiddev.mywins.successes.SuccessesActivity;
 import com.theandroiddev.mywins.successes.SuccessesPresenter;
 import com.theandroiddev.mywins.successslider.SuccessSliderActivity;
@@ -26,6 +28,10 @@ public interface AppComponent {
     void inject(SuccessSliderPresenter target);
 
     void inject(SuccessSliderContract.SuccessImageLoader target);
+
+    void inject(EditSuccessActivity target);
+
+    void inject(EditSuccessPresenter target);
     //void inject(SuccessSliderFragment target);
 
 }

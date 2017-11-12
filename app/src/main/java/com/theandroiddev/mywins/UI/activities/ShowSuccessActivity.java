@@ -31,6 +31,7 @@ import com.theandroiddev.mywins.R;
 import com.theandroiddev.mywins.data.db.DBAdapter;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.models.SuccessImage;
+import com.theandroiddev.mywins.editsuccess.EditSuccessActivity;
 import com.theandroiddev.mywins.utils.DrawableSelector;
 
 import java.util.ArrayList;

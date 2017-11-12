@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins.UI.activities;
+package com.theandroiddev.mywins.editsuccess;
 
 import android.app.Activity;
 import android.content.Context;
@@ -24,7 +24,6 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -38,7 +37,10 @@ import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.features.camera.CameraModule;
 import com.esafirm.imagepicker.features.camera.ImmediateCameraModule;
 import com.esafirm.imagepicker.features.camera.OnImageReadyListener;
+import com.theandroiddev.mywins.MyWinsApplication;
 import com.theandroiddev.mywins.R;
+import com.theandroiddev.mywins.UI.activities.ImportancePopupActivity;
+import com.theandroiddev.mywins.UI.activities.SuccessImageAdapter;
 import com.theandroiddev.mywins.UI.adapters.CustomImagePickerAdapter;
 import com.theandroiddev.mywins.data.db.DBAdapter;
 import com.theandroiddev.mywins.data.models.Success;
@@ -53,18 +55,18 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import static com.theandroiddev.mywins.utils.Constants.CLICK_LONG;
 import static com.theandroiddev.mywins.utils.Constants.CLICK_SHORT;
 import static com.theandroiddev.mywins.utils.Constants.DATE_ENDED_EMPTY;
 import static com.theandroiddev.mywins.utils.Constants.DATE_STARTED_EMPTY;
-import static com.theandroiddev.mywins.utils.Constants.EXTRA_EDIT_SUCCESS_ITEM;
-import static com.theandroiddev.mywins.utils.Constants.REQUEST_CODE_GALLERY;
 import static com.theandroiddev.mywins.utils.Constants.REQUEST_CODE_IMPORTANCE;
 import static com.theandroiddev.mywins.utils.Constants.SNACK_IMAGE_REMOVED;
 import static com.theandroiddev.mywins.utils.Constants.SNACK_UNDO;
 import static com.theandroiddev.mywins.utils.Constants.dummyImportanceDefault;
 
-public class EditSuccessActivity extends AppCompatActivity implements SuccessImageAdapter.OnSuccessImageClickListener, View.OnLongClickListener {
+public class EditSuccessActivity extends AppCompatActivity implements SuccessImageAdapter.OnSuccessImageClickListener, View.OnLongClickListener, EditSuccessContract.View {
     private static final String TAG = "EditSuccessActivity";
     private static final int RC_CODE_PICKER = 2000;
     private static final int RC_CAMERA = 3000;
@@ -77,12 +79,13 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
     DrawableSelector drawableSelector;
     DateHelper dateHelper;
     ImagePicker imagePicker;
+    String id;
+    @Inject
+    EditSuccessContract.Presenter presenter;
     private Animation animShow, animHide;
     private ArrayList<com.esafirm.imagepicker.model.Image> imageList = new ArrayList<>();
     private CameraModule cameraModule;
     private SuccessSliderContract.SuccessImageLoader successImageLoader;
-
-
     private boolean noDistractionMode;
     private int selectedImageNumber = -1;
     private RecyclerView recyclerView;
@@ -156,6 +159,13 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         setContentView(R.layout.activity_edit_success);
         Toolbar toolbar = findViewById(R.id.edit_toolbar);
         setSupportActionBar(toolbar);
+
+        ((MyWinsApplication) getApplicationContext()).getAppComponent().inject(this);
+
+        presenter.setView(this);
+        presenter.setRepository(new DatabaseSuccessesRepository(getApplicationContext()));
+
+        //TODO maybe refactor to editMode
         noDistractionMode = false;
         initAnimation();
         successImageLoader = new SuccessImageLoader();
@@ -209,23 +219,22 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         String dateStarted;
         String dateEnded;
 
-        Intent returnIntent = new Intent();
 
         if (dateHelper.validateData(editTitleEt, dateStartedTv, dateEndedTv)) {
 
             dateStarted = dateHelper.checkBlankDate(dateStartedTv.getText().toString());
             dateEnded = dateHelper.checkBlankDate(dateEndedTv.getText().toString());
 
-            Success editSuccess = new Success(editTitleEt.getText().toString(), editCategoryTv.getText().toString(), (int) editImportanceIv.getTag(), editDescriptionEt.getText().toString(),
+            editSuccess = new Success(editTitleEt.getText().toString(), editCategoryTv.getText().toString(), (int) editImportanceIv.getTag(), editDescriptionEt.getText().toString(),
                     dateStarted, dateEnded);
-//            editSuccess.setId( editTitleEt.getTag());
+            editSuccess.setId(id);
 
-            saveImages(editSuccess.getId());
+            presenter.editSuccess(editSuccess, successImageList);
 
-            returnIntent.putExtra(EXTRA_EDIT_SUCCESS_ITEM, editSuccess);
-
-            setResult(Activity.RESULT_OK, returnIntent);
-            finish();
+//            saveImages(editSuccess.getId());
+//
+//            returnIntent.putExtra(EXTRA_EDIT_SUCCESS_ITEM, editSuccess);
+//
 
         }
 
@@ -276,9 +285,7 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         editCardImages = findViewById(R.id.edit_card_images);
         editSuccessLayout = findViewById(R.id.edit_success_layout);
 
-
-        String id = getIntent().getStringExtra("id");
-        Log.d(TAG, "initViewsid: " + id);
+        id = getIntent().getStringExtra("id");
 
         editSuccess = successImageLoader.getSuccess(id);
         successImageList = successImageLoader.getSuccessImages(id);
@@ -286,8 +293,6 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
 //
 //        editSuccess = getIntent().getParcelableExtra(EXTRA_SHOW_SUCCESS_ITEM);
 //        successImageList = getIntent().getParcelableArrayListExtra(EXTRA_SHOW_SUCCESS_IMAGES);
-
-
 
         editTitleEt.setTag(editSuccess.getId());
         editTitleEt.setText(editSuccess.getTitle());
@@ -379,7 +384,7 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         Intent importanceIntent = new Intent(EditSuccessActivity.this, ImportancePopupActivity.class);
 
         importanceIntent.putExtra("importance", (int) editImportanceIv.getTag());
-        startActivityForResult(importanceIntent, REQUEST_CODE_GALLERY);
+        startActivityForResult(importanceIntent, REQUEST_CODE_IMPORTANCE);
 
     }
 
@@ -616,5 +621,12 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         }
 
 
+    }
+
+    @Override
+    public void displaySlider() {
+
+        setResult(Activity.RESULT_OK, new Intent());
+        finish();
     }
 }

@@ -1,10 +1,12 @@
 package com.theandroiddev.mywins.successslider;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -13,14 +15,14 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.theandroiddev.mywins.MyWinsApplication;
 import com.theandroiddev.mywins.R;
-import com.theandroiddev.mywins.UI.activities.EditSuccessActivity;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.repositories.DatabaseSuccessesRepository;
+import com.theandroiddev.mywins.editsuccess.EditSuccessActivity;
 import com.theandroiddev.mywins.successes.SearchFilter;
 
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import static android.view.Gravity.TOP;
 import static com.theandroiddev.mywins.utils.Constants.REQUEST_CODE_INSERT;
 
 /**
@@ -55,6 +58,7 @@ public class SuccessSliderActivity extends AppCompatActivity implements SuccessS
      */
     private PagerAdapter mPagerAdapter;
     private int position;
+    private ConstraintLayout showConstraintLayout;
 
 
     @Override
@@ -79,6 +83,7 @@ public class SuccessSliderActivity extends AppCompatActivity implements SuccessS
 
 
         FloatingActionButton fab = findViewById(R.id.show_fab);
+        showConstraintLayout = findViewById(R.id.show_constraint_layout);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -117,10 +122,42 @@ public class SuccessSliderActivity extends AppCompatActivity implements SuccessS
     }
 
     @Override
-    public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode == REQUEST_CODE_INSERT) {
+            if (resultCode == Activity.RESULT_OK) {
 
-        return super.onCreateView(parent, name, context, attrs);
+//                Success s = data.getExtras().getParcelable(EXTRA_EDIT_SUCCESS_ITEM);
+//
+//                editSuccess(s);
+//
+//                if (s != null) {
+//                    showTitle.setText(s.getTitle());
+//                    showCategory.setText(s.getCategory());
+//                    showDateStarted.setText(s.getDateStarted());
+//                    showDateEnded.setText(s.getDateEnded());
+//                    showDescription.setText(s.getDescription());
+//                    showImportanceIv.setTag(s.getImportance());
+//                    drawableSelector.selectCategoryImage(showCategoryIv, s.getCategory(), showCategory);
+//                    drawableSelector.selectImportanceImage(showImportanceIv, s.getImportance());
+//
+//                }
+
+                //makeSnackbar(SNACK_SAVED);
+            }
+        }
+
+    }
+
+    public void makeSnackbar(String s) {
+
+        Snackbar snackbar = Snackbar.make(showConstraintLayout, s, Snackbar.LENGTH_SHORT);
+        View view = snackbar.getView();
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) view.getLayoutParams();
+        params.gravity = TOP;
+        view.setLayoutParams(params);
+        snackbar.show();
     }
 
     @Override

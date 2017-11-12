@@ -41,7 +41,7 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".UI.activities.EditSuccessActivity"
+            android:name=".editsuccess.EditSuccessActivity"
             android:label="@string/title_activity_edit_success"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize">
@@ -54,7 +54,7 @@
             android:name=".UI.activities.ImageActivity"
             android:theme="@style/AppTheme.Dialog.No.Bg">
         </activity>
-        <activity android:name=".UI.activities.EditDescriptionActivity">
+        <activity android:name=".editsuccess.EditDescriptionActivity">
         </activity>
         <activity android:name=".successslider.SuccessSliderActivity">
 

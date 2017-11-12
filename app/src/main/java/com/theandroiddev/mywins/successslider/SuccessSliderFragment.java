@@ -1,8 +1,11 @@
 package com.theandroiddev.mywins.successslider;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,6 +20,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.theandroiddev.mywins.R;
+import com.theandroiddev.mywins.UI.activities.SuccessImageAdapter;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.models.SuccessImage;
 import com.theandroiddev.mywins.data.repositories.DatabaseSuccessesRepository;
@@ -28,12 +32,13 @@ import java.util.ArrayList;
  * Created by jakub on 27.10.17.
  */
 
-public class SuccessSliderFragment extends Fragment {
+public class SuccessSliderFragment extends Fragment implements SuccessImageAdapter.OnSuccessImageClickListener {
 
     TextView titleTv, dateStartedTv, dateEndedTv, categoryTv, descriptionTv;
     ImageView categoryIv, importanceIv;
     RecyclerView recyclerView;
     DrawableSelector drawableSelector;
+    SuccessImageAdapter successImageAdapter;
     Success s;
     ArrayList<SuccessImage> successImageList;
 
@@ -88,6 +93,8 @@ public class SuccessSliderFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        initViews();
+
     }
 
     @Override
@@ -114,6 +121,10 @@ public class SuccessSliderFragment extends Fragment {
 
         drawableSelector.selectCategoryImage(categoryIv, s.getCategory(), categoryTv);
         drawableSelector.selectImportanceImage(importanceIv, s.getImportance());
+
+        successImageAdapter = new SuccessImageAdapter(successImageList, this, R.layout.success_image_layout, getContext());
+        recyclerView.setAdapter(successImageAdapter);
+        successImageAdapter.notifyDataSetChanged();
     }
 
     private void initRecycler() {
@@ -121,6 +132,26 @@ public class SuccessSliderFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
+
+    }
+
+    @Override
+    public void onSuccessImageClick(SuccessImage successImage, ImageView successImageIv, int position, ConstraintLayout constraintLayout, CardView cardView) {
+
+        Intent intent = new Intent(getContext(), SuccessSliderActivity.class);
+        ArrayList<String> imagePaths = new ArrayList<>();
+
+        for (int i = 0; i < successImageList.size(); i++) {
+            imagePaths.add(successImageList.get(i).getImagePath());
+        }
+
+        intent.putStringArrayListExtra("imagePaths", imagePaths);
+        intent.putExtra("position", position);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onSuccessImageLongClick(SuccessImage successImage, ImageView successImageIv, int position, ConstraintLayout constraintLayout, CardView cardView) {
 
     }
 

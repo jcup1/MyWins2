@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.theandroiddev.mywins.R;
 import com.theandroiddev.mywins.data.models.Success;
+import com.theandroiddev.mywins.editsuccess.EditDescriptionActivity;
 import com.theandroiddev.mywins.utils.DateHelper;
 import com.theandroiddev.mywins.utils.DrawableSelector;
 
