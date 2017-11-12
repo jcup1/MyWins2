@@ -24,6 +24,7 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -42,6 +43,9 @@ import com.theandroiddev.mywins.UI.adapters.CustomImagePickerAdapter;
 import com.theandroiddev.mywins.data.db.DBAdapter;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.models.SuccessImage;
+import com.theandroiddev.mywins.data.repositories.DatabaseSuccessesRepository;
+import com.theandroiddev.mywins.successslider.SuccessImageLoader;
+import com.theandroiddev.mywins.successslider.SuccessSliderContract;
 import com.theandroiddev.mywins.utils.DateHelper;
 import com.theandroiddev.mywins.utils.DrawableSelector;
 
@@ -54,8 +58,6 @@ import static com.theandroiddev.mywins.utils.Constants.CLICK_SHORT;
 import static com.theandroiddev.mywins.utils.Constants.DATE_ENDED_EMPTY;
 import static com.theandroiddev.mywins.utils.Constants.DATE_STARTED_EMPTY;
 import static com.theandroiddev.mywins.utils.Constants.EXTRA_EDIT_SUCCESS_ITEM;
-import static com.theandroiddev.mywins.utils.Constants.EXTRA_SHOW_SUCCESS_IMAGES;
-import static com.theandroiddev.mywins.utils.Constants.EXTRA_SHOW_SUCCESS_ITEM;
 import static com.theandroiddev.mywins.utils.Constants.REQUEST_CODE_GALLERY;
 import static com.theandroiddev.mywins.utils.Constants.REQUEST_CODE_IMPORTANCE;
 import static com.theandroiddev.mywins.utils.Constants.SNACK_IMAGE_REMOVED;
@@ -78,6 +80,7 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
     private Animation animShow, animHide;
     private ArrayList<com.esafirm.imagepicker.model.Image> imageList = new ArrayList<>();
     private CameraModule cameraModule;
+    private SuccessSliderContract.SuccessImageLoader successImageLoader;
 
 
     private boolean noDistractionMode;
@@ -155,6 +158,8 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         setSupportActionBar(toolbar);
         noDistractionMode = false;
         initAnimation();
+        successImageLoader = new SuccessImageLoader();
+        successImageLoader.setRepository(new DatabaseSuccessesRepository(getApplicationContext()));
 
         FloatingActionButton fab = findViewById(R.id.edit_fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -185,7 +190,7 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         }
     }
 
-    private void getSuccessImages(int successId, String searchTerm, String sort) {
+    private void getSuccessImages(String successId, String searchTerm, String sort) {
 
         successImageList = new ArrayList<>();
         successImageList.clear();
@@ -213,7 +218,7 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
 
             Success editSuccess = new Success(editTitleEt.getText().toString(), editCategoryTv.getText().toString(), (int) editImportanceIv.getTag(), editDescriptionEt.getText().toString(),
                     dateStarted, dateEnded);
-            editSuccess.setId((Integer) editTitleEt.getTag());
+//            editSuccess.setId( editTitleEt.getTag());
 
             saveImages(editSuccess.getId());
 
@@ -271,8 +276,18 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         editCardImages = findViewById(R.id.edit_card_images);
         editSuccessLayout = findViewById(R.id.edit_success_layout);
 
-        editSuccess = getIntent().getParcelableExtra(EXTRA_SHOW_SUCCESS_ITEM);
-        successImageList = getIntent().getParcelableArrayListExtra(EXTRA_SHOW_SUCCESS_IMAGES);
+
+        String id = getIntent().getStringExtra("id");
+        Log.d(TAG, "initViewsid: " + id);
+
+        editSuccess = successImageLoader.getSuccess(id);
+        successImageList = successImageLoader.getSuccessImages(id);
+
+//
+//        editSuccess = getIntent().getParcelableExtra(EXTRA_SHOW_SUCCESS_ITEM);
+//        successImageList = getIntent().getParcelableArrayListExtra(EXTRA_SHOW_SUCCESS_IMAGES);
+
+
 
         editTitleEt.setTag(editSuccess.getId());
         editTitleEt.setText(editSuccess.getTitle());
@@ -368,7 +383,7 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
 
     }
 
-    private void saveImages(int successId) {
+    private void saveImages(String successId) {
         dbAdapter.openDB();
         dbAdapter.editSuccessImages(successImageList, successId);
         dbAdapter.closeDB();

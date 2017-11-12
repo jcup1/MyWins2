@@ -113,7 +113,7 @@ public class DBAdapter {
 
     }
 
-    public ArrayList<SuccessImage> getSuccessImages(int successId) {
+    public ArrayList<SuccessImage> getSuccessImages(String successId) {
 
         ArrayList<SuccessImage> successImages = new ArrayList<>();
 
@@ -132,14 +132,14 @@ public class DBAdapter {
         return successImages;
     }
 
-    public void editSuccessImages(ArrayList<SuccessImage> successImages, int successId) {
+    public void editSuccessImages(ArrayList<SuccessImage> successImages, String successId) {
 
         deleteImages(successId);
         addSuccessImages(successImages);
 
     }
 
-    private void deleteImages(int successId) {
+    private void deleteImages(String successId) {
         sqLiteDatabase.execSQL("DELETE FROM " + TB_NAME_IMAGES + " WHERE " + SUCCESS_ID + " = " + successId);
 
     }
@@ -158,7 +158,7 @@ public class DBAdapter {
         return successList;
     }
 
-    public Success getSuccess(int id) {
+    public Success getSuccess(String id) {
 
         String sql = "SELECT * FROM " + TB_NAME_SUCCESSES + " WHERE " + SUCCESS_ID + " = " + id;
         Cursor cursor = sqLiteDatabase.rawQuery(sql, null);
@@ -173,7 +173,7 @@ public class DBAdapter {
             cursor.close();
             Success s = new Success(title, category, importance, description, dateStarted, dateEnded);
             s.setId(id);
-            s.setId(id);
+            //s.setId(id);
             return s;
         }
 
@@ -189,7 +189,7 @@ public class DBAdapter {
         Cursor cursor = retrieveSuccess(searchTerm, sortType);
 
         while (cursor.moveToNext()) {
-            int id = cursor.getInt(SUCCESS_ID_VALUE);
+            String id = cursor.getString(SUCCESS_ID_VALUE);
             String title = cursor.getString(TITLE_VALUE);
             String category = cursor.getString(CATEGORY_VALUE);
             int importance = cursor.getInt(IMPORTANCE_VALUE);

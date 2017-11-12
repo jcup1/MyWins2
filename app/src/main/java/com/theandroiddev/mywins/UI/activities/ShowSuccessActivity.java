@@ -104,7 +104,7 @@ public class ShowSuccessActivity extends AppCompatActivity implements SuccessIma
         initViews();
     }
 
-    private void initImages(int successId) {
+    private void initImages(String successId) {
         getSuccessImages(successId);
     }
 
@@ -117,7 +117,7 @@ public class ShowSuccessActivity extends AppCompatActivity implements SuccessIma
 
     }
 
-    private void getSuccessImages(int successId) {
+    private void getSuccessImages(String successId) {
 
         dbAdapter = new DBAdapter(this);
 
@@ -150,7 +150,7 @@ public class ShowSuccessActivity extends AppCompatActivity implements SuccessIma
 
         Success showSuccess = new Success(showTitle.getText().toString(), showCategory.getText().toString(),
                 (int) showImportanceIv.getTag(), showDescription.getText().toString(), showDateStarted.getText().toString(), showDateEnded.getText().toString());
-        showSuccess.setId((Integer) showTitle.getTag());
+//        showSuccess.setId((Integer) showTitle.getTag());
 
         editSuccessIntent.putExtra(EXTRA_SHOW_SUCCESS_ITEM, showSuccess);
         editSuccessIntent.putParcelableArrayListExtra(EXTRA_SHOW_SUCCESS_IMAGES, successImages);

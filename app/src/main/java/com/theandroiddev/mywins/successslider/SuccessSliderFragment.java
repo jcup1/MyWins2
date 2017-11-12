@@ -54,8 +54,6 @@ public class SuccessSliderFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.content_show_success, container, false);
 
-        //((MyWinsApplication)getContext()).getAppComponent().inject(this);
-
         drawableSelector = new DrawableSelector(getContext());
         titleTv = view.findViewById(R.id.item_title);
         dateStartedTv = view.findViewById(R.id.item_date_started);
@@ -66,13 +64,6 @@ public class SuccessSliderFragment extends Fragment {
         importanceIv = view.findViewById(R.id.item_importance_iv);
         recyclerView = view.findViewById(R.id.show_image_recycler_view);
 
-//        FloatingActionButton fab = view.findViewById(R.id.show_fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                //TODO editSuccess();
-//            }
-//        });
         successImageLoader = new SuccessImageLoader();
         successImageLoader.setRepository(new DatabaseSuccessesRepository(getContext()));
 
@@ -80,9 +71,17 @@ public class SuccessSliderFragment extends Fragment {
         initImageLoader(getContext());
         initRecycler();
         initViews();
-
+        initAnimation();
 
         return view;
+    }
+
+    private void initAnimation() {
+
+        AlphaAnimation fadeIn = new AlphaAnimation(0.0f, 1.0f);
+        descriptionTv.startAnimation(fadeIn);
+        fadeIn.setDuration(375);
+        fadeIn.setFillAfter(true);
     }
 
     @Override
@@ -91,36 +90,15 @@ public class SuccessSliderFragment extends Fragment {
 
     }
 
-//    private void getSuccessImages(int successId) {
-//
-//
-//        successImages = new ArrayList<>();
-//        successImages.clear();
-//        dbAdapter.openDB();
-//        successImages.addAll(dbAdapter.retrieveSuccessImages(successId));
-//        dbAdapter.closeDB();
-//        successImageAdapter = new SuccessImageAdapter(successImages, this, R.layout.success_image_layout, this);
-//        recyclerView.setAdapter(successImageAdapter);
-//        successImageAdapter.notifyDataSetChanged();
-//
-//    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
     }
 
-//    }
-
     private void initViews() {
 
-//        Bundle bundle = this.getArguments();
-//        if(bundle != null) {
-//            s  = bundle.getParcelable("success");
-//
-
         Bundle bundle = this.getArguments();
-        int id = bundle.getInt("id");
+        String id = bundle.getString("id");
 
         s = successImageLoader.getSuccess(id);
 
@@ -136,11 +114,6 @@ public class SuccessSliderFragment extends Fragment {
 
         drawableSelector.selectCategoryImage(categoryIv, s.getCategory(), categoryTv);
         drawableSelector.selectImportanceImage(importanceIv, s.getImportance());
-
-        AlphaAnimation fadeIn = new AlphaAnimation(0.0f, 1.0f);
-        descriptionTv.startAnimation(fadeIn);
-        fadeIn.setDuration(375);
-        fadeIn.setFillAfter(true);
     }
 
     private void initRecycler() {

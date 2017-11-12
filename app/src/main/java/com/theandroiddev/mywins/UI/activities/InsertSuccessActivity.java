@@ -29,6 +29,7 @@ import static com.theandroiddev.mywins.utils.Constants.dummyImportanceDefault;
 public class InsertSuccessActivity extends AppCompatActivity implements View.OnClickListener {
 
 
+    private static final String TAG = "asd";
     TextView categoryTv, importanceTv, dateStartedTv, dateEndedTv;
     EditText titleEt, description_et;
     ImageView categoryIv, dateStartedIv, dateEndedIv, descriptionIv, importance1Iv, importance2Iv, importance3Iv, importance4Iv;
@@ -178,6 +179,9 @@ public class InsertSuccessActivity extends AppCompatActivity implements View.OnC
 
         Success s = new Success(titleEt.getText().toString(), categoryTv.getText().toString(),
                 drawableSelector.getImportance(importanceTv.getText().toString()), description_et.getText().toString(), dateStarted, dateEnded);
+
+        //s.setId(UUID.randomUUID().toString());
+        //Log.e(TAG, "sendData: uuid" + s.getId() );
 
 
         returnIntent.putExtra(EXTRA_INSERT_SUCCESS_ITEM, s);

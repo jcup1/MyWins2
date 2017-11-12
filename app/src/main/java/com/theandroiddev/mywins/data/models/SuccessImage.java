@@ -21,16 +21,16 @@ public class SuccessImage implements Parcelable {
         }
     };
     int id;
-    int successId;
+    String successId;
     String imagePath;
 
     protected SuccessImage(Parcel in) {
         id = in.readInt();
         imagePath = in.readString();
-        successId = in.readInt();
+        successId = in.readString();
     }
 
-    public SuccessImage(int successId) {
+    public SuccessImage(String successId) {
         this.successId = successId;
     }
 
@@ -42,11 +42,11 @@ public class SuccessImage implements Parcelable {
         this.id = id;
     }
 
-    public int getSuccessId() {
+    public String getSuccessId() {
         return successId;
     }
 
-    public void setSuccessId(int successId) {
+    public void setSuccessId(String successId) {
         this.successId = successId;
     }
 
@@ -67,7 +67,7 @@ public class SuccessImage implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(id);
         parcel.writeString(imagePath);
-        parcel.writeInt(successId);
+        parcel.writeString(successId);
     }
 
 

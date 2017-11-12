@@ -1,6 +1,7 @@
 package com.theandroiddev.mywins.successes;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.theandroiddev.mywins.MyWinsApplication;
@@ -95,7 +96,7 @@ public class SuccessesPresenter implements SuccessesContract.Presenter {
         if (preferencesHelper.isFirstSuccessAdded() && successList.size() > clickedPosition) {
 
             if (clickedPosition != NOT_ACTIVE) {
-                int id = successList.get(clickedPosition).getId();
+                String id = successList.get(clickedPosition).getId();
                 successList.set(clickedPosition, successesRepository.getSuccess(id));
                 view.displaySuccessChanged();
             }
@@ -229,6 +230,7 @@ public class SuccessesPresenter implements SuccessesContract.Presenter {
 
     @Override
     public void startSlider() {
+        Log.d(TAG, "startSlider: " + successList.get(0).getId());
         view.displaySlider(successesRepository.getSuccesses(getSearchFilter()));
     }
 

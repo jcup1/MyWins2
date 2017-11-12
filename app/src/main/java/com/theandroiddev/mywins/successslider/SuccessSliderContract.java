@@ -22,6 +22,8 @@ public interface SuccessSliderContract {
     interface View extends BaseView<Presenter> {
 
         void displaySuccesses(ArrayList<Success> successes);
+
+        void displayEditSuccessActivity(String id);
     }
 
     /**
@@ -37,6 +39,8 @@ public interface SuccessSliderContract {
         void openDB();
 
         void closeDB();
+
+        void startEditSuccess(int currentItem);
     }
 
 
@@ -46,10 +50,10 @@ public interface SuccessSliderContract {
 
     interface SuccessImageLoader {
 
-        ArrayList<SuccessImage> getSuccessImages(int id);
+        ArrayList<SuccessImage> getSuccessImages(String id);
 
         void setRepository(SuccessesRepository successesRepository);
 
-        Success getSuccess(int id);
+        Success getSuccess(String id);
     }
 }

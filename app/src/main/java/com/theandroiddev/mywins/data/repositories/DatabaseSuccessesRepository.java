@@ -52,7 +52,7 @@ public class DatabaseSuccessesRepository implements SuccessesRepository {
     }
 
     @Override
-    public Success getSuccess(int id) {
+    public Success getSuccess(String id) {
         return dbAdapter.getSuccess(id);
     }
 
@@ -77,7 +77,7 @@ public class DatabaseSuccessesRepository implements SuccessesRepository {
     }
 
     @Override
-    public ArrayList<SuccessImage> getSuccessImages(int id) {
+    public ArrayList<SuccessImage> getSuccessImages(String id) {
         return dbAdapter.getSuccessImages(id);
     }
 

@@ -27,6 +27,7 @@ import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -78,6 +79,7 @@ import static com.theandroiddev.mywins.utils.Constants.SNACK_SUCCESS_REMOVED;
 import static com.theandroiddev.mywins.utils.Constants.SNACK_UNDO;
 
 public class SuccessesActivity extends AppCompatActivity implements android.view.View.OnClickListener, SuccessAdapter.OnItemClickListener, SuccessesContract.View {
+    private static final String TAG = "SuccessesActivity";
 
     private static final String EXTRA_TRIGGER_SYNC_FLAG =
             "com.theandroiddev.mywins.UI.Activities.SuccessesActivity.EXTRA_TRIGGER_SYNC_FLAG";
@@ -679,6 +681,7 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
 
     @Override
     public void displaySlider(ArrayList<Success> successList) {
+        Log.d(TAG, "displaySlider: " + successList.get(clickedPosition).getId());
         Intent intent = new Intent(SuccessesActivity.this, SuccessSliderActivity.class);
         intent.putExtra("searchfilter", presenter.getSearchFilter());
         intent.putExtra("position", clickedPosition);

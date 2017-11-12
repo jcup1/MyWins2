@@ -1,6 +1,7 @@
 package com.theandroiddev.mywins.successslider;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -17,6 +18,7 @@ import android.view.View;
 
 import com.theandroiddev.mywins.MyWinsApplication;
 import com.theandroiddev.mywins.R;
+import com.theandroiddev.mywins.UI.activities.EditSuccessActivity;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.repositories.DatabaseSuccessesRepository;
 import com.theandroiddev.mywins.successes.SearchFilter;
@@ -25,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import static com.theandroiddev.mywins.utils.Constants.REQUEST_CODE_INSERT;
 
 /**
  * Created by jakub on 27.10.17.
@@ -78,7 +82,7 @@ public class SuccessSliderActivity extends AppCompatActivity implements SuccessS
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //editSuccess();
+                editSuccess();
             }
         });
 
@@ -108,16 +112,8 @@ public class SuccessSliderActivity extends AppCompatActivity implements SuccessS
 
     private void editSuccess() {
 
-//        Intent editSuccessIntent = new Intent(ShowSuccessActivity.this, EditSuccessActivity.class);
-//
-//        Success showSuccess = new Success(showTitle.getText().toString(), showCategory.getText().toString(),
-//                (int) showImportanceIv.getTag(), showDescription.getText().toString(), showDateStarted.getText().toString(), showDateEnded.getText().toString());
-//        showSuccess.setId((Integer) showTitle.getTag());
-//
-//        editSuccessIntent.putExtra(EXTRA_SHOW_SUCCESS_ITEM, showSuccess);
-//        editSuccessIntent.putParcelableArrayListExtra(EXTRA_SHOW_SUCCESS_IMAGES, successImages);
-//
-//        startActivityForResult(editSuccessIntent, REQUEST_CODE_INSERT);
+        presenter.startEditSuccess(mPager.getCurrentItem());
+
     }
 
     @Override
@@ -142,6 +138,16 @@ public class SuccessSliderActivity extends AppCompatActivity implements SuccessS
         mPager.setCurrentItem(position);
     }
 
+    @Override
+    public void displayEditSuccessActivity(String id) {
+        Intent editSuccessIntent = new Intent(SuccessSliderActivity.this, EditSuccessActivity.class);
+
+        editSuccessIntent.putExtra("id", id);
+
+        startActivityForResult(editSuccessIntent, REQUEST_CODE_INSERT);
+
+    }
+
     /**
      * A simple pager adapter that represents 5 SuccessSliderFragment objects, in
      * sequence.
@@ -158,7 +164,7 @@ public class SuccessSliderActivity extends AppCompatActivity implements SuccessS
         @Override
         public Fragment getItem(int position) {
             Bundle bundle = new Bundle();
-            bundle.putInt("id", successes.get(position).getId());
+            bundle.putString("id", successes.get(position).getId());
             SuccessSliderFragment frag = new SuccessSliderFragment();
             frag.setArguments(bundle);
             return frag;
