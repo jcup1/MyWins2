@@ -20,11 +20,11 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.theandroiddev.mywins.R;
-import com.theandroiddev.mywins.UI.activities.ImageActivity;
-import com.theandroiddev.mywins.UI.activities.SuccessImageAdapter;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.models.SuccessImage;
 import com.theandroiddev.mywins.data.repositories.DatabaseSuccessesRepository;
+import com.theandroiddev.mywins.images.ImageActivity;
+import com.theandroiddev.mywins.images.SuccessImageAdapter;
 import com.theandroiddev.mywins.utils.DrawableSelector;
 
 import java.util.ArrayList;

@@ -40,10 +40,9 @@ import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.theandroiddev.mywins.InsertSuccessActivity;
 import com.theandroiddev.mywins.MyWinsApplication;
 import com.theandroiddev.mywins.R;
-import com.theandroiddev.mywins.UI.activities.InsertSuccessActivity;
-import com.theandroiddev.mywins.UI.activities.ShowSuccessActivity;
 import com.theandroiddev.mywins.data.db.DBAdapter;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.prefs.PreferencesHelper;
@@ -70,7 +69,6 @@ import static com.theandroiddev.mywins.utils.Constants.EXTRA_SUCCESS_CATEGORY_IV
 import static com.theandroiddev.mywins.utils.Constants.EXTRA_SUCCESS_DATE_ENDED;
 import static com.theandroiddev.mywins.utils.Constants.EXTRA_SUCCESS_DATE_STARTED;
 import static com.theandroiddev.mywins.utils.Constants.EXTRA_SUCCESS_IMPORTANCE_IV;
-import static com.theandroiddev.mywins.utils.Constants.EXTRA_SUCCESS_ITEM;
 import static com.theandroiddev.mywins.utils.Constants.EXTRA_SUCCESS_TITLE;
 import static com.theandroiddev.mywins.utils.Constants.NOT_ACTIVE;
 import static com.theandroiddev.mywins.utils.Constants.REQUEST_CODE_INSERT;
@@ -170,7 +168,8 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
     public void onBackPressed() {
 
         if (searchBox != null) {
-            hideSearchBar();
+
+            presenter.handleMenuSearch();
         } else if (floatingActionsMenu.isExpanded()) {
             floatingActionsMenu.collapse();
         } else {
@@ -202,10 +201,8 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
         presenter.setSearchTerm("");
 
         presenter.setView(this);
+        presenter.checkPreferences();
         presenter.loadSuccesses();
-        //preferencesHelper.clear();
-        presenter.handleFirstSuccessPreference();
-
 
     }
 
@@ -510,7 +507,7 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
 //        }
         this.clickedPosition = position;
         hideSoftKeyboard();
-        presenter.startSlider();
+        presenter.startSlider(success, position, titleTv, categoryTv, dateStartedTv, dateEndedTv, categoryIv, importanceIv, constraintLayout, cardView);
 
         //TODO maybe put to presenter
 
@@ -538,40 +535,11 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
         });
     }
 
-
-    private void showSuccess(Success success) {
-
-        Intent showSuccessIntent = new Intent(SuccessesActivity.this, ShowSuccessActivity.class);
-
-        showSuccessIntent.putExtra(EXTRA_SUCCESS_ITEM, success);
-
-        startActivityForResult(showSuccessIntent, REQUEST_CODE_SLIDER);
-
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void showSuccessAnimation(Success success, TextView titleTv, TextView categoryTv, TextView dateStartedTv, TextView dateEndedTv, ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView) {
 
 
-        Intent showSuccessIntent = new Intent(SuccessesActivity.this, ShowSuccessActivity.class);
 
-
-        showSuccessIntent.putExtra(EXTRA_SUCCESS_ITEM, success);
-
-        Pair<android.view.View, String> p1, p2, p3, p4, p5, p6, p7;
-        p1 = Pair.create((android.view.View) titleTv, EXTRA_SUCCESS_TITLE);
-        p2 = Pair.create((android.view.View) categoryTv, EXTRA_SUCCESS_CATEGORY);
-        p3 = Pair.create((android.view.View) dateStartedTv, EXTRA_SUCCESS_DATE_STARTED);
-        p4 = Pair.create((android.view.View) dateEndedTv, EXTRA_SUCCESS_DATE_ENDED);
-        p5 = Pair.create((android.view.View) categoryIv, EXTRA_SUCCESS_CATEGORY_IV);
-        p6 = Pair.create((android.view.View) importanceIv, EXTRA_SUCCESS_IMPORTANCE_IV);
-        p7 = Pair.create((android.view.View) cardView, EXTRA_SUCCESS_CARD_VIEW);
-
-        ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                this,
-                p1, p2, p3, p4, p5, p6, p7);
-
-        startActivity(showSuccessIntent, activityOptionsCompat.toBundle());
 
     }
 
@@ -625,7 +593,6 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
             action.setDisplayShowCustomEnabled(false);
             action.setDisplayShowTitleEnabled(true);
         }
-        Log.d(TAG, "hideSearchBar: IM HERE");
         searchAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_search));
         searchBox = null;
         presenter.clearSearch();
@@ -674,8 +641,9 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
                                                 @Override
                                                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                                                     presenter.setSearchTerm(getSearchText());
-                                                    presenter.loadSuccesses();
-                                                    hideSearchBar();
+                                                    presenter.handleMenuSearch();
+//                                                    presenter.loadSuccesses();
+//                                                    hideSearchBar();
 
                                                     return true;
                                                 }
@@ -708,6 +676,30 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
         intent.putExtra("searchfilter", presenter.getSearchFilter());
         intent.putExtra("position", clickedPosition);
         startActivityForResult(intent, REQUEST_CODE_SLIDER);
+    }
+
+    @Override
+    public void displaySliderAnimation(ArrayList<Success> successes, Success success, int position, TextView titleTv, TextView categoryTv, TextView dateStartedTv, TextView dateEndedTv, ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView) {
+
+        Intent intent = new Intent(SuccessesActivity.this, SuccessSliderActivity.class);
+
+        intent.putExtra("searchfilter", presenter.getSearchFilter());
+        intent.putExtra("position", clickedPosition);
+
+        Pair<android.view.View, String> p1, p2, p3, p4, p5, p6, p7;
+        p1 = Pair.create((android.view.View) titleTv, EXTRA_SUCCESS_TITLE);
+        p2 = Pair.create((android.view.View) categoryTv, EXTRA_SUCCESS_CATEGORY);
+        p3 = Pair.create((android.view.View) dateStartedTv, EXTRA_SUCCESS_DATE_STARTED);
+        p4 = Pair.create((android.view.View) dateEndedTv, EXTRA_SUCCESS_DATE_ENDED);
+        p5 = Pair.create((android.view.View) categoryIv, EXTRA_SUCCESS_CATEGORY_IV);
+        p6 = Pair.create((android.view.View) importanceIv, EXTRA_SUCCESS_IMPORTANCE_IV);
+        p7 = Pair.create((android.view.View) cardView, EXTRA_SUCCESS_CARD_VIEW);
+
+        ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                this,
+                p1, p2, p3, p4, p5, p6, p7);
+
+        startActivity(intent, activityOptionsCompat.toBundle());
     }
 
     private void hideSoftKeyboard() {

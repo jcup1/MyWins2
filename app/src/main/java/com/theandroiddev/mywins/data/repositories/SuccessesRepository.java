@@ -1,8 +1,8 @@
 package com.theandroiddev.mywins.data.repositories;
 
+import com.theandroiddev.mywins.data.models.SearchFilter;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.models.SuccessImage;
-import com.theandroiddev.mywins.successes.SearchFilter;
 
 import java.util.ArrayList;
 
@@ -37,4 +37,8 @@ public interface SuccessesRepository {
     void editSuccess(Success editSuccess);
 
     void editSuccessImages(ArrayList<SuccessImage> successImageList, String successId);
+
+    void saveSuccesses(ArrayList<Success> defaultSuccesses);
+
+    void clearDatabase();
 }

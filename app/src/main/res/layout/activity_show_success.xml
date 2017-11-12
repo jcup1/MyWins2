@@ -6,7 +6,7 @@
     android:id="@+id/show_constraint_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UI.activities.ShowSuccessActivity">
+    tools:context=".UI.unused.ShowSuccessActivity">
 
 
     <android.support.v7.widget.Toolbar

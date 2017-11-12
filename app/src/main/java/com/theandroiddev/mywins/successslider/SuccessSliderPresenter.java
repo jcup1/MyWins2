@@ -4,9 +4,9 @@ import android.content.Context;
 import android.util.Log;
 
 import com.theandroiddev.mywins.MyWinsApplication;
+import com.theandroiddev.mywins.data.models.SearchFilter;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.repositories.SuccessesRepository;
-import com.theandroiddev.mywins.successes.SearchFilter;
 
 import java.util.ArrayList;
 

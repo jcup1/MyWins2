@@ -1,9 +1,14 @@
 package com.theandroiddev.mywins.successes;
 
+import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.CardView;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.theandroiddev.mywins.BasePresenter;
 import com.theandroiddev.mywins.BaseView;
+import com.theandroiddev.mywins.data.models.SearchFilter;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.models.SuccessImage;
 import com.theandroiddev.mywins.data.prefs.PreferencesHelper;
@@ -45,6 +50,8 @@ public interface SuccessesContract {
         void displayUpdatedSuccesses();
 
         void displaySlider(ArrayList<Success> successList);
+
+        void displaySliderAnimation(ArrayList<Success> successes, Success success, int position, TextView titleTv, TextView categoryTv, TextView dateStartedTv, TextView dateEndedTv, ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView);
     }
 
     /**
@@ -81,11 +88,11 @@ public interface SuccessesContract {
 
         void closeDB();
 
-        void handleFirstSuccessPreference();
+        void checkPreferences();
 
         void openDB();
 
-        void startSlider();
+        void startSlider(Success success, int position, TextView titleTv, TextView categoryTv, TextView dateStartedTv, TextView dateEndedTv, ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView);
 
         SearchFilter getSearchFilter();
 

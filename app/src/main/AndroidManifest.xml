@@ -31,15 +31,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".UI.activities.InsertSuccessActivity"
+            android:name=".InsertSuccessActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dialog"
             android:windowSoftInputMode="adjustResize"/>
-        <activity
-            android:name=".UI.activities.ShowSuccessActivity"
-            android:label="@string/title_activity_show_success"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
         <activity
             android:name=".editsuccess.EditSuccessActivity"
             android:label="@string/title_activity_edit_success"
@@ -47,11 +42,11 @@
             android:windowSoftInputMode="adjustResize">
         </activity>
         <activity
-            android:name=".UI.activities.ImportancePopupActivity"
+            android:name=".ImportancePopupActivity"
             android:theme="@style/AppTheme.Dialog">
         </activity>
         <activity
-            android:name=".UI.activities.ImageActivity"
+            android:name=".images.ImageActivity"
             android:theme="@style/AppTheme.Dialog.No.Bg">
         </activity>
         <activity android:name=".editsuccess.EditDescriptionActivity">

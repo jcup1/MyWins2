@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins.UI.adapters;
+package com.theandroiddev.mywins.images;
 
 import android.content.Context;
 

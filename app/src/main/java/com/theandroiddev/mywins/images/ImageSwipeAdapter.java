@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins.UI.activities;
+package com.theandroiddev.mywins.images;
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,7 +20,7 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.download.ImageDownloader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.theandroiddev.mywins.R;
-import com.theandroiddev.mywins.UI.views.TouchImageView;
+import com.theandroiddev.mywins.data.models.TouchImageView;
 
 import java.util.ArrayList;
 

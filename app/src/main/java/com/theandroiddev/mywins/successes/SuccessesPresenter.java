@@ -1,11 +1,15 @@
 package com.theandroiddev.mywins.successes;
 
 import android.content.Context;
-import android.util.Log;
+import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.CardView;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.theandroiddev.mywins.MyWinsApplication;
 import com.theandroiddev.mywins.R;
+import com.theandroiddev.mywins.data.models.SearchFilter;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.prefs.PreferencesHelper;
 import com.theandroiddev.mywins.data.repositories.SuccessesRepository;
@@ -205,7 +209,7 @@ public class SuccessesPresenter implements SuccessesContract.Presenter {
     public void addSuccess(Success s) {
 
         if (!preferencesHelper.isFirstSuccessAdded()) {
-            clearSuccesses();
+            successesRepository.clearDatabase();
             preferencesHelper.setFirstSuccessAdded();
         }
         successesRepository.addSuccess(s);
@@ -215,13 +219,15 @@ public class SuccessesPresenter implements SuccessesContract.Presenter {
     }
 
     @Override
-    public void handleFirstSuccessPreference() {
+    public void checkPreferences() {
+        if (preferencesHelper.isFirstRun()) {
+            //TODO add to database
+            successesRepository.saveSuccesses(successesRepository.getDefaultSuccesses());
 
-        if (!preferencesHelper.isFirstSuccessAdded()) {
-            view.displayDefaultSuccesses(successesRepository.getDefaultSuccesses());
-
+            preferencesHelper.setNotFirstRun();
         }
     }
+
 
     @Override
     public void openDB() {
@@ -229,9 +235,14 @@ public class SuccessesPresenter implements SuccessesContract.Presenter {
     }
 
     @Override
-    public void startSlider() {
-        Log.d(TAG, "startSlider: " + successList.get(0).getId());
-        view.displaySlider(successesRepository.getSuccesses(getSearchFilter()));
+    public void startSlider(Success success, int position, TextView titleTv, TextView categoryTv, TextView dateStartedTv, TextView dateEndedTv, ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            view.displaySliderAnimation(successesRepository.getSuccesses(getSearchFilter()), success, position, titleTv, categoryTv, dateStartedTv, dateEndedTv, categoryIv, importanceIv, constraintLayout, cardView);
+
+        } else {
+            view.displaySlider(successesRepository.getSuccesses(getSearchFilter()));
+
+        }
     }
 
     @Override
