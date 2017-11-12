@@ -2,8 +2,10 @@ package com.theandroiddev.mywins.injection;
 
 import android.content.Context;
 
-import com.theandroiddev.mywins.UI.activities.SuccessesActivityPresenter;
-import com.theandroiddev.mywins.UI.activities.SuccessesActivityPresenterImpl;
+import com.theandroiddev.mywins.successes.SuccessesContract;
+import com.theandroiddev.mywins.successes.SuccessesPresenter;
+import com.theandroiddev.mywins.successslider.SuccessSliderContract;
+import com.theandroiddev.mywins.successslider.SuccessSliderPresenter;
 
 import javax.inject.Singleton;
 
@@ -19,7 +21,13 @@ public class PresenterModule {
 
     @Provides
     @Singleton
-    SuccessesActivityPresenter provideSuccessesActivityPresenter(Context context) {
-        return new SuccessesActivityPresenterImpl(context);
+    SuccessesContract.Presenter provideSuccessesActivityPresenter(Context context) {
+        return new SuccessesPresenter(context);
+    }
+
+    @Provides
+    @Singleton
+    SuccessSliderContract.Presenter provideSuccessesSliderActivityPresenter(Context context) {
+        return new SuccessSliderPresenter(context);
     }
 }

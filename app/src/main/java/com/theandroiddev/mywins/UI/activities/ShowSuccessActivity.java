@@ -28,10 +28,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.theandroiddev.mywins.R;
-import com.theandroiddev.mywins.UI.adapters.SuccessImageAdapter;
-import com.theandroiddev.mywins.UI.models.Success;
-import com.theandroiddev.mywins.UI.models.SuccessImage;
 import com.theandroiddev.mywins.data.db.DBAdapter;
+import com.theandroiddev.mywins.data.models.Success;
+import com.theandroiddev.mywins.data.models.SuccessImage;
 import com.theandroiddev.mywins.utils.DrawableSelector;
 
 import java.util.ArrayList;
@@ -127,7 +126,7 @@ public class ShowSuccessActivity extends AppCompatActivity implements SuccessIma
         successImages = new ArrayList<>();
         successImages.clear();
         dbAdapter.openDB();
-        successImages.addAll(dbAdapter.retrieveSuccessImages(successId));
+        successImages.addAll(dbAdapter.getSuccessImages(successId));
         dbAdapter.closeDB();
         successImageAdapter = new SuccessImageAdapter(successImages, this, R.layout.success_image_layout, this);
         recyclerView.setAdapter(successImageAdapter);
@@ -161,6 +160,7 @@ public class ShowSuccessActivity extends AppCompatActivity implements SuccessIma
 
     private void initViews() {
 
+        //USED
         showConstraintLayout = findViewById(R.id.show_constraint_layout);
         showTitle = findViewById(R.id.item_title);
         showCategory = findViewById(R.id.item_category);

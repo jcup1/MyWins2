@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins.UI.activities;
+package com.theandroiddev.mywins.successes;
 
 import android.animation.Animator;
 import android.app.Activity;
@@ -30,7 +30,6 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
@@ -42,12 +41,13 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.theandroiddev.mywins.MyWinsApplication;
 import com.theandroiddev.mywins.R;
-import com.theandroiddev.mywins.UI.adapters.SuccessAdapter;
-import com.theandroiddev.mywins.UI.models.Success;
-import com.theandroiddev.mywins.UI.views.SuccessesActivityView;
+import com.theandroiddev.mywins.UI.activities.InsertSuccessActivity;
+import com.theandroiddev.mywins.UI.activities.ShowSuccessActivity;
 import com.theandroiddev.mywins.data.db.DBAdapter;
+import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.prefs.PreferencesHelper;
 import com.theandroiddev.mywins.data.repositories.DatabaseSuccessesRepository;
+import com.theandroiddev.mywins.successslider.SuccessSliderActivity;
 
 import java.util.ArrayList;
 
@@ -77,7 +77,7 @@ import static com.theandroiddev.mywins.utils.Constants.SNACK_SUCCESS_NOT_ADDED;
 import static com.theandroiddev.mywins.utils.Constants.SNACK_SUCCESS_REMOVED;
 import static com.theandroiddev.mywins.utils.Constants.SNACK_UNDO;
 
-public class SuccessesActivity extends AppCompatActivity implements View.OnClickListener, SuccessAdapter.OnItemClickListener, SuccessesActivityView {
+public class SuccessesActivity extends AppCompatActivity implements android.view.View.OnClickListener, SuccessAdapter.OnItemClickListener, SuccessesContract.View {
 
     private static final String EXTRA_TRIGGER_SYNC_FLAG =
             "com.theandroiddev.mywins.UI.Activities.SuccessesActivity.EXTRA_TRIGGER_SYNC_FLAG";
@@ -85,7 +85,7 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     DBAdapter dbAdapter;
     SuccessAdapter successAdapter;
     @Inject
-    SuccessesActivityPresenter presenter;
+    SuccessesContract.Presenter presenter;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
     @BindView(R.id.main_constraint)
@@ -95,7 +95,7 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     @BindView(R.id.show_toolbar)
     Toolbar toolbar;
     @BindView(R.id.shadow_view)
-    View shadowView;
+    android.view.View shadowView;
 
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
@@ -132,11 +132,22 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onPause() {
         super.onPause();
+        presenter.removeSuccessesFromQueue();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        presenter.closeDB();
+        presenter.dropView();
+        super.onDestroy();
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        presenter.setView(this);
         presenter.openDB();
         presenter.updateSuccess(clickedPosition);
     }
@@ -180,24 +191,20 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
         initCircularReveal();
         initRecycler();
 
-        presenter.setView(this);
         presenter.setRepository(new DatabaseSuccessesRepository(getApplication()));
         presenter.setPrefHelper(preferencesHelper);
         presenter.setSearchTerm("");
 
+        presenter.setView(this);
         presenter.loadSuccesses();
-
-    }
-
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
-
+        //preferencesHelper.clear();
         presenter.handleFirstSuccessPreference();
+
+
     }
 
     private void initCircularReveal() {
-        shadowView.setVisibility(View.GONE);
+        shadowView.setVisibility(android.view.View.GONE);
 
         floatingActionsMenu = findViewById(R.id.multiple_actions);
         floatingActionsMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
@@ -217,9 +224,9 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
             }
         });
 
-        shadowView.setOnClickListener(new View.OnClickListener() {
+        shadowView.setOnClickListener(new android.view.View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(android.view.View view) {
                 if (floatingActionsMenu.isExpanded()) {
                     floatingActionsMenu.collapse();
                 }
@@ -228,9 +235,9 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
     }
 
-    private void showCircularReveal(final View myView) {
+    private void showCircularReveal(final android.view.View myView) {
         myView.setBackgroundColor(Color.argb(0, 0, 0, 0));
-        myView.setVisibility(View.VISIBLE);
+        myView.setVisibility(android.view.View.VISIBLE);
         myView.post(new Runnable() {
             @Override
             public void run() {
@@ -251,8 +258,8 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
     }
 
-    private void hideCircularReveal(final View myView) {
-        myView.setVisibility(View.VISIBLE);
+    private void hideCircularReveal(final android.view.View myView) {
+        myView.setVisibility(android.view.View.VISIBLE);
         myView.post(new Runnable() {
             @Override
             public void run() {
@@ -272,7 +279,7 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
                     @Override
                     public void onAnimationEnd(Animator animator) {
-                        myView.setVisibility(View.GONE);
+                        myView.setVisibility(android.view.View.GONE);
                     }
 
                     @Override
@@ -385,8 +392,6 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onStop() {
         super.onStop();
-        presenter.removeSuccessesFromQueue();
-        presenter.closeDB();
     }
 
     @Override
@@ -400,7 +405,7 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
 
     @Override
-    public void onClick(View shadowView) {
+    public void onClick(android.view.View shadowView) {
         FloatingActionButton fab = (FloatingActionButton) shadowView;
 
         switch (fab.getId()) {
@@ -463,9 +468,9 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
         presenter.backupSuccess(position);
         Snackbar snackbar = Snackbar
                 .make(recyclerView, SNACK_SUCCESS_REMOVED, Snackbar.LENGTH_LONG)
-                .setAction(SNACK_UNDO, new View.OnClickListener() {
+                .setAction(SNACK_UNDO, new android.view.View.OnClickListener() {
                     @Override
-                    public void onClick(View view) {
+                    public void onClick(android.view.View view) {
 
                         presenter.undoToRemove(position);
                     }
@@ -483,10 +488,11 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 //        } else {
 //            showSuccess(success);
 //        }
+        this.clickedPosition = position;
+
         presenter.startSlider();
 
         //TODO maybe put to presenter
-        this.clickedPosition = position;
 
     }
 
@@ -532,14 +538,14 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
         showSuccessIntent.putExtra(EXTRA_SUCCESS_ITEM, success);
 
-        Pair<View, String> p1, p2, p3, p4, p5, p6, p7;
-        p1 = Pair.create((View) titleTv, EXTRA_SUCCESS_TITLE);
-        p2 = Pair.create((View) categoryTv, EXTRA_SUCCESS_CATEGORY);
-        p3 = Pair.create((View) dateStartedTv, EXTRA_SUCCESS_DATE_STARTED);
-        p4 = Pair.create((View) dateEndedTv, EXTRA_SUCCESS_DATE_ENDED);
-        p5 = Pair.create((View) categoryIv, EXTRA_SUCCESS_CATEGORY_IV);
-        p6 = Pair.create((View) importanceIv, EXTRA_SUCCESS_IMPORTANCE_IV);
-        p7 = Pair.create((View) cardView, EXTRA_SUCCESS_CARD_VIEW);
+        Pair<android.view.View, String> p1, p2, p3, p4, p5, p6, p7;
+        p1 = Pair.create((android.view.View) titleTv, EXTRA_SUCCESS_TITLE);
+        p2 = Pair.create((android.view.View) categoryTv, EXTRA_SUCCESS_CATEGORY);
+        p3 = Pair.create((android.view.View) dateStartedTv, EXTRA_SUCCESS_DATE_STARTED);
+        p4 = Pair.create((android.view.View) dateEndedTv, EXTRA_SUCCESS_DATE_ENDED);
+        p5 = Pair.create((android.view.View) categoryIv, EXTRA_SUCCESS_CATEGORY_IV);
+        p6 = Pair.create((android.view.View) importanceIv, EXTRA_SUCCESS_IMPORTANCE_IV);
+        p7 = Pair.create((android.view.View) cardView, EXTRA_SUCCESS_CARD_VIEW);
 
         ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
                 this,
@@ -552,20 +558,22 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void displayDefaultSuccesses(ArrayList<Success> successList) {
         successAdapter.updateSuccessList(successList);
+        recyclerView.setVisibility(android.view.View.VISIBLE);
+        emptyListTv.setVisibility(android.view.View.INVISIBLE);
     }
 
     @Override
     public void displayNoSuccesses() {
-        recyclerView.setVisibility(View.INVISIBLE);
-        emptyListTv.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(android.view.View.INVISIBLE);
+        emptyListTv.setVisibility(android.view.View.VISIBLE);
 
     }
 
     @Override
     public void displaySuccesses(ArrayList<Success> successList) {
         successAdapter.updateSuccessList(successList);
-        recyclerView.setVisibility(View.VISIBLE);
-        emptyListTv.setVisibility(View.INVISIBLE);
+        recyclerView.setVisibility(android.view.View.VISIBLE);
+        emptyListTv.setVisibility(android.view.View.INVISIBLE);
     }
 
     @Override
@@ -611,7 +619,7 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
         }
 
         final ViewGroup nullParent = null;
-        View view = getLayoutInflater().inflate(R.layout.search_bar, nullParent);
+        android.view.View view = getLayoutInflater().inflate(R.layout.search_bar, nullParent);
         ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,
                 ActionBar.LayoutParams.MATCH_PARENT);
         if (action != null) {
@@ -671,8 +679,9 @@ public class SuccessesActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void displaySlider(ArrayList<Success> successList) {
-        Intent intent = new Intent(SuccessesActivity.this, ScreenSlidePagerActivity.class);
-        intent.putParcelableArrayListExtra("SUCCESSES", successList);
+        Intent intent = new Intent(SuccessesActivity.this, SuccessSliderActivity.class);
+        intent.putExtra("searchfilter", presenter.getSearchFilter());
+        intent.putExtra("position", clickedPosition);
         startActivity(intent);
     }
 

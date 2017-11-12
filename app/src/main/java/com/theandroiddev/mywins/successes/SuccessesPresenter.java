@@ -1,12 +1,11 @@
-package com.theandroiddev.mywins.UI.activities;
+package com.theandroiddev.mywins.successes;
 
 import android.content.Context;
 import android.view.MenuItem;
 
 import com.theandroiddev.mywins.MyWinsApplication;
 import com.theandroiddev.mywins.R;
-import com.theandroiddev.mywins.UI.models.Success;
-import com.theandroiddev.mywins.UI.views.SuccessesActivityView;
+import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.prefs.PreferencesHelper;
 import com.theandroiddev.mywins.data.repositories.SuccessesRepository;
 import com.theandroiddev.mywins.utils.Constants;
@@ -19,20 +18,20 @@ import static com.theandroiddev.mywins.utils.Constants.NOT_ACTIVE;
  * Created by jakub on 04.11.17.
  */
 
-public class SuccessesActivityPresenterImpl implements SuccessesActivityPresenter {
+public class SuccessesPresenter implements SuccessesContract.Presenter {
     private static final String TAG = "SuccessesActivityPresen";
     ArrayList<Success> successList;
     ArrayList<Success> successToRemoveList;
     Success backupSuccess;
     PreferencesHelper preferencesHelper;
-    private SuccessesActivityView view;
+    private SuccessesContract.View view;
     private SuccessesRepository successesRepository;
     private String sortType;
     private boolean isSortingAscending;
     private boolean isSearchOpened = false;
-    private String searchText;
+    private String searchTerm;
 
-    public SuccessesActivityPresenterImpl(Context context) {
+    public SuccessesPresenter(Context context) {
         ((MyWinsApplication) context).getAppComponent().inject(this);
         successList = new ArrayList<>();
         successToRemoveList = new ArrayList<>();
@@ -43,18 +42,13 @@ public class SuccessesActivityPresenterImpl implements SuccessesActivityPresente
     @Override
     public void loadSuccesses() {
 
-        successList = successesRepository.getSuccesses(searchText, sortType, isSortingAscending);
+        successList = successesRepository.getSuccesses(getSearchFilter());
 
         if (successList.isEmpty()) {
             view.displayNoSuccesses();
         } else {
             view.displaySuccesses(successList);
         }
-    }
-
-    @Override
-    public void setView(SuccessesActivityView view) {
-        this.view = view;
     }
 
     @Override
@@ -82,8 +76,10 @@ public class SuccessesActivityPresenterImpl implements SuccessesActivityPresente
         successList.remove(position);
         view.successRemoved(position);
         successToRemoveList.add(backupSuccess);
+        //TODO handle it
         if (successList.isEmpty()) {
-            loadSuccesses();
+            //loadSuccesses();
+            view.displayNoSuccesses();
         }
 
     }
@@ -95,11 +91,14 @@ public class SuccessesActivityPresenterImpl implements SuccessesActivityPresente
 
     @Override
     public void updateSuccess(int clickedPosition) {
+        //TODO check it later
+        if (preferencesHelper.isFirstSuccessAdded() && successList.size() > clickedPosition) {
 
-        if (clickedPosition != NOT_ACTIVE) {
-            int id = successList.get(clickedPosition).getId();
-            successList.set(clickedPosition, successesRepository.getSuccess(id));
-            view.displaySuccessChanged();
+            if (clickedPosition != NOT_ACTIVE) {
+                int id = successList.get(clickedPosition).getId();
+                successList.set(clickedPosition, successesRepository.getSuccess(id));
+                view.displaySuccessChanged();
+            }
         }
 
     }
@@ -189,7 +188,7 @@ public class SuccessesActivityPresenterImpl implements SuccessesActivityPresente
         if (isSearchOpened) {
             view.hideSearchBar();
             isSearchOpened = false;
-            view.displaySuccesses(successesRepository.getSuccesses("", sortType, isSortingAscending));
+            view.displaySuccesses(successesRepository.getSuccesses(getSearchFilter()));
         } else {
             view.displaySearchBar();
             isSearchOpened = true;
@@ -197,8 +196,8 @@ public class SuccessesActivityPresenterImpl implements SuccessesActivityPresente
     }
 
     @Override
-    public void setSearchText(String searchText) {
-        this.searchText = searchText;
+    public void setSearchTerm(String searchTerm) {
+        this.searchTerm = searchTerm;
     }
 
     @Override
@@ -218,7 +217,6 @@ public class SuccessesActivityPresenterImpl implements SuccessesActivityPresente
     public void handleFirstSuccessPreference() {
 
         if (!preferencesHelper.isFirstSuccessAdded()) {
-
             view.displayDefaultSuccesses(successesRepository.getDefaultSuccesses());
 
         }
@@ -227,6 +225,16 @@ public class SuccessesActivityPresenterImpl implements SuccessesActivityPresente
     @Override
     public void openDB() {
         successesRepository.openDB();
+    }
+
+    @Override
+    public void startSlider() {
+        view.displaySlider(successesRepository.getSuccesses(getSearchFilter()));
+    }
+
+    @Override
+    public SearchFilter getSearchFilter() {
+        return new SearchFilter(searchTerm, sortType, isSortingAscending);
     }
 
 
@@ -239,4 +247,13 @@ public class SuccessesActivityPresenterImpl implements SuccessesActivityPresente
         successList.clear();
     }
 
+    @Override
+    public void setView(SuccessesContract.View view) {
+        this.view = view;
+    }
+
+    @Override
+    public void dropView() {
+        view = null;
+    }
 }

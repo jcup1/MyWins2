@@ -2,8 +2,10 @@ package com.theandroiddev.mywins.data.repositories;
 
 import android.content.Context;
 
-import com.theandroiddev.mywins.UI.models.Success;
 import com.theandroiddev.mywins.data.db.DBAdapter;
+import com.theandroiddev.mywins.data.models.Success;
+import com.theandroiddev.mywins.data.models.SuccessImage;
+import com.theandroiddev.mywins.successes.SearchFilter;
 
 import java.util.ArrayList;
 
@@ -29,9 +31,9 @@ public class DatabaseSuccessesRepository implements SuccessesRepository {
     }
 
     @Override
-    public ArrayList<Success> getSuccesses(String searchTerm, String sortType, boolean isAscending) {
+    public ArrayList<Success> getSuccesses(SearchFilter searchFilter) {
         dbAdapter = new DBAdapter(context);
-        return dbAdapter.getSuccesses(searchTerm, sortType, isAscending);
+        return dbAdapter.getSuccesses(searchFilter.getSearchTerm(), searchFilter.getSortType(), searchFilter.isSortingAscending());
     }
 
     @Override
@@ -72,6 +74,11 @@ public class DatabaseSuccessesRepository implements SuccessesRepository {
     @Override
     public void openDB() {
         dbAdapter.openDB();
+    }
+
+    @Override
+    public ArrayList<SuccessImage> getSuccessImages(int id) {
+        return dbAdapter.getSuccessImages(id);
     }
 
 }

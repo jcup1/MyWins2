@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins.UI.adapters;
+package com.theandroiddev.mywins.UI.activities;
 
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
@@ -11,7 +11,7 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 import com.theandroiddev.mywins.R;
-import com.theandroiddev.mywins.UI.models.SuccessImage;
+import com.theandroiddev.mywins.data.models.SuccessImage;
 
 import java.io.File;
 import java.util.List;

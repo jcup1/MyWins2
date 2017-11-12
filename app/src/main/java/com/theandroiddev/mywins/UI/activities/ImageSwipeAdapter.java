@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins.UI.adapters;
+package com.theandroiddev.mywins.UI.activities;
 
 import android.app.Activity;
 import android.content.Context;
