@@ -84,6 +84,8 @@ public class SuccessSliderActivity extends AppCompatActivity implements SuccessS
 
         FloatingActionButton fab = findViewById(R.id.show_fab);
         showConstraintLayout = findViewById(R.id.show_constraint_layout);
+        mPager = findViewById(R.id.pager);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,11 +98,12 @@ public class SuccessSliderActivity extends AppCompatActivity implements SuccessS
         presenter.setRepository(new DatabaseSuccessesRepository(this));
         presenter.setView(this);
         Bundle extras = getIntent().getExtras();
-        SearchFilter searchFilter = extras.getParcelable("searchfilter");
-        position = extras.getInt("position");
-        // Instantiate a ViewPager and a PagerAdapter.
-        mPager = findViewById(R.id.pager);
-        presenter.loadSuccesses(searchFilter);
+        SearchFilter searchFilter = null;
+        if (extras != null) {
+            searchFilter = extras.getParcelable("searchfilter");
+            position = extras.getInt("position");
+            presenter.loadSuccesses(searchFilter);
+        }
 
     }
 
