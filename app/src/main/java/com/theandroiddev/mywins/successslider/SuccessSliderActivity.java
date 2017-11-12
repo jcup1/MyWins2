@@ -42,7 +42,6 @@ public class SuccessSliderActivity extends AppCompatActivity implements SuccessS
     /**
      * The number of pages (wizard steps) to show in this demo.
      */
-    private static int NUM_PAGES;
     @Inject
     public SuccessSliderContract.Presenter presenter;
     public SuccessSliderContract.SuccessImageLoader loader;
@@ -153,6 +152,7 @@ public class SuccessSliderActivity extends AppCompatActivity implements SuccessS
 
     }
 
+
     public void makeSnackbar(String s) {
 
         Snackbar snackbar = Snackbar.make(showConstraintLayout, s, Snackbar.LENGTH_SHORT);
@@ -166,7 +166,11 @@ public class SuccessSliderActivity extends AppCompatActivity implements SuccessS
     @Override
     public void onBackPressed() {
 
-        super.onBackPressed();
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("position", mPager.getCurrentItem());
+        setResult(RESULT_OK, returnIntent);
+        finish();
+//        super.onBackPressed();
 
     }
 

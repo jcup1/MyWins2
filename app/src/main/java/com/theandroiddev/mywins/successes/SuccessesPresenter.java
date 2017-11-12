@@ -239,6 +239,11 @@ public class SuccessesPresenter implements SuccessesContract.Presenter {
         return new SearchFilter(searchTerm, sortType, isSortingAscending);
     }
 
+    @Override
+    public void clearSearch() {
+        searchTerm = "";
+    }
+
 
     @Override
     public void closeDB() {

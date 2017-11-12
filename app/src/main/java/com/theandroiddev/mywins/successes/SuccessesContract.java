@@ -88,6 +88,8 @@ public interface SuccessesContract {
         void startSlider();
 
         SearchFilter getSearchFilter();
+
+        void clearSearch();
     }
 
     interface SuccessInfo {
