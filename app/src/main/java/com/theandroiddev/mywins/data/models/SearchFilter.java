@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins.successes;
+package com.theandroiddev.mywins.data.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;

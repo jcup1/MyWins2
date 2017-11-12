@@ -28,11 +28,21 @@ public class PreferencesHelper {
         pref.edit().clear().apply();
     }
 
+    //TODO handle first launch pref that have to save defaults to database...
+
     public boolean isFirstSuccessAdded() {
         return pref.getBoolean("firstsuccess", false);
     }
 
     public void setFirstSuccessAdded() {
         pref.edit().putBoolean("firstsuccess", true).apply();
+    }
+
+    public boolean isFirstRun() {
+        return pref.getBoolean("firstrun", true);
+    }
+
+    public void setNotFirstRun() {
+        pref.edit().putBoolean("firstrun", false).apply();
     }
 }

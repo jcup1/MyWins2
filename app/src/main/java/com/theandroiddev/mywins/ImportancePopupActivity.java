@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins.UI.activities;
+package com.theandroiddev.mywins;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.theandroiddev.mywins.R;
 import com.theandroiddev.mywins.utils.DrawableSelector;
 
 import static com.theandroiddev.mywins.utils.Constants.dummyImportanceDefault;

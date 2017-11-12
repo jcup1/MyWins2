@@ -224,4 +224,8 @@ public class DBAdapter {
     }
 
 
+    public void clear() {
+        sqLiteDatabase.delete(TB_NAME_SUCCESSES, null, null);
+        sqLiteDatabase.delete(TB_NAME_IMAGES, null, null);
+    }
 }

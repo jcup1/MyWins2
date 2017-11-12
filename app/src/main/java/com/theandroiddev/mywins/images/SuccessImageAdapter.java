@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins.UI.activities;
+package com.theandroiddev.mywins.images;
 
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;

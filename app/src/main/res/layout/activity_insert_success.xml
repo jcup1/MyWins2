@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        tools:context=".UI.activities.InsertSuccessActivity">
+        tools:context=".InsertSuccessActivity">
 
         <TextView
             android:id="@+id/insert_category_tv"

@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins.UI.activities;
+package com.theandroiddev.mywins.images;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;

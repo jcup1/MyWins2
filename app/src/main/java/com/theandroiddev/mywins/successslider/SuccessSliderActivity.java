@@ -20,10 +20,10 @@ import android.widget.FrameLayout;
 
 import com.theandroiddev.mywins.MyWinsApplication;
 import com.theandroiddev.mywins.R;
+import com.theandroiddev.mywins.data.models.SearchFilter;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.repositories.DatabaseSuccessesRepository;
 import com.theandroiddev.mywins.editsuccess.EditSuccessActivity;
-import com.theandroiddev.mywins.successes.SearchFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -145,7 +145,7 @@ public class SuccessSliderActivity extends AppCompatActivity implements SuccessS
 //                    drawableSelector.selectImportanceImage(showImportanceIv, s.getImportance());
 //
 //                }
-
+                //TODO add this snackbar
                 //makeSnackbar(SNACK_SAVED);
             }
         }
@@ -170,7 +170,6 @@ public class SuccessSliderActivity extends AppCompatActivity implements SuccessS
         returnIntent.putExtra("position", mPager.getCurrentItem());
         setResult(RESULT_OK, returnIntent);
         finish();
-//        super.onBackPressed();
 
     }
 

@@ -3,9 +3,9 @@ package com.theandroiddev.mywins.data.repositories;
 import android.content.Context;
 
 import com.theandroiddev.mywins.data.db.DBAdapter;
+import com.theandroiddev.mywins.data.models.SearchFilter;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.models.SuccessImage;
-import com.theandroiddev.mywins.successes.SearchFilter;
 
 import java.util.ArrayList;
 
@@ -89,6 +89,17 @@ public class DatabaseSuccessesRepository implements SuccessesRepository {
     @Override
     public void editSuccessImages(ArrayList<SuccessImage> successImageList, String successId) {
         dbAdapter.editSuccessImages(successImageList, successId);
+    }
+
+    @Override
+    public void saveSuccesses(ArrayList<Success> defaultSuccesses) {
+        for (Success s : defaultSuccesses)
+            dbAdapter.addSuccess(s);
+    }
+
+    @Override
+    public void clearDatabase() {
+        dbAdapter.clear();
     }
 
 }

@@ -41,7 +41,7 @@ public class Constants {
     public static final String EXTRA_SUCCESS_IMPORTANCE_IV = "importance_iv";
     public static final String EXTRA_SUCCESS_CARD_VIEW = "success_card_view";
     //DATABASE
-    public static final int DB_VERSION = 8;
+    public static final int DB_VERSION = 9;
     public static final String SUCCESS_ID = "success_id";
     public static final String TITLE = "title";
     public static final String CATEGORY = "category";

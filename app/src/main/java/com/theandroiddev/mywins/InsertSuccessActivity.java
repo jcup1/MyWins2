@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins.UI.activities;
+package com.theandroiddev.mywins;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -14,7 +14,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.theandroiddev.mywins.R;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.editsuccess.EditDescriptionActivity;
 import com.theandroiddev.mywins.utils.DateHelper;

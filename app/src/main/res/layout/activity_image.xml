@@ -7,7 +7,7 @@
     android:background="#00ffffff"
     android:gravity="center"
 
-    tools:context="com.theandroiddev.mywins.UI.activities.ImageActivity">
+    tools:context="com.theandroiddev.mywins.images.ImageActivity">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/view_pager"

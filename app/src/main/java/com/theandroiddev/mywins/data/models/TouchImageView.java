@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins.UI.views;
+package com.theandroiddev.mywins.data.models;
 
 /**
  * /*
