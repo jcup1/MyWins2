@@ -27,6 +27,7 @@ import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -73,6 +74,7 @@ import static com.theandroiddev.mywins.utils.Constants.EXTRA_SUCCESS_ITEM;
 import static com.theandroiddev.mywins.utils.Constants.EXTRA_SUCCESS_TITLE;
 import static com.theandroiddev.mywins.utils.Constants.NOT_ACTIVE;
 import static com.theandroiddev.mywins.utils.Constants.REQUEST_CODE_INSERT;
+import static com.theandroiddev.mywins.utils.Constants.REQUEST_CODE_SLIDER;
 import static com.theandroiddev.mywins.utils.Constants.SNACK_SUCCESS_NOT_ADDED;
 import static com.theandroiddev.mywins.utils.Constants.SNACK_SUCCESS_REMOVED;
 import static com.theandroiddev.mywins.utils.Constants.SNACK_UNDO;
@@ -151,6 +153,9 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
         presenter.setView(this);
         presenter.openDB();
         presenter.updateSuccess(clickedPosition);
+
+        if (searchBox != null)
+            showSoftKeyboard();
     }
 
 
@@ -448,6 +453,20 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
             }
         }
 
+        if (requestCode == REQUEST_CODE_SLIDER) {
+            if (resultCode == RESULT_OK) {
+                onSliderResultSuccess(data);
+            }
+        }
+
+    }
+
+    private void onSliderResultSuccess(Intent data) {
+        int position = data.getIntExtra("position", 0);
+        Log.d(TAG, "onActivityResult: GOTIT" + position);
+
+        recyclerView.scrollToPosition(position);
+
     }
 
     public void onSuccessNotAdded() {
@@ -490,7 +509,7 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
 //            showSuccess(success);
 //        }
         this.clickedPosition = position;
-
+        hideSoftKeyboard();
         presenter.startSlider();
 
         //TODO maybe put to presenter
@@ -526,7 +545,7 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
 
         showSuccessIntent.putExtra(EXTRA_SUCCESS_ITEM, success);
 
-        startActivity(showSuccessIntent);
+        startActivityForResult(showSuccessIntent, REQUEST_CODE_SLIDER);
 
     }
 
@@ -601,13 +620,17 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
     @Override
     public void hideSearchBar() {
         action = getSupportActionBar();
-        handleSoftKeyboard();
+        hideSoftKeyboard();
         if (action != null) {
             action.setDisplayShowCustomEnabled(false);
             action.setDisplayShowTitleEnabled(true);
         }
+        Log.d(TAG, "hideSearchBar: IM HERE");
         searchAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_search));
         searchBox = null;
+        presenter.clearSearch();
+        //presenter.loadSuccesses();
+
 
     }
 
@@ -684,10 +707,10 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
         Intent intent = new Intent(SuccessesActivity.this, SuccessSliderActivity.class);
         intent.putExtra("searchfilter", presenter.getSearchFilter());
         intent.putExtra("position", clickedPosition);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_CODE_SLIDER);
     }
 
-    private void handleSoftKeyboard() {
+    private void hideSoftKeyboard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null && searchBox != null) {
             imm.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);

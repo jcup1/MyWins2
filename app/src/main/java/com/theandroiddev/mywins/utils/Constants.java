@@ -74,6 +74,7 @@ public class Constants {
             SUCCESS_ID + " INTEGER NOT NULL);";
     public static final String DROP_TB_SUCCESSES = "DROP TABLE IF EXISTS " + TB_NAME_SUCCESSES;
     public static final String DROP_TB_IMAGES = "DROP TABLE IF EXISTS " + TB_NAME_IMAGES;
+    public static final int REQUEST_CODE_SLIDER = 9;
     static final int REQUEST_CODE_EDIT = 2;
     public static String PACKAGE_NAME = "com.theandroiddev.mywins";
     public static String SORT_DATE_ADDED = "";
