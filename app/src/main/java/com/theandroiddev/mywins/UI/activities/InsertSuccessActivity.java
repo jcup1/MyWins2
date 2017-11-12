@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.theandroiddev.mywins.R;
-import com.theandroiddev.mywins.UI.models.Success;
+import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.utils.DateHelper;
 import com.theandroiddev.mywins.utils.DrawableSelector;
 

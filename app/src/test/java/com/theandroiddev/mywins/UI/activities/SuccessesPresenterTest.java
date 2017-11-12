@@ -1,8 +1,9 @@
 package com.theandroiddev.mywins.UI.activities;
 
-import com.theandroiddev.mywins.UI.models.Success;
-import com.theandroiddev.mywins.UI.views.SuccessesActivityView;
+import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.repositories.SuccessesRepository;
+import com.theandroiddev.mywins.successes.SuccessesContract;
+import com.theandroiddev.mywins.successes.SuccessesPresenter;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 /**
  * Created by jakub on 28.10.17.
  */
-public class SuccessesActivityPresenterImplTest {
+public class SuccessesPresenterTest {
 
     private final ArrayList<Success> successList = new ArrayList<>();
     @Rule
@@ -24,15 +25,21 @@ public class SuccessesActivityPresenterImplTest {
     @Mock
     SuccessesRepository successesRepository;
     @Mock
-    SuccessesActivityView view;
-    SuccessesActivityPresenterImpl presenter;
+    SuccessesContract.View view;
+    SuccessesPresenter presenter;
 
     @Before
     public void setUp() {
-        //presenter = new SuccessesActivityPresenterImpl(view, successesRepository);
+        //presenter = new SuccessesPresenter(view, successesRepository);
         successList.add(new Success());
         successList.add(new Success());
     }
+//
+//    @Test
+//    public void shouldDisplayDefaultSuccesses() {
+//        presenter.preferencesHelper.setFirstSuccessAdded();
+//        Mockito.when(view.displayDefaultSuccesses(successesRepository.getDefaultSuccesses()));
+//    }
 
 //    @Test
 //    public void shouldNotPassDefaultSuccessesToView() {

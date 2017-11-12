@@ -1,7 +1,10 @@
 package com.theandroiddev.mywins.injection;
 
-import com.theandroiddev.mywins.UI.activities.SuccessesActivity;
-import com.theandroiddev.mywins.UI.activities.SuccessesActivityPresenterImpl;
+import com.theandroiddev.mywins.successes.SuccessesActivity;
+import com.theandroiddev.mywins.successes.SuccessesPresenter;
+import com.theandroiddev.mywins.successslider.SuccessSliderActivity;
+import com.theandroiddev.mywins.successslider.SuccessSliderContract;
+import com.theandroiddev.mywins.successslider.SuccessSliderPresenter;
 
 import javax.inject.Singleton;
 
@@ -16,7 +19,13 @@ import dagger.Component;
 public interface AppComponent {
     void inject(SuccessesActivity target);
 
-    //    void inject(SuccessAdapter target);
-    void inject(SuccessesActivityPresenterImpl target);
+    void inject(SuccessesPresenter target);
+
+    void inject(SuccessSliderActivity target);
+
+    void inject(SuccessSliderPresenter target);
+
+    void inject(SuccessSliderContract.SuccessImageLoader target);
+    //void inject(SuccessSliderFragment target);
 
 }

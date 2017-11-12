@@ -5,7 +5,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.theandroiddev.mywins.R;
-import com.theandroiddev.mywins.UI.adapters.ImageSwipeAdapter;
 
 import java.util.ArrayList;
 

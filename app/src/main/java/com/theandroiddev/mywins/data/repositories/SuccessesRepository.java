@@ -1,6 +1,8 @@
 package com.theandroiddev.mywins.data.repositories;
 
-import com.theandroiddev.mywins.UI.models.Success;
+import com.theandroiddev.mywins.data.models.Success;
+import com.theandroiddev.mywins.data.models.SuccessImage;
+import com.theandroiddev.mywins.successes.SearchFilter;
 
 import java.util.ArrayList;
 
@@ -12,7 +14,7 @@ public interface SuccessesRepository {
 
     void updateForDeleteSuccess(ArrayList<Success> successToRemoveList);
 
-    ArrayList<Success> getSuccesses(String searchTerm, String sortType, boolean isAscending);
+    ArrayList<Success> getSuccesses(SearchFilter searchFilter);
 
     void registerRepository(DatabaseSuccessesRepository databaseSuccessesRepository);
 
@@ -29,4 +31,6 @@ public interface SuccessesRepository {
     void closeDB();
 
     void openDB();
+
+    ArrayList<SuccessImage> getSuccessImages(int id);
 }

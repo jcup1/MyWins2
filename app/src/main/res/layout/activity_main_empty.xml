@@ -7,7 +7,7 @@
     android:id="@+id/main_constraint"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.theandroiddev.mywins.UI.activities.SuccessesActivity">
+    tools:context="com.theandroiddev.mywins.successes.SuccessesActivity">
 
 
     <android.support.design.widget.AppBarLayout

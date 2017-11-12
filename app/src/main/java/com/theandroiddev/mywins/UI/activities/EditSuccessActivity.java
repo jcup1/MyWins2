@@ -39,10 +39,9 @@ import com.esafirm.imagepicker.features.camera.ImmediateCameraModule;
 import com.esafirm.imagepicker.features.camera.OnImageReadyListener;
 import com.theandroiddev.mywins.R;
 import com.theandroiddev.mywins.UI.adapters.CustomImagePickerAdapter;
-import com.theandroiddev.mywins.UI.adapters.SuccessImageAdapter;
-import com.theandroiddev.mywins.UI.models.Success;
-import com.theandroiddev.mywins.UI.models.SuccessImage;
 import com.theandroiddev.mywins.data.db.DBAdapter;
+import com.theandroiddev.mywins.data.models.Success;
+import com.theandroiddev.mywins.data.models.SuccessImage;
 import com.theandroiddev.mywins.utils.DateHelper;
 import com.theandroiddev.mywins.utils.DrawableSelector;
 
@@ -191,7 +190,7 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         successImageList = new ArrayList<>();
         successImageList.clear();
         dbAdapter.openDB();
-        successImageList.addAll(dbAdapter.retrieveSuccessImages(successId));
+        successImageList.addAll(dbAdapter.getSuccessImages(successId));
         dbAdapter.closeDB();
         successImageList.add(0, addImageIv());
 

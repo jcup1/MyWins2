@@ -6,8 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.theandroiddev.mywins.UI.models.Success;
-import com.theandroiddev.mywins.UI.models.SuccessImage;
+import com.theandroiddev.mywins.data.models.Success;
+import com.theandroiddev.mywins.data.models.SuccessImage;
 import com.theandroiddev.mywins.utils.Constants;
 
 import java.util.ArrayList;
@@ -113,7 +113,7 @@ public class DBAdapter {
 
     }
 
-    public ArrayList<SuccessImage> retrieveSuccessImages(int successId) {
+    public ArrayList<SuccessImage> getSuccessImages(int successId) {
 
         ArrayList<SuccessImage> successImages = new ArrayList<>();
 
