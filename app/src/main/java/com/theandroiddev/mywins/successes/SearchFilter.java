@@ -11,8 +11,8 @@ public class SearchFilter implements Parcelable {
 
     public static final Parcelable.Creator<SearchFilter> CREATOR = new Parcelable.Creator<SearchFilter>() {
         @Override
-        public SearchFilter createFromParcel(Parcel in) {
-            return new SearchFilter(in);
+        public SearchFilter createFromParcel(Parcel source) {
+            return new SearchFilter(source);
         }
 
         @Override
@@ -24,7 +24,6 @@ public class SearchFilter implements Parcelable {
     private String sortType;
     private boolean isSortingAscending;
 
-
     public SearchFilter(String searchTerm, String sortType, boolean isSortingAscending) {
         this.searchTerm = searchTerm;
         this.sortType = sortType;
@@ -32,9 +31,9 @@ public class SearchFilter implements Parcelable {
     }
 
     protected SearchFilter(Parcel in) {
-        searchTerm = in.readString();
-        sortType = in.readString();
-        isSortingAscending = in.readByte() != 0x00;
+        this.searchTerm = in.readString();
+        this.sortType = in.readString();
+        this.isSortingAscending = in.readByte() != 0;
     }
 
     public String getSearchTerm() {
@@ -68,8 +67,8 @@ public class SearchFilter implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(searchTerm);
-        dest.writeString(sortType);
-        dest.writeByte((byte) (isSortingAscending ? 0x01 : 0x00));
+        dest.writeString(this.searchTerm);
+        dest.writeString(this.sortType);
+        dest.writeByte(this.isSortingAscending ? (byte) 1 : (byte) 0);
     }
 }

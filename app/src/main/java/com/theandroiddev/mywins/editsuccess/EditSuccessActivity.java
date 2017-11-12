@@ -231,11 +231,6 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
 
             presenter.editSuccess(editSuccess, successImageList);
 
-//            saveImages(editSuccess.getId());
-//
-//            returnIntent.putExtra(EXTRA_EDIT_SUCCESS_ITEM, editSuccess);
-//
-
         }
 
     }
@@ -289,10 +284,6 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
 
         editSuccess = successImageLoader.getSuccess(id);
         successImageList = successImageLoader.getSuccessImages(id);
-
-//
-//        editSuccess = getIntent().getParcelableExtra(EXTRA_SHOW_SUCCESS_ITEM);
-//        successImageList = getIntent().getParcelableArrayListExtra(EXTRA_SHOW_SUCCESS_IMAGES);
 
         editTitleEt.setTag(editSuccess.getId());
         editTitleEt.setText(editSuccess.getTitle());
@@ -387,13 +378,6 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         startActivityForResult(importanceIntent, REQUEST_CODE_IMPORTANCE);
 
     }
-
-    private void saveImages(String successId) {
-        dbAdapter.openDB();
-        dbAdapter.editSuccessImages(successImageList, successId);
-        dbAdapter.closeDB();
-    }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

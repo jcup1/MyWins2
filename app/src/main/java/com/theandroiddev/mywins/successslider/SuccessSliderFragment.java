@@ -20,6 +20,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.theandroiddev.mywins.R;
+import com.theandroiddev.mywins.UI.activities.ImageActivity;
 import com.theandroiddev.mywins.UI.activities.SuccessImageAdapter;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.models.SuccessImage;
@@ -138,7 +139,7 @@ public class SuccessSliderFragment extends Fragment implements SuccessImageAdapt
     @Override
     public void onSuccessImageClick(SuccessImage successImage, ImageView successImageIv, int position, ConstraintLayout constraintLayout, CardView cardView) {
 
-        Intent intent = new Intent(getContext(), SuccessSliderActivity.class);
+        Intent intent = new Intent(getActivity(), ImageActivity.class);
         ArrayList<String> imagePaths = new ArrayList<>();
 
         for (int i = 0; i < successImageList.size(); i++) {
