@@ -193,11 +193,17 @@ public class SuccessesPresenter implements SuccessesContract.Presenter {
         if (isSearchOpened) {
             view.hideSearchBar();
             isSearchOpened = false;
-            view.displaySuccesses(successesRepository.getSuccesses(getSearchFilter()));
+            successList = successesRepository.getSuccesses(getSearchFilter());
+            view.displaySuccesses(successList);
         } else {
             view.displaySearchBar();
             isSearchOpened = true;
         }
+    }
+
+    @Override
+    public void showSearch() {
+        view.displaySearch();
     }
 
     @Override
@@ -253,6 +259,8 @@ public class SuccessesPresenter implements SuccessesContract.Presenter {
     @Override
     public void clearSearch() {
         searchTerm = "";
+        //loadSuccesses();
+
     }
 
 

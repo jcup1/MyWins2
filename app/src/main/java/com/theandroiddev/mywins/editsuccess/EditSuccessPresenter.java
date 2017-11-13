@@ -17,9 +17,11 @@ public class EditSuccessPresenter implements EditSuccessContract.Presenter {
 
     private EditSuccessContract.View view;
     private SuccessesRepository repository;
+    private ArrayList<SuccessImage> successImageList;
 
     public EditSuccessPresenter(Context context) {
         ((MyWinsApplication) context).getAppComponent().inject(this);
+        successImageList = new ArrayList<>();
     }
 
     @Override
@@ -45,4 +47,32 @@ public class EditSuccessPresenter implements EditSuccessContract.Presenter {
 
         view.displaySlider();
     }
+
+    @Override
+    public void loadSuccessImages(String id) {
+
+        successImageList = new ArrayList<>();
+        successImageList.clear();
+        successImageList.addAll(repository.getSuccessImages(id));
+        successImageList.add(0, addImageIv(id));
+
+    }
+
+    @Override
+    public void closeDB() {
+        repository.closeDB();
+    }
+
+    @Override
+    public void openDB() {
+        repository.openDB();
+    }
+
+    private SuccessImage addImageIv(String id) {
+
+        return new SuccessImage(id);
+    }
+
+
+
 }

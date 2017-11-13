@@ -32,6 +32,5 @@ public interface AppComponent {
     void inject(EditSuccessActivity target);
 
     void inject(EditSuccessPresenter target);
-    //void inject(SuccessSliderFragment target);
 
 }

@@ -17,6 +17,8 @@ public class EditSuccessContract {
     interface View extends BaseView<Presenter> {
 
         void displaySlider();
+
+        void displaySuccessImages(ArrayList<SuccessImage> successImageList);
     }
 
     public interface Presenter extends BasePresenter<View> {
@@ -24,5 +26,11 @@ public class EditSuccessContract {
         void setRepository(SuccessesRepository repository);
 
         void editSuccess(Success editSuccess, ArrayList<SuccessImage> successImageList);
+
+        void loadSuccessImages(String id);
+
+        void closeDB();
+
+        void openDB();
     }
 }

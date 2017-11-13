@@ -10,7 +10,6 @@ import com.theandroiddev.mywins.BasePresenter;
 import com.theandroiddev.mywins.BaseView;
 import com.theandroiddev.mywins.data.models.SearchFilter;
 import com.theandroiddev.mywins.data.models.Success;
-import com.theandroiddev.mywins.data.models.SuccessImage;
 import com.theandroiddev.mywins.data.prefs.PreferencesHelper;
 import com.theandroiddev.mywins.data.repositories.SuccessesRepository;
 
@@ -52,6 +51,8 @@ public interface SuccessesContract {
         void displaySlider(ArrayList<Success> successList);
 
         void displaySliderAnimation(ArrayList<Success> successes, Success success, int position, TextView titleTv, TextView categoryTv, TextView dateStartedTv, TextView dateEndedTv, ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView);
+
+        void displaySearch();
     }
 
     /**
@@ -97,12 +98,8 @@ public interface SuccessesContract {
         SearchFilter getSearchFilter();
 
         void clearSearch();
+
+        void showSearch();
     }
 
-    interface SuccessInfo {
-        Success getSuccess(String id);
-
-        ArrayList<SuccessImage> getSuccessImageList(String id);
-
-    }
 }

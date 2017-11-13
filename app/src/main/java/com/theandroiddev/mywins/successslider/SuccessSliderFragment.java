@@ -29,6 +29,9 @@ import com.theandroiddev.mywins.utils.DrawableSelector;
 
 import java.util.ArrayList;
 
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+
 /**
  * Created by jakub on 27.10.17.
  */
@@ -41,10 +44,14 @@ public class SuccessSliderFragment extends Fragment implements SuccessImageAdapt
     DrawableSelector drawableSelector;
     SuccessImageAdapter successImageAdapter;
     Success s;
+    String id;
     ArrayList<SuccessImage> successImageList;
+    SuccessSliderContract.ActionHandler actionHandler;
 
     SuccessSliderContract.SuccessImageLoader successImageLoader;
+    private TextView noImageTv;
 
+    //TODO handle ImageLoader destroy onDestroy
     public static void initImageLoader(Context context) {
         ImageLoaderConfiguration.Builder config = new ImageLoaderConfiguration.Builder(context);
         config.threadPriority(Thread.NORM_PRIORITY - 2);
@@ -53,6 +60,18 @@ public class SuccessSliderFragment extends Fragment implements SuccessImageAdapt
         config.diskCacheSize(50 * 1024 * 1024);
         config.tasksProcessingOrder(QueueProcessingType.LIFO);
         ImageLoader.getInstance().init(config.build());
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            actionHandler = (SuccessSliderContract.ActionHandler) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement OnItemClickedListener");
+        }
+
     }
 
     @Override
@@ -70,16 +89,47 @@ public class SuccessSliderFragment extends Fragment implements SuccessImageAdapt
         importanceIv = view.findViewById(R.id.item_importance_iv);
         recyclerView = view.findViewById(R.id.show_image_recycler_view);
 
+        noImageTv = view.findViewById(R.id.no_images_tv);
+
+        noImageTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                //TODO fix
+                actionHandler.onAddImage();
+            }
+        });
+
+
+
+
         successImageLoader = new SuccessImageLoader();
         successImageLoader.setRepository(new DatabaseSuccessesRepository(getContext()));
 
 
         initImageLoader(getContext());
         initRecycler();
-        initViews();
+        initBundle();
+        //initViews();
         initAnimation();
 
         return view;
+    }
+
+    private void initBundle() {
+        Bundle bundle = this.getArguments();
+        id = bundle.getString("id");
+    }
+
+    private void initRecycler() {
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setHasFixedSize(true);
+//        successImageList = new ArrayList<>();
+//        successImageAdapter = new SuccessImageAdapter(successImageList, this, R.layout.success_image_layout, getContext());
+//        recyclerView.setAdapter(successImageAdapter);
+
     }
 
     private void initAnimation() {
@@ -93,25 +143,27 @@ public class SuccessSliderFragment extends Fragment implements SuccessImageAdapt
     @Override
     public void onResume() {
         super.onResume();
-
         initViews();
+
+        checkSuccessImageList();
 
     }
 
     @Override
     public void onDestroy() {
+        destroyImageLoader();
         super.onDestroy();
+    }
+
+    private void destroyImageLoader() {
+        //ImageLoader.getInstance().destroy();
     }
 
     private void initViews() {
 
-        Bundle bundle = this.getArguments();
-        String id = bundle.getString("id");
-
         s = successImageLoader.getSuccess(id);
 
-        successImageList = successImageLoader.getSuccessImages(id);
-
+        //TODO remove tags
         titleTv.setTag(s.getId());
         titleTv.setText(s.getTitle());
         categoryTv.setText(s.getCategory());
@@ -123,18 +175,23 @@ public class SuccessSliderFragment extends Fragment implements SuccessImageAdapt
         drawableSelector.selectCategoryImage(categoryIv, s.getCategory(), categoryTv);
         drawableSelector.selectImportanceImage(importanceIv, s.getImportance());
 
+        successImageList = successImageLoader.getSuccessImages(id);
+
         successImageAdapter = new SuccessImageAdapter(successImageList, this, R.layout.success_image_layout, getContext());
         recyclerView.setAdapter(successImageAdapter);
+
         successImageAdapter.notifyDataSetChanged();
     }
 
-    private void initRecycler() {
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setHasFixedSize(true);
-
+    private void checkSuccessImageList() {
+        if (successImageList.isEmpty()) {
+            noImageTv.setVisibility(VISIBLE);
+        } else {
+            noImageTv.setVisibility(INVISIBLE);
+        }
     }
+
 
     @Override
     public void onSuccessImageClick(SuccessImage successImage, ImageView successImageIv, int position, ConstraintLayout constraintLayout, CardView cardView) {
@@ -153,7 +210,7 @@ public class SuccessSliderFragment extends Fragment implements SuccessImageAdapt
 
     @Override
     public void onSuccessImageLongClick(SuccessImage successImage, ImageView successImageIv, int position, ConstraintLayout constraintLayout, CardView cardView) {
-
+        //TODO add functionality
     }
 
 }

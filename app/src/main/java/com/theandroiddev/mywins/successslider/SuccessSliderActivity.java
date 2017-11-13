@@ -16,7 +16,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.theandroiddev.mywins.MyWinsApplication;
 import com.theandroiddev.mywins.R;
@@ -30,40 +30,30 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import static android.view.Gravity.TOP;
 import static com.theandroiddev.mywins.utils.Constants.REQUEST_CODE_INSERT;
 
 /**
  * Created by jakub on 27.10.17.
  */
 
-public class SuccessSliderActivity extends AppCompatActivity implements SuccessSliderContract.View {
+public class SuccessSliderActivity extends AppCompatActivity implements SuccessSliderContract.View, SuccessSliderContract.ActionHandler {
     private static final String TAG = "ScreenSlidePagerActivit";
-    /**
-     * The number of pages (wizard steps) to show in this demo.
-     */
     @Inject
     public SuccessSliderContract.Presenter presenter;
-    public SuccessSliderContract.SuccessImageLoader loader;
-    int id;
-    int color;
-    /**
-     * The pager widget, which handles animation and allows swiping horizontally to access previous
-     * and next wizard steps.
-     */
-    private ViewPager mPager;
-    /**
-     * The pager adapter, which provides the pages to the view pager widget.
-     */
-    private PagerAdapter mPagerAdapter;
+
+    private int id;
+    private int color;
     private int position;
-    private ConstraintLayout showConstraintLayout;
+
+    private ViewPager mPager;
+    private PagerAdapter mPagerAdapter;
+    private ConstraintLayout sliderConstraint;
+
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        presenter.openDB();
 
     }
 
@@ -76,14 +66,14 @@ public class SuccessSliderActivity extends AppCompatActivity implements SuccessS
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_screen_slide);
+        setContentView(R.layout.activity_slider);
 
         ((MyWinsApplication) getApplication()).getAppComponent().inject(this);
 
 
-        FloatingActionButton fab = findViewById(R.id.show_fab);
-        showConstraintLayout = findViewById(R.id.show_constraint_layout);
-        mPager = findViewById(R.id.pager);
+        FloatingActionButton fab = findViewById(R.id.slider_fab);
+        sliderConstraint = findViewById(R.id.slider_constraint);
+        mPager = findViewById(R.id.slider_pager);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,8 +86,10 @@ public class SuccessSliderActivity extends AppCompatActivity implements SuccessS
 
         presenter.setRepository(new DatabaseSuccessesRepository(this));
         presenter.setView(this);
+        presenter.openDB();
+
         Bundle extras = getIntent().getExtras();
-        SearchFilter searchFilter = null;
+        SearchFilter searchFilter;
         if (extras != null) {
             searchFilter = extras.getParcelable("searchfilter");
             position = extras.getInt("position");
@@ -130,23 +122,9 @@ public class SuccessSliderActivity extends AppCompatActivity implements SuccessS
         if (requestCode == REQUEST_CODE_INSERT) {
             if (resultCode == Activity.RESULT_OK) {
 
-//                Success s = data.getExtras().getParcelable(EXTRA_EDIT_SUCCESS_ITEM);
-//
-//                editSuccess(s);
-//
-//                if (s != null) {
-//                    showTitle.setText(s.getTitle());
-//                    showCategory.setText(s.getCategory());
-//                    showDateStarted.setText(s.getDateStarted());
-//                    showDateEnded.setText(s.getDateEnded());
-//                    showDescription.setText(s.getDescription());
-//                    showImportanceIv.setTag(s.getImportance());
-//                    drawableSelector.selectCategoryImage(showCategoryIv, s.getCategory(), showCategory);
-//                    drawableSelector.selectImportanceImage(showImportanceIv, s.getImportance());
-//
-//                }
-                //TODO add this snackbar
-                //makeSnackbar(SNACK_SAVED);
+                // Snackbar hides photos
+                // makeSnackbar(SNACK_SAVED);
+                Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -155,11 +133,7 @@ public class SuccessSliderActivity extends AppCompatActivity implements SuccessS
 
     public void makeSnackbar(String s) {
 
-        Snackbar snackbar = Snackbar.make(showConstraintLayout, s, Snackbar.LENGTH_SHORT);
-        View view = snackbar.getView();
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) view.getLayoutParams();
-        params.gravity = TOP;
-        view.setLayoutParams(params);
+        Snackbar snackbar = Snackbar.make(sliderConstraint, s, Snackbar.LENGTH_SHORT);
         snackbar.show();
     }
 
@@ -191,10 +165,11 @@ public class SuccessSliderActivity extends AppCompatActivity implements SuccessS
 
     }
 
-    /**
-     * A simple pager adapter that represents 5 SuccessSliderFragment objects, in
-     * sequence.
-     */
+    @Override
+    public void onAddImage() {
+        editSuccess();
+    }
+
     static class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
         List<Success> successes;
 

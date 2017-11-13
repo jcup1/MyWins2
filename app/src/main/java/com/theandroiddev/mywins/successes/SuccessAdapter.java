@@ -19,7 +19,6 @@ import java.util.List;
 
 /**
  * Created by jakub on 07.08.17.
- * https://github.com/jcup1/MyWins-CardView/blob/master/app/src/main/java/com/example/jakubchmiel/mywins/SuccessAdapter.java
  */
 
 public class SuccessAdapter extends RecyclerView.Adapter<SuccessAdapter.ViewHolder> {

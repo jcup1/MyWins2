@@ -28,4 +28,14 @@ public class SuccessImageLoader implements SuccessSliderContract.SuccessImageLoa
     public Success getSuccess(String id) {
         return successesRepository.getSuccess(id);
     }
+
+    @Override
+    public void openDB() {
+        successesRepository.openDB();
+    }
+
+    @Override
+    public void closeDB() {
+        successesRepository.closeDB();
+    }
 }

@@ -8,9 +8,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -43,7 +41,6 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.theandroiddev.mywins.InsertSuccessActivity;
 import com.theandroiddev.mywins.MyWinsApplication;
 import com.theandroiddev.mywins.R;
-import com.theandroiddev.mywins.data.db.DBAdapter;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.prefs.PreferencesHelper;
 import com.theandroiddev.mywins.data.repositories.DatabaseSuccessesRepository;
@@ -83,7 +80,6 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
     private static final String EXTRA_TRIGGER_SYNC_FLAG =
             "com.theandroiddev.mywins.UI.Activities.SuccessesActivity.EXTRA_TRIGGER_SYNC_FLAG";
     FloatingActionsMenu floatingActionsMenu;
-    DBAdapter dbAdapter;
     SuccessAdapter successAdapter;
     @Inject
     SuccessesContract.Presenter presenter;
@@ -149,7 +145,6 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
     protected void onResume() {
         super.onResume();
         presenter.setView(this);
-        presenter.openDB();
         presenter.updateSuccess(clickedPosition);
 
         if (searchBox != null)
@@ -167,11 +162,11 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
     @Override
     public void onBackPressed() {
 
-        if (searchBox != null) {
+        if (floatingActionsMenu.isExpanded()) {
+            floatingActionsMenu.collapse();
+        } else if (searchBox != null) {
 
             presenter.handleMenuSearch();
-        } else if (floatingActionsMenu.isExpanded()) {
-            floatingActionsMenu.collapse();
         } else {
 
             super.onBackPressed();
@@ -189,18 +184,16 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
 
         ButterKnife.bind(this);
 
-        dbAdapter = new DBAdapter(this);
         preferencesHelper = new PreferencesHelper(this);
         setSupportActionBar(toolbar);//1
         initFABs();
         initCircularReveal();
         initRecycler();
-
         presenter.setRepository(new DatabaseSuccessesRepository(getApplication()));
         presenter.setPrefHelper(preferencesHelper);
         presenter.setSearchTerm("");
-
         presenter.setView(this);
+        presenter.openDB();
         presenter.checkPreferences();
         presenter.loadSuccesses();
 
@@ -216,7 +209,8 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
 
 
                 if (searchBox != null) {
-                    presenter.handleMenuSearch();
+                    //presenter.handleMenuSearch();
+                    hideSoftKeyboard();
                 }
                 showCircularReveal(shadowView);
             }
@@ -385,7 +379,6 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
         return "";
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -404,8 +397,6 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
 
         return super.onOptionsItemSelected(item);
     }
-
-
 
     @Override
     public void onClick(android.view.View shadowView) {
@@ -499,17 +490,10 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
 
     @Override
     public void onItemClick(Success success, int position, TextView titleTv, TextView categoryTv, TextView dateStartedTv, TextView dateEndedTv, ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView) {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            showSuccessAnimation(success, titleTv, categoryTv, dateStartedTv, dateEndedTv, categoryIv, importanceIv, constraintLayout, cardView);
-//
-//        } else {
-//            showSuccess(success);
-//        }
+
         this.clickedPosition = position;
         hideSoftKeyboard();
         presenter.startSlider(success, position, titleTv, categoryTv, dateStartedTv, dateEndedTv, categoryIv, importanceIv, constraintLayout, cardView);
-
-        //TODO maybe put to presenter
 
     }
 
@@ -533,14 +517,6 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
                 return true;
             }
         });
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void showSuccessAnimation(Success success, TextView titleTv, TextView categoryTv, TextView dateStartedTv, TextView dateEndedTv, ImageView categoryIv, ImageView importanceIv, ConstraintLayout constraintLayout, CardView cardView) {
-
-
-
-
     }
 
     @Override
@@ -571,8 +547,10 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
 
     @Override
     public void undoToRemove(int position) {
-        successAdapter.notifyItemInserted(position);
+//        successAdapter.notifyItemInserted(position);
+        presenter.loadSuccesses();
         recyclerView.scrollToPosition(position);
+
     }
 
     @Override
@@ -596,7 +574,6 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
         searchAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_search));
         searchBox = null;
         presenter.clearSearch();
-        //presenter.loadSuccesses();
 
 
     }
@@ -641,9 +618,7 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
                                                 @Override
                                                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                                                     presenter.setSearchTerm(getSearchText());
-                                                    presenter.handleMenuSearch();
-//                                                    presenter.loadSuccesses();
-//                                                    hideSearchBar();
+                                                    presenter.showSearch();
 
                                                     return true;
                                                 }
@@ -700,6 +675,12 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
                 p1, p2, p3, p4, p5, p6, p7);
 
         startActivity(intent, activityOptionsCompat.toBundle());
+    }
+
+    @Override
+    public void displaySearch() {
+
+        hideSoftKeyboard();
     }
 
     private void hideSoftKeyboard() {

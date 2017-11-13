@@ -47,7 +47,7 @@
             android:gravity="top|left"
             android:padding="16dp"
             android:textColor="@color/secondary_text"
-            android:textSize="18sp" />
+            android:textSize="18sp"/>
 
     </android.support.v7.widget.CardView>
 
@@ -70,6 +70,19 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
 
+
+        <TextView
+            android:id="@+id/no_images_tv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="Add Images in Edit Mode"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/show_image_recycler_view"

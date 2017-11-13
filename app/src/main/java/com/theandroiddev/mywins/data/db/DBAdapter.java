@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.models.SuccessImage;
@@ -51,6 +50,8 @@ public class DBAdapter {
 
     public DBAdapter(Context context) {
 
+        //TODO fix database leaks
+
         this.context = context;
         dbHelper = new DBHelper(context);
         openDB();
@@ -72,7 +73,7 @@ public class DBAdapter {
         sqLiteDatabase.insert(TB_NAME_SUCCESSES, SUCCESS_ID, getSuccessContentValues(success));
     }
 
-    public Cursor retrieveSuccess(String searchTerm, String sort) {
+    private Cursor retrieveSuccess(String searchTerm, String sort) {
 
         String[] columns = {SUCCESS_ID, TITLE, CATEGORY, IMPORTANCE, DESCRIPTION, DATE_STARTED, DATE_ENDED};
         Cursor cursor;
@@ -152,7 +153,6 @@ public class DBAdapter {
         for (int i = 0; i < dummySuccessesSize; i++) {
             successList.add(new Success(dummyTitle.get(i), dummyCategory.get(i), dummyImportance.get(i), dummyDescription.get(i),
                     dummyStartDate.get(i), dummyEndDate.get(i)));
-            Log.e(TAG, "insertDummyData: " + i);
         }
 
         return successList;

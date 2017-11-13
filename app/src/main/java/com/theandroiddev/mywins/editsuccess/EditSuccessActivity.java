@@ -108,8 +108,7 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
     };
     private DBAdapter dbAdapter;
     private Uri mImageUri;
-    private String mCurrentPhotoPath;
-    private Uri contentUri;
+
 
     private void toRemove(int position) {
         showSnackbar(position);
@@ -127,10 +126,7 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
 
         Snackbar snackbar = Snackbar
                 .make(editSuccessLayout, SNACK_IMAGE_REMOVED, Snackbar.LENGTH_LONG);
-//        View view = snackbar.getView();
-//        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) view.getLayoutParams();
-//        params.gravity = TOP;
-//        view.setLayoutParams(params);
+
         snackbar.setAction(SNACK_UNDO, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -164,6 +160,7 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
 
         presenter.setView(this);
         presenter.setRepository(new DatabaseSuccessesRepository(getApplicationContext()));
+        presenter.openDB();
 
         //TODO maybe refactor to editMode
         noDistractionMode = false;
@@ -200,13 +197,11 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         }
     }
 
-    private void getSuccessImages(String successId, String searchTerm, String sort) {
+    private void getSuccessImages(String successId) {
 
         successImageList = new ArrayList<>();
         successImageList.clear();
-        dbAdapter.openDB();
         successImageList.addAll(dbAdapter.getSuccessImages(successId));
-        dbAdapter.closeDB();
         successImageList.add(0, addImageIv());
 
         successImageAdapter = new SuccessImageAdapter(successImageList, this, R.layout.success_image_layout, this);
@@ -297,7 +292,8 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         drawableSelector.selectCategoryImage(editCategoryIv, editSuccess.getCategory(), editCategoryTv);
         drawableSelector.selectImportanceImage(editImportanceIv, editSuccess.getImportance());
 
-        getSuccessImages(editSuccess.getId(), null, "");
+        //presenter.loadSuccessImages(editSuccess.getId());
+        getSuccessImages(editSuccess.getId());
 
         dateStartedTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -350,9 +346,9 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         dateStartedTv.setOnLongClickListener(this);
         dateEndedTv.setOnLongClickListener(this);
 
-
-
     }
+
+
 
     private void checkDate(String dateStarted, String dateEnded) {
 
@@ -377,6 +373,12 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         importanceIntent.putExtra("importance", (int) editImportanceIv.getTag());
         startActivityForResult(importanceIntent, REQUEST_CODE_IMPORTANCE);
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        presenter.closeDB();
+        super.onDestroy();
     }
 
     @Override
@@ -490,7 +492,6 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
                 .origin(imageList) // original selected imageList, used in multi mode
                 .start(RC_CODE_PICKER); // start image picker activity with request code
     }
-
 
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -612,5 +613,13 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
 
         setResult(Activity.RESULT_OK, new Intent());
         finish();
+    }
+
+    @Override
+    public void displaySuccessImages(ArrayList<SuccessImage> successImageList) {
+
+        successImageAdapter = new SuccessImageAdapter(successImageList, this, R.layout.success_image_layout, this);
+        recyclerView.setAdapter(successImageAdapter);
+        successImageAdapter.notifyDataSetChanged();
     }
 }

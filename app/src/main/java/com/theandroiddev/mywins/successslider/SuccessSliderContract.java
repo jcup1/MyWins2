@@ -55,5 +55,13 @@ public interface SuccessSliderContract {
         void setRepository(SuccessesRepository successesRepository);
 
         Success getSuccess(String id);
+
+        void openDB();
+
+        void closeDB();
+    }
+
+    interface ActionHandler {
+        void onAddImage();
     }
 }
