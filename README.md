@@ -18,4 +18,7 @@ Better version of MyWins app. I'm still in the process of developing it.
         
       This repository is strongly connected with https://github.com/jcup1/MVPLearn5
           
-      MVPLearn5 is my latest repository that I use to learn new things. Starting with MVP pattern. 
+      MVPLearn5 is my latest repository that I use to learn new things. Starting with MVP pattern.  
+        
+//13.11.17 New version of this app has some issues but it works and is refactored. Again in main branch.  
+//14.11.17 There is a problem with leaking sqlite. It's not the hardest bug to fix but I want to do it better. It's a good opportunity to learn Room library. I should fix everything today and put it on google play.
