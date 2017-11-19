@@ -1,12 +1,19 @@
 package com.theandroiddev.mywins.data.models;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+
+import java.util.UUID;
 
 /**
  * Created by jakub on 07.08.17.
  */
-
+@Entity
 public class Success implements Parcelable {
 
     public static final Creator<Success> CREATOR = new Creator<Success>() {
@@ -20,28 +27,63 @@ public class Success implements Parcelable {
             return new Success[size];
         }
     };
-    String title, category, description, date_started, date_ended, id;
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "id")
+    private String id;
+    @ColumnInfo(name = "title")
+    private
+    String title;
+    @ColumnInfo(name = "category")
+    private
+    String category;
+    @ColumnInfo(name = "description")
+    private
+    String description;
+    @ColumnInfo(name = "dateStarted")
+    private
+    String dateStarted;
+    @ColumnInfo(name = "dateEnded")
+    private
+    String dateEnded;
+    @ColumnInfo(name = "importance")
+    private
     int importance;
 
-    public Success(String title, String category, int importance, String description, String date_started, String date_ended) {
+    @Ignore
+    public Success(String title, String category, int importance, String description, String dateStarted, String dateEnded) {
+        this.id = UUID.randomUUID().toString();
         this.title = title;
         this.category = category;
         this.importance = importance;
         this.description = description;
-        this.date_started = date_started;
-        this.date_ended = date_ended;
+        this.dateStarted = dateStarted;
+        this.dateEnded = dateEnded;
     }
 
+    public Success(@NonNull String id, @NonNull String title, @NonNull String category, String description,
+                   String dateStarted, String dateEnded, int importance) {
+        this.id = id;
+        this.title = title;
+        this.category = category;
+        this.description = description;
+        this.dateStarted = dateStarted;
+        this.dateEnded = dateEnded;
+        this.importance = importance;
+    }
+
+    @Ignore
     protected Success(Parcel in) {
         title = in.readString();
         category = in.readString();
         importance = in.readInt();
         description = in.readString();
-        date_started = in.readString();
-        date_ended = in.readString();
+        dateStarted = in.readString();
+        dateEnded = in.readString();
         id = in.readString();
     }
 
+    @Ignore
     public Success() {
 
     }
@@ -79,19 +121,19 @@ public class Success implements Parcelable {
     }
 
     public String getDateStarted() {
-        return date_started;
+        return dateStarted;
     }
 
     public void setDateStarted(String date) {
-        this.date_started = date;
+        this.dateStarted = date;
     }
 
     public String getDateEnded() {
-        return date_ended;
+        return dateEnded;
     }
 
     public void setDateEnded(String date) {
-        this.date_ended = date;
+        this.dateEnded = date;
     }
 
 
@@ -114,8 +156,8 @@ public class Success implements Parcelable {
         parcel.writeString(category);
         parcel.writeInt(importance);
         parcel.writeString(description);
-        parcel.writeString(date_started);
-        parcel.writeString(date_ended);
+        parcel.writeString(dateStarted);
+        parcel.writeString(dateEnded);
         parcel.writeString(id);
     }
 }

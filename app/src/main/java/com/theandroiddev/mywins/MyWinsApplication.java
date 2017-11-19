@@ -8,19 +8,18 @@ import com.theandroiddev.mywins.injection.DaggerAppComponent;
 
 /**
  * Created by jakub on 07.11.17.
- */
+ */ 
 
 public class MyWinsApplication extends Application {
 
     private AppComponent appComponent;
 
     @Override
+
     public void onCreate() {
         super.onCreate();
         appComponent = initDagger(this);
-
     }
-
 
     public AppComponent getAppComponent() {
         return appComponent;

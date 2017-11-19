@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 27
@@ -38,7 +37,6 @@ dependencies {
     compile 'com.android.support:design:27.0.0'
     compile 'com.github.ozodrukh.CircularReveal:circualreveal:2.1.0'
     compile 'com.jakewharton:butterknife:8.8.1'
-    compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.squareup.picasso:picasso:2.5.2'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
@@ -47,14 +45,17 @@ dependencies {
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     compile 'it.sephiroth.android.library.imagezoom:imagezoom:+'
     testImplementation 'org.mockito:mockito-core:2.11.0'
-    compile "com.google.dagger:dagger:2.12"
-    annotationProcessor "com.google.dagger:dagger-compiler:2.12"
-    annotationProcessor "com.google.dagger:dagger-android-processor:2.12"
-    compile 'com.google.dagger:dagger-android:2.12'
-    compile 'com.google.dagger:dagger-android-support:2.12' // if you use the support libraries
+
+    compile "com.google.dagger:dagger:$dagger_version"
+    annotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"
+    compile "com.google.dagger:dagger-android:$dagger_version"
+    compile "com.google.dagger:dagger-android-support:$dagger_version" // if you use the support libraries
+    annotationProcessor "com.google.dagger:dagger-android-processor:$dagger_version"
+
     implementation 'com.jakewharton.timber:timber:4.6.0'
     provided 'javax.annotation:jsr250-api:1.0'
-
+    compile 'android.arch.persistence.room:runtime:1.0.0'
+    annotationProcessor 'android.arch.persistence.room:compiler:1.0.0'
 
 }
 repositories {

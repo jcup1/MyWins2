@@ -1,14 +1,30 @@
 package com.theandroiddev.mywins.data.models;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+
+import java.util.UUID;
 
 /**
  * Created by grazyna on 2017-08-23.
  */
 
+@Entity/*(tableName = "successImage",
+        foreignKeys = {
+                @ForeignKey(
+                        entity = Success.class,
+                        parentColumns = "id",
+                        childColumns = "successId",
+                        onDelete = ForeignKey.CASCADE
+                )},
+        indices = { @Index(value = "id")}
+)*/
 public class SuccessImage implements Parcelable {
-
     public static final Creator<SuccessImage> CREATOR = new Creator<SuccessImage>() {
         @Override
         public SuccessImage createFromParcel(Parcel in) {
@@ -20,25 +36,43 @@ public class SuccessImage implements Parcelable {
             return new SuccessImage[size];
         }
     };
-    int id;
+
+    @PrimaryKey()
+    @NonNull
+    @ColumnInfo(name = "id")
+    private
+    String id;
+    @ColumnInfo(name = "successId")
+    private
     String successId;
+    @ColumnInfo(name = "imagePath")
+    private
     String imagePath;
 
+    @Ignore
     protected SuccessImage(Parcel in) {
-        id = in.readInt();
+        id = in.readString();
         imagePath = in.readString();
         successId = in.readString();
     }
 
-    public SuccessImage(String successId) {
-        this.successId = successId;
+    @Ignore
+    public SuccessImage() {
+        this.id = UUID.randomUUID().toString();
+
     }
 
-    public int getId() {
+    public SuccessImage(@NonNull String id, @NonNull String successId, @NonNull String imagePath) {
+        this.id = id;
+        this.successId = successId;
+        this.imagePath = imagePath;
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -65,7 +99,7 @@ public class SuccessImage implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(id);
+        parcel.writeString(id);
         parcel.writeString(imagePath);
         parcel.writeString(successId);
     }

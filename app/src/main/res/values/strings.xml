@@ -23,8 +23,8 @@
     <string name="transition_category_iv">category_iv</string>
     <string name="transition_category">category</string>
 
-    <string name="transition_date_started">date_started</string>
-    <string name="transition_date_ended">date_ended</string>
+    <string name="transition_date_started">dateStarted</string>
+    <string name="transition_date_ended">dateEnded</string>
     <string name="transition_importance_iv">importance_iv</string>
 
     <string name="importance">Sort by importance</string>
