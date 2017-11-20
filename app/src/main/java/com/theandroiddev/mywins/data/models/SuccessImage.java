@@ -14,17 +14,20 @@ import java.util.UUID;
  * Created by grazyna on 2017-08-23.
  */
 
-@Entity/*(tableName = "successImage",
-        foreignKeys = {
-                @ForeignKey(
-                        entity = Success.class,
-                        parentColumns = "id",
-                        childColumns = "successId",
-                        onDelete = ForeignKey.CASCADE
-                )},
-        indices = { @Index(value = "id")}
-)*/
+//@Entity/*(tableName = "successImage",
+//        foreignKeys = {
+//                @ForeignKey(
+//                        entity = Success.class,
+//                        parentColumns = "id",
+//                        childColumns = "successId",
+//                        onDelete = ForeignKey.CASCADE
+//                )},
+//        indices = { @Index(value = "id")}
+//)*/
+//
+@Entity
 public class SuccessImage implements Parcelable {
+
     public static final Creator<SuccessImage> CREATOR = new Creator<SuccessImage>() {
         @Override
         public SuccessImage createFromParcel(Parcel in) {
@@ -37,7 +40,7 @@ public class SuccessImage implements Parcelable {
         }
     };
 
-    @PrimaryKey()
+    @PrimaryKey
     @NonNull
     @ColumnInfo(name = "id")
     private
@@ -50,7 +53,7 @@ public class SuccessImage implements Parcelable {
     String imagePath;
 
     @Ignore
-    protected SuccessImage(Parcel in) {
+    public SuccessImage(Parcel in) {
         id = in.readString();
         imagePath = in.readString();
         successId = in.readString();
@@ -66,6 +69,11 @@ public class SuccessImage implements Parcelable {
         this.id = id;
         this.successId = successId;
         this.imagePath = imagePath;
+    }
+
+    @Ignore
+    public SuccessImage(String id) {
+        this.id = id;
     }
 
     public String getId() {

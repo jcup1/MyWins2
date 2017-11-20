@@ -1,5 +1,6 @@
 package com.theandroiddev.mywins.injection;
 
+import com.theandroiddev.mywins.data.db.AppDatabase;
 import com.theandroiddev.mywins.editsuccess.EditSuccessActivity;
 import com.theandroiddev.mywins.editsuccess.EditSuccessPresenter;
 import com.theandroiddev.mywins.successes.SuccessesActivity;
@@ -32,5 +33,9 @@ public interface AppComponent {
     void inject(EditSuccessActivity target);
 
     void inject(EditSuccessPresenter target);
+
+    void inject(AppDatabase target);
+
+
 
 }

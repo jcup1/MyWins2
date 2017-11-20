@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.models.SuccessDao;
 import com.theandroiddev.mywins.data.models.SuccessImage;
+import com.theandroiddev.mywins.data.models.SuccessImageDao;
 
 /**
  * Created by grazyna on 2017-11-18.
@@ -44,6 +45,6 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract SuccessDao successDao();
 
-    public abstract SuccessImage successImageDao();
+    public abstract SuccessImageDao successImageDao();
 
 }
