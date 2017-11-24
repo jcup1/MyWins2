@@ -22,3 +22,4 @@ Better version of MyWins app. I'm still in the process of developing it.
         
 //13.11.17 New version of this app has some issues but it works and is refactored. Again in main branch.  
 //14.11.17 There is a problem with leaking sqlite. It's not the hardest bug to fix but I want to do it better. It's a good opportunity to learn Room library. I should fix everything today and put it on google play.
+//24.11.17 I have privacy policy issue because of camera usage. I will try to fix it but for now there is no latest 1,5 version  on google play. 
