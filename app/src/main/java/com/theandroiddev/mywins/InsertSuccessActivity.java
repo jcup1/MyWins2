@@ -19,8 +19,8 @@ import com.theandroiddev.mywins.editsuccess.EditDescriptionActivity;
 import com.theandroiddev.mywins.utils.DateHelper;
 import com.theandroiddev.mywins.utils.DrawableSelector;
 
-import static com.theandroiddev.mywins.utils.Constants.DATE_ENDED;
-import static com.theandroiddev.mywins.utils.Constants.DATE_STARTED;
+import static com.theandroiddev.mywins.utils.Constants.DATE_ENDED_EMPTY;
+import static com.theandroiddev.mywins.utils.Constants.DATE_STARTED_EMPTY;
 import static com.theandroiddev.mywins.utils.Constants.EXTRA_DESCRIPTION;
 import static com.theandroiddev.mywins.utils.Constants.EXTRA_INSERT_SUCCESS_ITEM;
 import static com.theandroiddev.mywins.utils.Constants.REQUEST_CODE_DESCRIPTION;
@@ -139,16 +139,16 @@ public class InsertSuccessActivity extends AppCompatActivity implements View.OnC
                 drawableSelector.setHugeImportance(importanceTv, importance1Iv, importance2Iv, importance3Iv, importance4Iv);
                 break;
             case R.id.insert_date_started_iv:
-                dateHelper.setDate(DATE_STARTED, dateStartedTv, dateEndedTv);
+                dateHelper.setDate(DATE_STARTED_EMPTY, dateStartedTv, dateEndedTv);
                 break;
             case R.id.insert_date_ended_iv:
-                dateHelper.setDate(DATE_ENDED, dateStartedTv, dateEndedTv);
+                dateHelper.setDate(DATE_ENDED_EMPTY, dateStartedTv, dateEndedTv);
                 break;
             case R.id.insert_date_started_tv:
-                dateHelper.setDate(DATE_STARTED, dateStartedTv, dateEndedTv);
+                dateHelper.setDate(DATE_STARTED_EMPTY, dateStartedTv, dateEndedTv);
                 break;
             case R.id.insert_date_ended_tv:
-                dateHelper.setDate(DATE_ENDED, dateStartedTv, dateEndedTv);
+                dateHelper.setDate(DATE_ENDED_EMPTY, dateStartedTv, dateEndedTv);
                 break;
             case R.id.insert_description_iv:
                 setDesc();
