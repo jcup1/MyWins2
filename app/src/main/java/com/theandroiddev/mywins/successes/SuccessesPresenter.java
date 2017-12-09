@@ -1,9 +1,15 @@
 package com.theandroiddev.mywins.successes;
 
+import android.animation.Animator;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,11 +18,19 @@ import com.theandroiddev.mywins.R;
 import com.theandroiddev.mywins.data.models.SearchFilter;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.prefs.PreferencesHelper;
+import com.theandroiddev.mywins.data.repositories.DatabaseSuccessesRepository;
 import com.theandroiddev.mywins.data.repositories.SuccessesRepository;
 import com.theandroiddev.mywins.utils.Constants;
 
 import java.util.ArrayList;
 
+import io.codetail.animation.ViewAnimationUtils;
+
+import static com.theandroiddev.mywins.utils.Constants.CATEGORY_JOURNEY;
+import static com.theandroiddev.mywins.utils.Constants.CATEGORY_LEARN;
+import static com.theandroiddev.mywins.utils.Constants.CATEGORY_MONEY;
+import static com.theandroiddev.mywins.utils.Constants.CATEGORY_SPORT;
+import static com.theandroiddev.mywins.utils.Constants.CATEGORY_VIDEO;
 import static com.theandroiddev.mywins.utils.Constants.NOT_ACTIVE;
 
 /**
@@ -204,6 +218,161 @@ public class SuccessesPresenter implements SuccessesContract.Presenter {
     @Override
     public void showSearch() {
         view.displaySearch();
+    }
+
+    @Override
+    public void onCreateActivity(Context context, SuccessesContract.View view, PreferencesHelper prefs) {
+
+        setRepository(new DatabaseSuccessesRepository(context));
+        setPrefHelper(prefs);
+        setSearchTerm("");
+        setView(view);
+        openDB();
+        checkPreferences();
+        loadSuccesses();
+    }
+
+    @Override
+    public void onDestroyActivity() {
+        closeDB();
+        dropView();
+    }
+
+    @Override
+    public void onResumeActivity(SuccessesContract.View view, int clickedPosition, EditText searchBox) {
+
+        setView(view);
+        updateSuccess(clickedPosition);
+
+    }
+
+    @Override
+    public void showSoftKeyboard(InputMethodManager imm, EditText searchBox) {
+
+        if (searchBox != null) {
+            if (imm != null) {
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.SHOW_IMPLICIT);
+            }
+        }
+    }
+
+    @Override
+    public void hideSoftKeyboard(EditText searchBox, InputMethodManager imm) {
+
+        if (imm != null && searchBox != null) {
+            imm.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);
+        }
+
+    }
+
+    @Override
+    public void setSuccessListVisible(RecyclerView recyclerView, TextView emptyListTv) {
+        recyclerView.setVisibility(android.view.View.VISIBLE);
+        emptyListTv.setVisibility(android.view.View.INVISIBLE);
+    }
+
+    @Override
+    public void setSuccessListInvisible(RecyclerView recyclerView, TextView emptyListTv) {
+        recyclerView.setVisibility(android.view.View.INVISIBLE);
+        emptyListTv.setVisibility(android.view.View.VISIBLE);
+    }
+
+    @Override
+    public void selectCategory(int id) {
+
+        switch (id) {
+
+            case R.id.action_learn:
+                categoryPicked(CATEGORY_LEARN);
+                break;
+            case R.id.action_sport:
+                categoryPicked(CATEGORY_SPORT);
+                break;
+            case R.id.action_journey:
+                categoryPicked(CATEGORY_JOURNEY);
+                break;
+            case R.id.action_money:
+                categoryPicked(CATEGORY_MONEY);
+                break;
+            case R.id.action_video:
+                categoryPicked(CATEGORY_VIDEO);
+                break;
+
+            default:
+                break;
+
+        }
+    }
+
+    @Override
+    public void showCircularReveal(final android.view.View myView) {
+        myView.setBackgroundColor(Color.argb(0, 0, 0, 0));
+        myView.setVisibility(android.view.View.VISIBLE);
+        myView.post(new Runnable() {
+            @Override
+            public void run() {
+                myView.setBackgroundColor(Color.argb(127, 0, 0, 0));
+                int cx = (myView.getLeft() + myView.getRight());
+                int cy = (myView.getTop() + myView.getBottom());
+                int dx = Math.max(cx, myView.getWidth() - cx);
+                int dy = Math.max(cy, myView.getHeight() - cy);
+                float finalRadius = (float) Math.hypot(dx, dy);
+                Animator animator =
+                        ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
+                animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                animator.setDuration(375);
+
+                animator.start();
+            }
+        });
+
+    }
+
+    @Override
+    public void hideCircularReveal(final android.view.View myView) {
+        myView.setVisibility(android.view.View.VISIBLE);
+        myView.post(new Runnable() {
+            @Override
+            public void run() {
+                int cx = (myView.getLeft() + myView.getRight());
+                int cy = (myView.getTop() + myView.getBottom());
+                int dx = Math.max(cx, myView.getWidth() - cx);
+                int dy = Math.max(cy, myView.getHeight() - cy);
+                float finalRadius = (float) Math.hypot(dx, dy);
+                final Animator animator =
+                        ViewAnimationUtils.createCircularReveal(myView, cx, cy, finalRadius, 0);
+                animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                animator.setDuration(375).addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animator) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animator) {
+                        myView.setVisibility(android.view.View.GONE);
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animator) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animator) {
+
+                    }
+                });
+
+                animator.start();
+            }
+        });
+
+    }
+
+    @Override
+    public void setUpFAM() {
+
     }
 
     @Override

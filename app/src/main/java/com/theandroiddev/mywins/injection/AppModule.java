@@ -3,6 +3,8 @@ package com.theandroiddev.mywins.injection;
 import android.app.Application;
 import android.content.Context;
 
+import com.theandroiddev.mywins.utils.SuccessesConfig;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -24,5 +26,10 @@ public class AppModule {
     @Singleton
     public Context provideContext() {
         return application;
+    }
+
+    @Provides
+    SuccessesConfig successesConfig() {
+        return new SuccessesConfig();
     }
 }

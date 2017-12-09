@@ -1,8 +1,12 @@
 package com.theandroiddev.mywins.successes;
 
+import android.content.Context;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -100,6 +104,26 @@ public interface SuccessesContract {
         void clearSearch();
 
         void showSearch();
+
+        void onCreateActivity(Context context, SuccessesContract.View view, PreferencesHelper prefs);
+
+        void onDestroyActivity();
+
+        void onResumeActivity(SuccessesContract.View view, int clickedPosition, EditText searchBox);
+
+        void showSoftKeyboard(InputMethodManager imm, EditText searchBox);
+
+        void hideSoftKeyboard(EditText searchBox, InputMethodManager imm);
+
+        void setSuccessListVisible(RecyclerView recyclerView, TextView emptyListTv);
+
+        void setSuccessListInvisible(RecyclerView recyclerView, TextView emptyListTv);
+
+        void selectCategory(int id);
+
+        void showCircularReveal(final android.view.View myView);
+
+        void hideCircularReveal(final android.view.View myView);
     }
 
 }

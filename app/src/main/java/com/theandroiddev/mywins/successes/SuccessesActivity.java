@@ -1,19 +1,14 @@
 package com.theandroiddev.mywins.successes;
 
-import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -25,12 +20,10 @@ import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -43,8 +36,8 @@ import com.theandroiddev.mywins.MyWinsApplication;
 import com.theandroiddev.mywins.R;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.prefs.PreferencesHelper;
-import com.theandroiddev.mywins.data.repositories.DatabaseSuccessesRepository;
 import com.theandroiddev.mywins.successslider.SuccessSliderActivity;
+import com.theandroiddev.mywins.utils.SuccessesConfig;
 
 import java.util.ArrayList;
 
@@ -52,13 +45,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.codetail.animation.ViewAnimationUtils;
 
-import static com.theandroiddev.mywins.utils.Constants.CATEGORY_JOURNEY;
-import static com.theandroiddev.mywins.utils.Constants.CATEGORY_LEARN;
-import static com.theandroiddev.mywins.utils.Constants.CATEGORY_MONEY;
-import static com.theandroiddev.mywins.utils.Constants.CATEGORY_SPORT;
-import static com.theandroiddev.mywins.utils.Constants.CATEGORY_VIDEO;
 import static com.theandroiddev.mywins.utils.Constants.EXTRA_INSERT_SUCCESS_ITEM;
 import static com.theandroiddev.mywins.utils.Constants.EXTRA_SUCCESS_CARD_VIEW;
 import static com.theandroiddev.mywins.utils.Constants.EXTRA_SUCCESS_CATEGORY;
@@ -83,6 +70,9 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
     SuccessAdapter successAdapter;
     @Inject
     SuccessesContract.Presenter presenter;
+    @Inject
+    SuccessesConfig successesConfig;
+
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
     @BindView(R.id.main_constraint)
@@ -94,6 +84,9 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
     @BindView(R.id.shadow_view)
     android.view.View shadowView;
 
+    ActionBar action;
+    Drawable videoDrawable, moneyDrawable, journeyDrawable, sportDrawable, learnDrawable;
+    FloatingActionButton actionLearn, actionSport, actionJourney, actionBusiness, actionVideo;
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
         @Override
@@ -104,16 +97,13 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
 
-            int pos = viewHolder.getAdapterPosition();
-            toRemove(pos);
+            toRemove(viewHolder.getAdapterPosition());
 
         }
     };
-    ActionBar action;
     private MenuItem searchAction;
     private EditText searchBox;
     private int clickedPosition = NOT_ACTIVE;
-    private PreferencesHelper preferencesHelper;
 
     /**
      * Return an Intent to start this Activity.
@@ -135,8 +125,7 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
 
     @Override
     protected void onDestroy() {
-        presenter.closeDB();
-        presenter.dropView();
+        presenter.onDestroyActivity();
         super.onDestroy();
 
     }
@@ -144,11 +133,8 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
     @Override
     protected void onResume() {
         super.onResume();
-        presenter.setView(this);
-        presenter.updateSuccess(clickedPosition);
+        presenter.onResumeActivity(this, clickedPosition, searchBox);
 
-        if (searchBox != null)
-            showSoftKeyboard();
     }
 
 
@@ -184,18 +170,13 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
 
         ButterKnife.bind(this);
 
-        preferencesHelper = new PreferencesHelper(this);
+        PreferencesHelper preferencesHelper = new PreferencesHelper(this);
         setSupportActionBar(toolbar);//1
         initFABs();
         initCircularReveal();
         initRecycler();
-        presenter.setRepository(new DatabaseSuccessesRepository(getApplication()));
-        presenter.setPrefHelper(preferencesHelper);
-        presenter.setSearchTerm("");
-        presenter.setView(this);
-        presenter.openDB();
-        presenter.checkPreferences();
-        presenter.loadSuccesses();
+        presenter.onCreateActivity(getApplicationContext(), this, preferencesHelper);
+
 
     }
 
@@ -203,154 +184,20 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
         shadowView.setVisibility(android.view.View.GONE);
 
         floatingActionsMenu = findViewById(R.id.multiple_actions);
-        floatingActionsMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
-            @Override
-            public void onMenuExpanded() {
-
-
-                if (searchBox != null) {
-                    //presenter.handleMenuSearch();
-                    hideSoftKeyboard();
-                }
-                showCircularReveal(shadowView);
-            }
-
-            @Override
-            public void onMenuCollapsed() {
-                hideCircularReveal(shadowView);
-            }
-        });
-
-        shadowView.setOnClickListener(new android.view.View.OnClickListener() {
-            @Override
-            public void onClick(android.view.View view) {
-                if (floatingActionsMenu.isExpanded()) {
-                    floatingActionsMenu.collapse();
-                }
-            }
-        });
-
-    }
-
-    private void showCircularReveal(final android.view.View myView) {
-        myView.setBackgroundColor(Color.argb(0, 0, 0, 0));
-        myView.setVisibility(android.view.View.VISIBLE);
-        myView.post(new Runnable() {
-            @Override
-            public void run() {
-                myView.setBackgroundColor(Color.argb(127, 0, 0, 0));
-                int cx = (myView.getLeft() + myView.getRight());
-                int cy = (myView.getTop() + myView.getBottom());
-                int dx = Math.max(cx, myView.getWidth() - cx);
-                int dy = Math.max(cy, myView.getHeight() - cy);
-                float finalRadius = (float) Math.hypot(dx, dy);
-                Animator animator =
-                        ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
-                animator.setInterpolator(new AccelerateDecelerateInterpolator());
-                animator.setDuration(375);
-
-                animator.start();
-            }
-        });
-
-    }
-
-    private void hideCircularReveal(final android.view.View myView) {
-        myView.setVisibility(android.view.View.VISIBLE);
-        myView.post(new Runnable() {
-            @Override
-            public void run() {
-                int cx = (myView.getLeft() + myView.getRight());
-                int cy = (myView.getTop() + myView.getBottom());
-                int dx = Math.max(cx, myView.getWidth() - cx);
-                int dy = Math.max(cy, myView.getHeight() - cy);
-                float finalRadius = (float) Math.hypot(dx, dy);
-                final Animator animator =
-                        ViewAnimationUtils.createCircularReveal(myView, cx, cy, finalRadius, 0);
-                animator.setInterpolator(new AccelerateDecelerateInterpolator());
-                animator.setDuration(375).addListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animator) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animator) {
-                        myView.setVisibility(android.view.View.GONE);
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animator) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animator) {
-
-                    }
-                });
-
-                animator.start();
-            }
-        });
-
 
     }
 
     private void initFABs() {
 
-        final FloatingActionButton actionLearn = findViewById(R.id.action_learn);
-        final FloatingActionButton actionSport = findViewById(R.id.action_sport);
-        final FloatingActionButton actionJourney = findViewById(R.id.action_journey);
-        final FloatingActionButton actionBusiness = findViewById(R.id.action_money);
-        final FloatingActionButton actionVideo = findViewById(R.id.action_video);
+        actionLearn = findViewById(R.id.action_learn);
+        actionSport = findViewById(R.id.action_sport);
+        actionJourney = findViewById(R.id.action_journey);
+        actionBusiness = findViewById(R.id.action_money);
+        actionVideo = findViewById(R.id.action_video);
 
-        actionLearn.setSize(FloatingActionButton.SIZE_MINI);
-        actionSport.setSize(FloatingActionButton.SIZE_MINI);
-        actionJourney.setSize(FloatingActionButton.SIZE_MINI);
-        actionBusiness.setSize(FloatingActionButton.SIZE_MINI);
-        actionVideo.setSize(FloatingActionButton.SIZE_MINI);
-
-        int color_video = ResourcesCompat.getColor(getResources(), R.color.video, null);
-        int color_money = ResourcesCompat.getColor(getResources(), R.color.money, null);
-        int color_journey = ResourcesCompat.getColor(getResources(), R.color.journey, null);
-        int color_sport = ResourcesCompat.getColor(getResources(), R.color.sport, null);
-        int color_learn = ResourcesCompat.getColor(getResources(), R.color.learn, null);
-        int color_white = ResourcesCompat.getColor(getResources(), R.color.white, null);
-
-        Drawable videoDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_video, null);
-        Drawable moneyDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_money, null);
-        Drawable journeyDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_journey, null);
-        Drawable sportDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_sport, null);
-        Drawable learnDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_learn, null);
-
-
-        if (videoDrawable != null) {
-            videoDrawable.setColorFilter(new PorterDuffColorFilter(color_white, PorterDuff.Mode.SRC_IN));
-            actionVideo.setIconDrawable(videoDrawable);
-        }
-        if (moneyDrawable != null) {
-            moneyDrawable.setColorFilter(new PorterDuffColorFilter(color_white, PorterDuff.Mode.SRC_IN));
-            actionBusiness.setIconDrawable(moneyDrawable);
-        }
-        if (journeyDrawable != null) {
-            journeyDrawable.setColorFilter(new PorterDuffColorFilter(color_white, PorterDuff.Mode.SRC_IN));
-            actionJourney.setIconDrawable(journeyDrawable);
-        }
-        if (sportDrawable != null) {
-            sportDrawable.setColorFilter(new PorterDuffColorFilter(color_white, PorterDuff.Mode.SRC_IN));
-            actionSport.setIconDrawable(sportDrawable);
-        }
-        if (learnDrawable != null) {
-            learnDrawable.setColorFilter(new PorterDuffColorFilter(color_white, PorterDuff.Mode.SRC_IN));
-            actionLearn.setIconDrawable(learnDrawable);
-        }
-
-        actionVideo.setColorNormal(color_video);
-        actionBusiness.setColorNormal(color_money);
-        actionJourney.setColorNormal(color_journey);
-        actionSport.setColorNormal(color_sport);
-        actionLearn.setColorNormal(color_learn);
+        successesConfig.configFABs(getApplicationContext(),
+                videoDrawable, moneyDrawable, journeyDrawable, sportDrawable, learnDrawable,
+                actionLearn, actionSport, actionJourney, actionBusiness, actionVideo);
 
         actionLearn.setOnClickListener(this);
         actionSport.setOnClickListener(this);
@@ -402,28 +249,7 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
     public void onClick(android.view.View shadowView) {
         FloatingActionButton fab = (FloatingActionButton) shadowView;
 
-        switch (fab.getId()) {
-
-            case R.id.action_learn:
-                presenter.categoryPicked(CATEGORY_LEARN);
-                break;
-            case R.id.action_sport:
-                presenter.categoryPicked(CATEGORY_SPORT);
-                break;
-            case R.id.action_journey:
-                presenter.categoryPicked(CATEGORY_JOURNEY);
-                break;
-            case R.id.action_money:
-                presenter.categoryPicked(CATEGORY_MONEY);
-                break;
-            case R.id.action_video:
-                presenter.categoryPicked(CATEGORY_VIDEO);
-                break;
-
-            default:
-                break;
-
-        }
+        presenter.selectCategory(fab.getId());
 
     }
 
@@ -451,7 +277,6 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
 
     private void onSliderResultSuccess(Intent data) {
         int position = data.getIntExtra("position", 0);
-        Log.d(TAG, "onActivityResult: GOTIT" + position);
 
         recyclerView.scrollToPosition(position);
 
@@ -522,22 +347,19 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
     @Override
     public void displayDefaultSuccesses(ArrayList<Success> successList) {
         successAdapter.updateSuccessList(successList);
-        recyclerView.setVisibility(android.view.View.VISIBLE);
-        emptyListTv.setVisibility(android.view.View.INVISIBLE);
+        presenter.setSuccessListVisible(recyclerView, emptyListTv);
+
     }
 
     @Override
     public void displayNoSuccesses() {
-        recyclerView.setVisibility(android.view.View.INVISIBLE);
-        emptyListTv.setVisibility(android.view.View.VISIBLE);
-
+        presenter.setSuccessListInvisible(recyclerView, emptyListTv);
     }
 
     @Override
     public void displaySuccesses(ArrayList<Success> successList) {
         successAdapter.updateSuccessList(successList);
-        recyclerView.setVisibility(android.view.View.VISIBLE);
-        emptyListTv.setVisibility(android.view.View.INVISIBLE);
+        presenter.setSuccessListVisible(recyclerView, emptyListTv);
     }
 
     @Override
@@ -547,7 +369,6 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
 
     @Override
     public void undoToRemove(int position) {
-//        successAdapter.notifyItemInserted(position);
         presenter.loadSuccesses();
         recyclerView.scrollToPosition(position);
 
@@ -567,6 +388,8 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
     public void hideSearchBar() {
         action = getSupportActionBar();
         hideSoftKeyboard();
+
+
         if (action != null) {
             action.setDisplayShowCustomEnabled(false);
             action.setDisplayShowTitleEnabled(true);
@@ -574,8 +397,6 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
         searchAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_search));
         searchBox = null;
         presenter.clearSearch();
-
-
     }
 
     @Override
@@ -685,19 +506,14 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
 
     private void hideSoftKeyboard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null && searchBox != null) {
-            imm.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);
-        }
+        presenter.hideSoftKeyboard(searchBox, imm);
+
     }
 
     private void showSoftKeyboard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        presenter.showSoftKeyboard(imm, searchBox);
 
-        if (imm != null) {
-            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.SHOW_IMPLICIT);
-        }
     }
-
-
 
 }

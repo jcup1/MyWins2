@@ -8,6 +8,7 @@ import com.theandroiddev.mywins.successes.SuccessesPresenter;
 import com.theandroiddev.mywins.successslider.SuccessSliderActivity;
 import com.theandroiddev.mywins.successslider.SuccessSliderContract;
 import com.theandroiddev.mywins.successslider.SuccessSliderPresenter;
+import com.theandroiddev.mywins.utils.SuccessesConfig;
 
 import javax.inject.Singleton;
 
@@ -35,6 +36,8 @@ public interface AppComponent {
     void inject(EditSuccessPresenter target);
 
     void inject(AppDatabase target);
+
+    void inject(SuccessesConfig target);
 
 
 
