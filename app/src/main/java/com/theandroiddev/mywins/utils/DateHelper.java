@@ -7,17 +7,17 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.theandroiddev.mywins.R;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.theandroiddev.mywins.utils.Constants.DATE_ENDED_EMPTY;
+import static com.theandroiddev.mywins.utils.Constants.DATE;
 import static com.theandroiddev.mywins.utils.Constants.DATE_FORMAT;
-import static com.theandroiddev.mywins.utils.Constants.DATE_STARTED_EMPTY;
-import static com.theandroiddev.mywins.utils.Constants.ERROR_DATE_ENDED;
-import static com.theandroiddev.mywins.utils.Constants.ERROR_TITLE;
+
 
 /**
  * Created by jakub on 03.09.17.
@@ -57,14 +57,13 @@ public class DateHelper {
 
     private void updateLabel(String d, TextView dateStarted, TextView dateEnded) {
 
-        String myFormat = "yy-MM-dd";
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
 
-        if (d.equals(DATE_STARTED_EMPTY)) {
+        if (d.equals(context.getString(R.string.date_started_empty))) {
             dateStarted.setText(sdf.format(myCalendar.getTime()));
             dateStarted.setError(null);
         }
-        if (d.equals(DATE_ENDED_EMPTY)) {
+        if (d.equals(context.getString(R.string.date_ended_empty))) {
             dateEnded.setText(sdf.format(myCalendar.getTime()));
             dateEnded.setError(null);
 
@@ -73,7 +72,7 @@ public class DateHelper {
     }
 
     public String checkBlankDate(String s) {
-        if (s.contains("Date")) {
+        if (s.contains(DATE)) {
             return "";
         } else return s;
     }
@@ -83,7 +82,7 @@ public class DateHelper {
         int cnt = 0;
 
         if (TextUtils.isEmpty(titleEt.getText().toString())) {
-            titleEt.setError(ERROR_TITLE);
+            titleEt.setError(context.getString(R.string.error_title));
             cnt++;
 
         }
@@ -95,7 +94,7 @@ public class DateHelper {
                     Date date1 = sdf.parse(dateStartedTv.getText().toString());
                     Date date2 = sdf.parse(dateEndedTv.getText().toString());
                     if (date1.after(date2)) {
-                        dateEndedTv.setError(ERROR_DATE_ENDED);
+                        dateEndedTv.setError(context.getString(R.string.error_date_ended));
                         cnt++;
                     }
                 } catch (ParseException e) {

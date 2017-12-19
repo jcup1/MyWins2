@@ -371,11 +371,6 @@ public class SuccessesPresenter implements SuccessesContract.Presenter {
     }
 
     @Override
-    public void setUpFAM() {
-
-    }
-
-    @Override
     public void setSearchTerm(String searchTerm) {
         this.searchTerm = searchTerm;
     }

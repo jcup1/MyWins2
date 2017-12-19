@@ -59,11 +59,7 @@ import javax.inject.Inject;
 
 import static com.theandroiddev.mywins.utils.Constants.CLICK_LONG;
 import static com.theandroiddev.mywins.utils.Constants.CLICK_SHORT;
-import static com.theandroiddev.mywins.utils.Constants.DATE_ENDED_EMPTY;
-import static com.theandroiddev.mywins.utils.Constants.DATE_STARTED_EMPTY;
 import static com.theandroiddev.mywins.utils.Constants.REQUEST_CODE_IMPORTANCE;
-import static com.theandroiddev.mywins.utils.Constants.SNACK_IMAGE_REMOVED;
-import static com.theandroiddev.mywins.utils.Constants.SNACK_UNDO;
 import static com.theandroiddev.mywins.utils.Constants.dummyImportanceDefault;
 
 public class EditSuccessActivity extends AppCompatActivity implements SuccessImageAdapter.OnSuccessImageClickListener, View.OnLongClickListener, EditSuccessContract.View {
@@ -125,9 +121,9 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
 
 
         Snackbar snackbar = Snackbar
-                .make(editSuccessLayout, SNACK_IMAGE_REMOVED, Snackbar.LENGTH_LONG);
+                .make(editSuccessLayout, getString(R.string.snack_image_removed), Snackbar.LENGTH_LONG);
 
-        snackbar.setAction(SNACK_UNDO, new View.OnClickListener() {
+        snackbar.setAction(getString(R.string.snack_undo), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         undoToRemove(successImage, position);
@@ -298,14 +294,14 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         dateStartedTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dateHelper.setDate(DATE_STARTED_EMPTY, dateStartedTv, dateEndedTv);
+                dateHelper.setDate(getString(R.string.date_started_empty), dateStartedTv, dateEndedTv);
             }
         });
 
         dateEndedTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dateHelper.setDate(DATE_ENDED_EMPTY, dateStartedTv, dateEndedTv);
+                dateHelper.setDate(getString(R.string.date_ended_empty), dateStartedTv, dateEndedTv);
             }
         });
 
@@ -353,13 +349,13 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
     private void checkDate(String dateStarted, String dateEnded) {
 
         if (dateStarted.equals("")) {
-            dateStartedTv.setText(DATE_STARTED_EMPTY);
+            dateStartedTv.setText(getString(R.string.date_started_empty));
         } else {
             dateStartedTv.setText(dateStarted);
         }
 
         if (dateEnded.equals("")) {
-            dateEndedTv.setText(DATE_ENDED_EMPTY);
+            dateEndedTv.setText(getString(R.string.date_ended_empty));
         } else {
             dateEndedTv.setText(dateEnded);
         }
@@ -561,10 +557,10 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
 
         switch (view.getId()) {
             case R.id.edit_date_started:
-                openDatePopupMenu(DATE_STARTED_EMPTY);
+                openDatePopupMenu(getString(R.string.date_started_empty));
                 break;
             case R.id.edit_date_ended:
-                openDatePopupMenu(DATE_ENDED_EMPTY);
+                openDatePopupMenu(getString(R.string.date_ended_empty));
                 break;
             default:
                 break;
@@ -576,9 +572,9 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
 
 
         PopupMenu popupMenu = null;
-        if (s.equals(DATE_STARTED_EMPTY)) {
+        if (s.equals(getString(R.string.date_started_empty))) {
             popupMenu = new PopupMenu(EditSuccessActivity.this, dateStartedTv);
-        } else if (s.equals(DATE_ENDED_EMPTY)) {
+        } else if (s.equals(getString(R.string.date_ended_empty))) {
             popupMenu = new PopupMenu(EditSuccessActivity.this, dateEndedTv);
         }
 
@@ -592,10 +588,10 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
                     if (item.getItemId() == R.id.remove_date_menu) {
 
 
-                        if (s.equals(DATE_STARTED_EMPTY)) {
-                            dateStartedTv.setText(DATE_STARTED_EMPTY);
-                        } else if (s.equals(DATE_ENDED_EMPTY)) {
-                            dateEndedTv.setText(DATE_ENDED_EMPTY);
+                        if (s.equals(getString(R.string.date_started_empty))) {
+                            dateStartedTv.setText(getString(R.string.date_started_empty));
+                        } else if (s.equals(getString(R.string.date_ended_empty))) {
+                            dateEndedTv.setText(getString(R.string.date_ended_empty));
                         }
 
                     }

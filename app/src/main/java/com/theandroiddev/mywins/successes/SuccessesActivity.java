@@ -57,9 +57,6 @@ import static com.theandroiddev.mywins.utils.Constants.EXTRA_SUCCESS_TITLE;
 import static com.theandroiddev.mywins.utils.Constants.NOT_ACTIVE;
 import static com.theandroiddev.mywins.utils.Constants.REQUEST_CODE_INSERT;
 import static com.theandroiddev.mywins.utils.Constants.REQUEST_CODE_SLIDER;
-import static com.theandroiddev.mywins.utils.Constants.SNACK_SUCCESS_NOT_ADDED;
-import static com.theandroiddev.mywins.utils.Constants.SNACK_SUCCESS_REMOVED;
-import static com.theandroiddev.mywins.utils.Constants.SNACK_UNDO;
 
 public class SuccessesActivity extends AppCompatActivity implements android.view.View.OnClickListener, SuccessAdapter.OnItemClickListener, SuccessesContract.View {
     private static final String TAG = "SuccessesActivity";
@@ -171,10 +168,10 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
         ButterKnife.bind(this);
 
         PreferencesHelper preferencesHelper = new PreferencesHelper(this);
-        setSupportActionBar(toolbar);//1
-        initFABs();
+        setSupportActionBar(toolbar);
+        setUpFABs();
         initCircularReveal();
-        initRecycler();
+        setUpRecycler();
         presenter.onCreateActivity(getApplicationContext(), this, preferencesHelper);
 
 
@@ -187,7 +184,7 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
 
     }
 
-    private void initFABs() {
+    private void setUpFABs() {
 
         actionLearn = findViewById(R.id.action_learn);
         actionSport = findViewById(R.id.action_sport);
@@ -207,7 +204,7 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
 
     }
 
-    private void initRecycler() {
+    private void setUpRecycler() {
 
         successAdapter = new SuccessAdapter(R.layout.success_layout, getApplicationContext(), this);
         recyclerView.setAdapter(successAdapter);
@@ -283,7 +280,7 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
     }
 
     public void onSuccessNotAdded() {
-        Snackbar.make(mainConstraint, SNACK_SUCCESS_NOT_ADDED, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(mainConstraint, getString(R.string.snack_success_not_added), Snackbar.LENGTH_SHORT).show();
 
     }
 
@@ -300,8 +297,8 @@ public class SuccessesActivity extends AppCompatActivity implements android.view
     private void showUndoSnackbar(final int position) {
         presenter.backupSuccess(position);
         Snackbar snackbar = Snackbar
-                .make(recyclerView, SNACK_SUCCESS_REMOVED, Snackbar.LENGTH_LONG)
-                .setAction(SNACK_UNDO, new android.view.View.OnClickListener() {
+                .make(recyclerView, getString(R.string.snack_success_removed), Snackbar.LENGTH_LONG)
+                .setAction(getString(R.string.snack_undo), new android.view.View.OnClickListener() {
                     @Override
                     public void onClick(android.view.View view) {
 

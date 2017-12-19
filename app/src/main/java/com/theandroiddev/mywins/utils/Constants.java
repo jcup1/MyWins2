@@ -25,6 +25,7 @@ public class Constants {
     public static final int REQUEST_CODE_IMPORTANCE = 3;
     public static final int REQUEST_CODE_GALLERY = 4;
     public static final int REQUEST_CODE_DESCRIPTION = 4;
+    public static final String DATE = "Date";
     //REQUESTS
     public static final String EXTRA_SUCCESS_ITEM = "success_item";
     public static final String EXTRA_INSERT_SUCCESS_ITEM = "insert_success_item";
@@ -76,45 +77,30 @@ public class Constants {
     public static final String DROP_TB_IMAGES = "DROP TABLE IF EXISTS " + TB_NAME_IMAGES;
     public static final int REQUEST_CODE_SLIDER = 9;
     static final int REQUEST_CODE_EDIT = 2;
-    public static String PACKAGE_NAME = "com.theandroiddev.mywins";
-    public static String SORT_DATE_ADDED = "";
-    public static String SORT_DATE_STARTED = Constants.DATE_STARTED;
-
-
-    //SORTING
-    public static String SORT_DATE_ENDED = Constants.DATE_ENDED;
-    public static String SORT_TITLE = Constants.TITLE;
-    public static String SORT_IMPORTANCE = Constants.IMPORTANCE;
-    public static String SORT_DESCRIPTION = "LENGTH(" + Constants.DESCRIPTION + ")";
     public static String CATEGORY_VIDEO = "video";
     public static String CATEGORY_SPORT = "sport";
     public static String CATEGORY_MONEY = "money";
     public static String CATEGORY_JOURNEY = "journey";
     public static String CATEGORY_LEARN = "learn";
-    public static String SNACK_SUCCESS_NOT_ADDED = "Not Added!";
-    public static String SNACK_SUCCESS_REMOVED = "Success Removed!";
-    public static String SNACK_UNDO = "UNDO";
-    public static String SNACK_IMAGE_REMOVED = "Image Removed!";
-    public static String SNACK_SAVED = "Saved";
-    public static String TOAST_PERMISSION_DENIED = "Access file: permission denied";
+    public static String PACKAGE_NAME = "com.theandroiddev.mywins";
+    public static String SORT_DATE_ADDED = "";
+    public static String SORT_DATE_STARTED = Constants.DATE_STARTED;
+    public static String SORT_DATE_ENDED = Constants.DATE_ENDED;
+    public static String SORT_TITLE = Constants.TITLE;
+    public static String SORT_IMPORTANCE = Constants.IMPORTANCE;
+    public static String SORT_DESCRIPTION = "LENGTH(" + Constants.DESCRIPTION + ")";
     public static String CLICK_SHORT = "short";
     public static String CLICK_LONG = "long";
-    public static String DATE_STARTED_EMPTY = "Start Date";
-    public static String DATE_ENDED_EMPTY = "End Date";
     static String IMPORTANCE_HUGE = "Huge";
     static String IMPORTANCE_BIG = "Big";
     static String IMPORTANCE_MEDIUM = "Medium";
     static String IMPORTANCE_SMALL = "Small";
+    //SORTING
     static int IMPORTANCE_HUGE_VALUE = 4;
     static int IMPORTANCE_BIG_VALUE = 3;
     static int IMPORTANCE_MEDIUM_VALUE = 2;
     static int IMPORTANCE_SMALL_VALUE = 1;
-    static String ERROR_TITLE = "What's the name of your success?";
-    static String ERROR_DATE_ENDED = "You ended before started!";
     static String DATE_FORMAT = "yy-MM-dd";
-    static String NOT_DATE_BUT_TEXT = "Date";
-    static String SNACK_DESCRIPTION_TODO = "Not active!";
-    static String SNACK_REFRESH_NEEDED = "Successes may not be synced";
 
     public Constants() {
         setValues();
