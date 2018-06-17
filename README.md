@@ -1,5 +1,8 @@
 # MyWins2
-Better version of MyWins app. I'm still in the process of developing it.
+
+This project is suspended.
+
+Better version of MyWins app.
   
   This new version will include things like:
     
