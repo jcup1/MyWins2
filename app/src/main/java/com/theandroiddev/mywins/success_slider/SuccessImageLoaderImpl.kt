@@ -14,11 +14,11 @@ class SuccessImageLoaderImpl @Inject constructor(
         private var successesRepository: SuccessesRepository
 ) : SuccessImageLoader {
 
-    override fun getSuccessImages(id: String): ArrayList<SuccessImage> {
+    override fun getSuccessImages(id: Long): ArrayList<SuccessImage> {
         return successesRepository.getSuccessImages(id)
     }
 
-    override fun getSuccess(id: String): Success {
+    override fun getSuccess(id: Long): Success {
         return successesRepository.getSuccess(id)
     }
 

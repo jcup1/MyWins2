@@ -40,7 +40,7 @@ class SuccessSliderFragment : MvpDaggerFragment<SuccessSliderFragmentView, Succe
     private var drawableSelector: DrawableSelector? = null
     var recyclerView: RecyclerView? = null
 
-    private var id: String? = null
+    private var id: Long? = null
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -74,7 +74,7 @@ class SuccessSliderFragment : MvpDaggerFragment<SuccessSliderFragmentView, Succe
 
     private fun initBundle() {
         val bundle = this.arguments
-        id = bundle?.getString("id")
+        id = bundle?.getLong("id")
     }
 
     private fun initRecycler() {

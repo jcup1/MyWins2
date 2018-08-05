@@ -6,9 +6,9 @@ import java.util.*
 
 interface SuccessImageLoader {
 
-    abstract fun getSuccessImages(id: String): ArrayList<SuccessImage>
+    abstract fun getSuccessImages(id: Long): ArrayList<SuccessImage>
 
-    abstract fun getSuccess(id: String): Success
+    abstract fun getSuccess(id: Long): Success
 
     abstract fun openDB()
 

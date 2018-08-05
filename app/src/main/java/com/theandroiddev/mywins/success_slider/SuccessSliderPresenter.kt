@@ -38,7 +38,7 @@ constructor(
     fun sliderFabClicked(currentItem: Int) {
         d { "sliderFabClicked: id " + successList[currentItem].id }
         ifViewAttached { view ->
-            view.displayEditSuccessActivity(successList[currentItem].id)
+            view.displayEditSuccessActivity(successList[currentItem].id ?: 0)
         }
     }
 

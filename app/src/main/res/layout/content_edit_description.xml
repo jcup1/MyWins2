@@ -31,6 +31,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <EditText
+            android:hint=""
             android:id="@+id/edit_description_et"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

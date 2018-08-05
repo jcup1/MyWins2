@@ -68,14 +68,18 @@ class SuccessSliderActivity : MvpDaggerAppCompatActivity<SuccessSliderView, Succ
 
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == REQUEST_CODE_INSERT) {
+        if (requestCode == REQUEST_CODE_INSERT && data != null) {
             if (resultCode == Activity.RESULT_OK) {
 
                 Snackbar.make(slider_constraint, "Saved", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        if (resultCode == RESULT_CANCELED) {
+
         }
 
     }
@@ -96,7 +100,7 @@ class SuccessSliderActivity : MvpDaggerAppCompatActivity<SuccessSliderView, Succ
 
     }
 
-    override fun displayEditSuccessActivity(id: String) {
+    override fun displayEditSuccessActivity(id: Long) {
         val editSuccessIntent = Intent(this@SuccessSliderActivity, EditSuccessActivity::class.java)
 
         editSuccessIntent.putExtra("id", id)
@@ -113,7 +117,7 @@ class SuccessSliderActivity : MvpDaggerAppCompatActivity<SuccessSliderView, Succ
 
         override fun getItem(position: Int): Fragment {
             val bundle = Bundle()
-            bundle.putString("id", successes[position].id)
+            bundle.putLong("id", successes[position].id ?: 0)
             val frag = SuccessSliderFragment()
             frag.arguments = bundle
             return frag

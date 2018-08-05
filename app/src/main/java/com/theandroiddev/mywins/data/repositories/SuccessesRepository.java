@@ -22,7 +22,7 @@ public interface SuccessesRepository {
 
     void removeSuccesses(ArrayList<Success> successToRemoveList);
 
-    Success getSuccess(String id);
+    Success getSuccess(Long id);
 
     ArrayList<Success> getDefaultSuccesses();
 
@@ -32,11 +32,11 @@ public interface SuccessesRepository {
 
     void openDB();
 
-    ArrayList<SuccessImage> getSuccessImages(String id);
+    ArrayList<SuccessImage> getSuccessImages(Long id);
 
     void editSuccess(Success editSuccess);
 
-    void editSuccessImages(ArrayList<SuccessImage> successImageList, String successId);
+    void editSuccessImages(ArrayList<SuccessImage> successImageList, Long successId);
 
     void saveSuccesses(ArrayList<Success> defaultSuccesses);
 

@@ -3,6 +3,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
+androidExtensions {
+    experimental = true
+}
+
 android {
     compileSdkVersion 27
     buildToolsVersion '27.0.3'
@@ -19,6 +23,9 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            resValue("string", "PORT_NUMBER", "8081")
         }
     }
 
@@ -42,6 +49,7 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     implementation 'com.android.support:design:27.1.1'
+
     implementation 'com.github.ozodrukh.CircularReveal:circualreveal:2.1.0'
     implementation 'com.jakewharton:butterknife:8.8.1'
     implementation 'com.squareup.picasso:picasso:2.5.2'
@@ -65,7 +73,8 @@ dependencies {
 
     provided 'javax.annotation:jsr250-api:1.0'
     implementation 'android.arch.persistence.room:runtime:1.1.1'
-    annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
+    kapt 'android.arch.persistence.room:compiler:1.1.1'
+    debugImplementation 'com.amitshekhar.android:debug-db:1.0.4'
 
     implementation "io.reactivex.rxjava2:rxjava:2.1.7"
 

@@ -13,9 +13,6 @@ import com.theandroiddev.mywins.data.models.SuccessDao;
 import com.theandroiddev.mywins.data.models.SuccessImage;
 import com.theandroiddev.mywins.data.models.SuccessImageDao;
 
-/**
- * Created by grazyna on 2017-11-18.
- */
 @Database(entities = {Success.class, SuccessImage.class},
         version = 10, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {

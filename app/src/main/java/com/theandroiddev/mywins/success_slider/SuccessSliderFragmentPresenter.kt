@@ -11,7 +11,7 @@ class SuccessSliderFragmentPresenter @Inject constructor(
 
     private val successImageList = ArrayList<SuccessImage>()
 
-    fun onResume(id: String?) {
+    fun onResume(id: Long?) {
 
         if (id != null) {
 

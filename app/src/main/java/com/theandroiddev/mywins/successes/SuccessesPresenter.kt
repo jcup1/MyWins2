@@ -112,13 +112,15 @@ class SuccessesPresenter @Inject() constructor(
         //TODO check it later
         val successList = successList
         val successesRepository = successesRepository
-        if (successList != null && successesRepository != null) {
+        if (successList != null) {
             if (preferencesHelper?.isFirstSuccessAdded == true && successList.size > clickedPosition) {
 
                 if (clickedPosition != NOT_ACTIVE) {
                     val id = successList[clickedPosition].id
                     successList[clickedPosition] = successesRepository.getSuccess(id)
-                    view.displaySuccessChanged()
+                    ifViewAttached { view ->
+                        view.displaySuccessChanged()
+                    }
                 }
             }
         }

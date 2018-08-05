@@ -55,8 +55,8 @@ public class DatabaseSuccessesRepository implements SuccessesRepository {
     }
 
     @Override
-    public Success getSuccess(String id) {
-        return dbAdapter.getSuccess(id);
+    public Success getSuccess(Long id) {
+        return dbAdapter.fetchSuccess(id);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class DatabaseSuccessesRepository implements SuccessesRepository {
     }
 
     @Override
-    public ArrayList<SuccessImage> getSuccessImages(String id) {
+    public ArrayList<SuccessImage> getSuccessImages(Long id) {
         return dbAdapter.getSuccessImages(id);
     }
 
@@ -90,7 +90,7 @@ public class DatabaseSuccessesRepository implements SuccessesRepository {
     }
 
     @Override
-    public void editSuccessImages(ArrayList<SuccessImage> successImageList, String successId) {
+    public void editSuccessImages(ArrayList<SuccessImage> successImageList, Long successId) {
         dbAdapter.editSuccessImages(successImageList, successId);
     }
 

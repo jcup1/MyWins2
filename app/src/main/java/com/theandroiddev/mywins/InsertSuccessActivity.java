@@ -175,8 +175,9 @@ public class InsertSuccessActivity extends AppCompatActivity implements View.OnC
 
         Intent returnIntent = new Intent();
 
-        Success s = new Success(titleEt.getText().toString(), categoryTv.getText().toString(),
-                drawableSelector.getImportance(importanceTv.getText().toString()), description_et.getText().toString(), dateStarted, dateEnded);
+        Success s = new Success(null, titleEt.getText().toString(), categoryTv.getText().toString(),
+                description_et.getText().toString(), dateStarted, dateEnded,
+                drawableSelector.getImportance(importanceTv.getText().toString()));
 
         //s.setId(UUID.randomUUID().toString());
         //Log.e(TAG, "sendData: uuid" + s.getId() );

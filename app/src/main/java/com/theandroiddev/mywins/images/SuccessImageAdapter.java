@@ -107,4 +107,24 @@ public class SuccessImageAdapter extends RecyclerView.Adapter<SuccessImageAdapte
             });
         }
     }
+
+    public ArrayList<SuccessImage> getSuccessImages() {
+        return successImages;
+    }
+
+    public void setSuccessImages(ArrayList<SuccessImage> successImages) {
+        this.successImages = successImages;
+    }
+
+    public void addSuccessImage(int position, SuccessImage successImage) {
+        this.successImages.add(position, successImage);
+    }
+
+    public void updateSuccessImage(int position, SuccessImage successImage) {
+        this.successImages.set(position, successImage);
+    }
+
+    public void addSuccessImage(SuccessImage successImage) {
+        this.successImages.add(successImage);
+    }
 }
