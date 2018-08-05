@@ -32,6 +32,7 @@ import com.theandroiddev.mywins.data.prefs.PreferencesHelper
 import com.theandroiddev.mywins.mvp.MvpDaggerAppCompatActivity
 import com.theandroiddev.mywins.success_slider.SuccessSliderActivity
 import com.theandroiddev.mywins.utils.Constants.*
+import com.theandroiddev.mywins.utils.DrawableSelector
 import com.theandroiddev.mywins.utils.SuccessesConfig
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -151,7 +152,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
 
     private fun setUpRecycler() {
 
-        successAdapter = SuccessAdapter(R.layout.success_layout, applicationContext, this)
+        successAdapter = SuccessAdapter(R.layout.success_layout, this, DrawableSelector(applicationContext))
         recycler_view.adapter = successAdapter
         val linearLayoutManager = LinearLayoutManager(this)
         recycler_view.layoutManager = linearLayoutManager
