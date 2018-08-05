@@ -61,6 +61,8 @@ dependencies {
     kapt "com.google.dagger:dagger-android-processor:$dagger_version"
 
     implementation 'com.jakewharton.timber:timber:4.7.0'
+    implementation 'com.github.ajalt:timberkt:1.5.1'
+
     provided 'javax.annotation:jsr250-api:1.0'
     implementation 'android.arch.persistence.room:runtime:1.1.1'
     annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
