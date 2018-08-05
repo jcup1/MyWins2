@@ -9,6 +9,8 @@ import com.theandroiddev.mywins.data.models.SuccessImage;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 /**
  * Created by jakub on 04.11.17.
  */
@@ -20,6 +22,7 @@ public class DatabaseSuccessesRepository implements SuccessesRepository {
     private SuccessesRepository mSuccessRepository;
     private Context context;
 
+    @Inject
     public DatabaseSuccessesRepository(Context context) {
         dbAdapter = new DBAdapter(context);
         this.context = context;

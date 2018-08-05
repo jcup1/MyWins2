@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins.successslider;
+package com.theandroiddev.mywins.success_slider;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -14,21 +14,18 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import com.theandroiddev.mywins.MyWinsApplication;
 import com.theandroiddev.mywins.R;
 import com.theandroiddev.mywins.data.models.SearchFilter;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.repositories.DatabaseSuccessesRepository;
-import com.theandroiddev.mywins.editsuccess.EditSuccessActivity;
+import com.theandroiddev.mywins.edit_success.EditSuccessActivity;
+import com.theandroiddev.mywins.mvp.MvpDaggerAppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.inject.Inject;
 
 import static com.theandroiddev.mywins.utils.Constants.REQUEST_CODE_INSERT;
 
@@ -36,10 +33,7 @@ import static com.theandroiddev.mywins.utils.Constants.REQUEST_CODE_INSERT;
  * Created by jakub on 27.10.17.
  */
 
-public class SuccessSliderActivity extends AppCompatActivity implements SuccessSliderContract.View, SuccessSliderContract.ActionHandler {
-    private static final String TAG = "ScreenSlidePagerActivit";
-    @Inject
-    public SuccessSliderContract.Presenter presenter;
+public class SuccessSliderActivity extends MvpDaggerAppCompatActivity<SuccessSliderView, SuccessSliderPresenter> implements SuccessSliderView, ActionHandler {
 
     private int id;
     private int color;
@@ -48,8 +42,6 @@ public class SuccessSliderActivity extends AppCompatActivity implements SuccessS
     private ViewPager mPager;
     private PagerAdapter mPagerAdapter;
     private ConstraintLayout sliderConstraint;
-
-
 
     @Override
     protected void onResume() {
@@ -67,9 +59,6 @@ public class SuccessSliderActivity extends AppCompatActivity implements SuccessS
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slider);
-
-        ((MyWinsApplication) getApplication()).getAppComponent().inject(this);
-
 
         FloatingActionButton fab = findViewById(R.id.slider_fab);
         sliderConstraint = findViewById(R.id.slider_constraint);

@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins.successslider;
+package com.theandroiddev.mywins.success_slider;
 
 import android.content.Context;
 import android.content.Intent;
@@ -46,9 +46,9 @@ public class SuccessSliderFragment extends Fragment implements SuccessImageAdapt
     Success s;
     String id;
     ArrayList<SuccessImage> successImageList;
-    SuccessSliderContract.ActionHandler actionHandler;
+    ActionHandler actionHandler;
 
-    SuccessSliderContract.SuccessImageLoader successImageLoader;
+    SuccessImageLoader successImageLoader;
     private TextView noImageTv;
 
     //TODO handle ImageLoader destroy onDestroy
@@ -67,7 +67,7 @@ public class SuccessSliderFragment extends Fragment implements SuccessImageAdapt
         super.onAttach(context);
 
         try {
-            actionHandler = (SuccessSliderContract.ActionHandler) context;
+            actionHandler = (ActionHandler) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement OnItemClickedListener");
         }
@@ -101,9 +101,7 @@ public class SuccessSliderFragment extends Fragment implements SuccessImageAdapt
         });
 
 
-
-
-        successImageLoader = new SuccessImageLoader();
+        successImageLoader = new SuccessImageLoaderImpl();
         successImageLoader.setRepository(new DatabaseSuccessesRepository(getContext()));
 
 

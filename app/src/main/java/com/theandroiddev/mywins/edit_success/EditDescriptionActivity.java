@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins.editsuccess;
+package com.theandroiddev.mywins.edit_success;
 
 import android.app.Activity;
 import android.content.Intent;

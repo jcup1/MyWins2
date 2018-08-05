@@ -35,7 +35,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dialog"/>
         <activity
-            android:name=".editsuccess.EditSuccessActivity"
+            android:name=".edit_success.EditSuccessActivity"
             android:label="@string/title_activity_edit_success"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize">
@@ -48,9 +48,9 @@
             android:name=".images.ImageActivity"
             android:theme="@style/AppTheme.Dialog.No.Bg">
         </activity>
-        <activity android:name=".editsuccess.EditDescriptionActivity">
+        <activity android:name=".edit_success.EditDescriptionActivity">
         </activity>
-        <activity android:name=".successslider.SuccessSliderActivity">
+        <activity android:name=".success_slider.SuccessSliderActivity">
 
         </activity>
 

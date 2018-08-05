@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins.editsuccess;
+package com.theandroiddev.mywins.edit_success;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,7 +17,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -38,7 +37,6 @@ import com.esafirm.imagepicker.features.camera.CameraModule;
 import com.esafirm.imagepicker.features.camera.ImmediateCameraModule;
 import com.esafirm.imagepicker.features.camera.OnImageReadyListener;
 import com.theandroiddev.mywins.ImportancePopupActivity;
-import com.theandroiddev.mywins.MyWinsApplication;
 import com.theandroiddev.mywins.R;
 import com.theandroiddev.mywins.data.db.DBAdapter;
 import com.theandroiddev.mywins.data.models.Success;
@@ -46,8 +44,9 @@ import com.theandroiddev.mywins.data.models.SuccessImage;
 import com.theandroiddev.mywins.data.repositories.DatabaseSuccessesRepository;
 import com.theandroiddev.mywins.images.CustomImagePickerAdapter;
 import com.theandroiddev.mywins.images.SuccessImageAdapter;
-import com.theandroiddev.mywins.successslider.SuccessImageLoader;
-import com.theandroiddev.mywins.successslider.SuccessSliderContract;
+import com.theandroiddev.mywins.mvp.MvpDaggerAppCompatActivity;
+import com.theandroiddev.mywins.success_slider.SuccessImageLoader;
+import com.theandroiddev.mywins.success_slider.SuccessImageLoaderImpl;
 import com.theandroiddev.mywins.utils.DateHelper;
 import com.theandroiddev.mywins.utils.DrawableSelector;
 
@@ -55,14 +54,12 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import static com.theandroiddev.mywins.utils.Constants.CLICK_LONG;
 import static com.theandroiddev.mywins.utils.Constants.CLICK_SHORT;
 import static com.theandroiddev.mywins.utils.Constants.REQUEST_CODE_IMPORTANCE;
 import static com.theandroiddev.mywins.utils.Constants.dummyImportanceDefault;
 
-public class EditSuccessActivity extends AppCompatActivity implements SuccessImageAdapter.OnSuccessImageClickListener, View.OnLongClickListener, EditSuccessContract.View {
+public class EditSuccessActivity extends MvpDaggerAppCompatActivity<EditSuccessView, EditSuccessPresenter> implements SuccessImageAdapter.OnSuccessImageClickListener, View.OnLongClickListener, EditSuccessView {
     private static final String TAG = "EditSuccessActivity";
     private static final int RC_CODE_PICKER = 2000;
     private static final int RC_CAMERA = 3000;
@@ -76,12 +73,11 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
     DateHelper dateHelper;
     ImagePicker imagePicker;
     String id;
-    @Inject
-    EditSuccessContract.Presenter presenter;
+
     private Animation animShow, animHide;
     private ArrayList<com.esafirm.imagepicker.model.Image> imageList = new ArrayList<>();
     private CameraModule cameraModule;
-    private SuccessSliderContract.SuccessImageLoader successImageLoader;
+    private SuccessImageLoader successImageLoader;
     private boolean noDistractionMode;
     private int selectedImageNumber = -1;
     private RecyclerView recyclerView;
@@ -124,11 +120,11 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
                 .make(editSuccessLayout, getString(R.string.snack_image_removed), Snackbar.LENGTH_LONG);
 
         snackbar.setAction(getString(R.string.snack_undo), new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        undoToRemove(successImage, position);
-                    }
-                });
+            @Override
+            public void onClick(View view) {
+                undoToRemove(successImage, position);
+            }
+        });
         snackbar.show();
 
         sendToRemoveQueue(successImage, position);
@@ -152,8 +148,6 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         Toolbar toolbar = findViewById(R.id.edit_toolbar);
         setSupportActionBar(toolbar);
 
-        ((MyWinsApplication) getApplicationContext()).getAppComponent().inject(this);
-
         presenter.setView(this);
         presenter.setRepository(new DatabaseSuccessesRepository(getApplicationContext()));
         presenter.openDB();
@@ -161,7 +155,7 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         //TODO maybe refactor to editMode
         noDistractionMode = false;
         initAnimation();
-        successImageLoader = new SuccessImageLoader();
+        successImageLoader = new SuccessImageLoaderImpl();
         successImageLoader.setRepository(new DatabaseSuccessesRepository(getApplicationContext()));
 
         FloatingActionButton fab = findViewById(R.id.edit_fab);
@@ -343,7 +337,6 @@ public class EditSuccessActivity extends AppCompatActivity implements SuccessIma
         dateEndedTv.setOnLongClickListener(this);
 
     }
-
 
 
     private void checkDate(String dateStarted, String dateEnded) {

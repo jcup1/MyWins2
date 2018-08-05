@@ -1,46 +1,42 @@
-package com.theandroiddev.mywins.editsuccess;
+package com.theandroiddev.mywins.edit_success;
 
-import android.content.Context;
-
-import com.theandroiddev.mywins.MyWinsApplication;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.models.SuccessImage;
 import com.theandroiddev.mywins.data.repositories.SuccessesRepository;
+import com.theandroiddev.mywins.mvp.MvpPresenter;
 
 import java.util.ArrayList;
+
+import javax.inject.Inject;
 
 /**
  * Created by jakub on 12.11.17.
  */
 
-public class EditSuccessPresenter implements EditSuccessContract.Presenter {
+public class EditSuccessPresenter extends MvpPresenter<EditSuccessView> {
 
-    private EditSuccessContract.View view;
+    private EditSuccessView view;
     private SuccessesRepository repository;
     private ArrayList<SuccessImage> successImageList;
 
-    public EditSuccessPresenter(Context context) {
-        ((MyWinsApplication) context).getAppComponent().inject(this);
+    @Inject
+    public EditSuccessPresenter() {
         successImageList = new ArrayList<>();
     }
 
-    @Override
-    public void setView(EditSuccessContract.View view) {
+    public void setView(EditSuccessView view) {
 
         this.view = view;
     }
 
-    @Override
     public void setRepository(SuccessesRepository repository) {
         this.repository = repository;
     }
 
-    @Override
     public void dropView() {
         view = null;
     }
 
-    @Override
     public void editSuccess(Success editSuccess, ArrayList<SuccessImage> successImageList) {
         repository.editSuccess(editSuccess);
         repository.editSuccessImages(successImageList, editSuccess.getId());
@@ -48,7 +44,6 @@ public class EditSuccessPresenter implements EditSuccessContract.Presenter {
         view.displaySlider();
     }
 
-    @Override
     public void loadSuccessImages(String id) {
 
         successImageList = new ArrayList<>();
@@ -58,12 +53,10 @@ public class EditSuccessPresenter implements EditSuccessContract.Presenter {
 
     }
 
-    @Override
     public void closeDB() {
         repository.closeDB();
     }
 
-    @Override
     public void openDB() {
         repository.openDB();
     }
@@ -72,7 +65,6 @@ public class EditSuccessPresenter implements EditSuccessContract.Presenter {
 
         return new SuccessImage(id);
     }
-
 
 
 }

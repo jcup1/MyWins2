@@ -1,4 +1,7 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 26
@@ -19,6 +22,10 @@ android {
         }
     }
 
+}
+
+kapt {
+    generateStubs = true
 }
 
 dependencies {
@@ -46,11 +53,12 @@ dependencies {
     compile 'it.sephiroth.android.library.imagezoom:imagezoom:2.3.0'
     testImplementation 'org.mockito:mockito-core:2.11.0'
 
-    compile "com.google.dagger:dagger:$dagger_version"
-    annotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"
-    compile "com.google.dagger:dagger-android:$dagger_version"
-    compile "com.google.dagger:dagger-android-support:$dagger_version" // if you use the support libraries
+    implementation "com.google.dagger:dagger:$dagger_version"
+    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    implementation "com.google.dagger:dagger-android:$dagger_version"
+    implementation "com.google.dagger:dagger-android-support:$dagger_version" // if you use the support libraries
     annotationProcessor "com.google.dagger:dagger-android-processor:$dagger_version"
+    kapt "com.google.dagger:dagger-android-processor:$dagger_version"
 
     implementation 'com.jakewharton.timber:timber:4.6.0'
     provided 'javax.annotation:jsr250-api:1.0'
@@ -63,6 +71,8 @@ dependencies {
 // Because RxAndroid releases are few and far between, it is recommended you also
 // explicitly depend on RxJava's latest version for bug fixes and new features.
     compile 'io.reactivex.rxjava2:rxjava:2.1.7'
+
+    compile 'com.hannesdorfmann.mosby3:mvp:3.1.0'
 
 
 }
