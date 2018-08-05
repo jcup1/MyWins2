@@ -15,14 +15,9 @@ import com.theandroiddev.mywins.R;
 
 public class SuccessesConfig {
 
-    private Context context;
-
-
     public void configFABs(Context context,
                            Drawable videoDrawable, Drawable moneyDrawable, Drawable journeyDrawable, Drawable sportDrawable, Drawable learnDrawable,
                            FloatingActionButton actionLearn, FloatingActionButton actionSport, FloatingActionButton actionJourney, FloatingActionButton actionBusiness, FloatingActionButton actionVideo) {
-
-        this.context = context;
 
         actionLearn.setSize(FloatingActionButton.SIZE_MINI);
         actionSport.setSize(FloatingActionButton.SIZE_MINI);

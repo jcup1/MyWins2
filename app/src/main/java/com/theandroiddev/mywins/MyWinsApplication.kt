@@ -16,5 +16,4 @@ class MyWinsApplication : DaggerApplication() {
         return component
     }
 
-
 }

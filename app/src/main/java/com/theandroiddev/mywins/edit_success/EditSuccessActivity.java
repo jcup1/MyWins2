@@ -41,12 +41,9 @@ import com.theandroiddev.mywins.R;
 import com.theandroiddev.mywins.data.db.DBAdapter;
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.data.models.SuccessImage;
-import com.theandroiddev.mywins.data.repositories.DatabaseSuccessesRepository;
 import com.theandroiddev.mywins.images.CustomImagePickerAdapter;
 import com.theandroiddev.mywins.images.SuccessImageAdapter;
 import com.theandroiddev.mywins.mvp.MvpDaggerAppCompatActivity;
-import com.theandroiddev.mywins.success_slider.SuccessImageLoader;
-import com.theandroiddev.mywins.success_slider.SuccessImageLoaderImpl;
 import com.theandroiddev.mywins.utils.DateHelper;
 import com.theandroiddev.mywins.utils.DrawableSelector;
 
@@ -77,7 +74,6 @@ public class EditSuccessActivity extends MvpDaggerAppCompatActivity<EditSuccessV
     private Animation animShow, animHide;
     private ArrayList<com.esafirm.imagepicker.model.Image> imageList = new ArrayList<>();
     private CameraModule cameraModule;
-    private SuccessImageLoader successImageLoader;
     private boolean noDistractionMode;
     private int selectedImageNumber = -1;
     private RecyclerView recyclerView;
@@ -148,15 +144,9 @@ public class EditSuccessActivity extends MvpDaggerAppCompatActivity<EditSuccessV
         Toolbar toolbar = findViewById(R.id.edit_toolbar);
         setSupportActionBar(toolbar);
 
-        presenter.setView(this);
-        presenter.setRepository(new DatabaseSuccessesRepository(getApplicationContext()));
-        presenter.openDB();
-
         //TODO maybe refactor to editMode
         noDistractionMode = false;
         initAnimation();
-        successImageLoader = new SuccessImageLoaderImpl();
-        successImageLoader.setRepository(new DatabaseSuccessesRepository(getApplicationContext()));
 
         FloatingActionButton fab = findViewById(R.id.edit_fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -267,8 +257,8 @@ public class EditSuccessActivity extends MvpDaggerAppCompatActivity<EditSuccessV
 
         id = getIntent().getStringExtra("id");
 
-        editSuccess = successImageLoader.getSuccess(id);
-        successImageList = successImageLoader.getSuccessImages(id);
+        editSuccess = presenter.getSuccess(id);
+        successImageList = presenter.getSuccessImages(id);
 
         editTitleEt.setTag(editSuccess.getId());
         editTitleEt.setText(editSuccess.getTitle());
