@@ -6,7 +6,7 @@ import java.util.*
 
 interface SuccessSliderView : MvpView {
 
-    fun displaySuccesses(successes: ArrayList<Success>)
+    fun displaySuccesses(successes: ArrayList<Success>, position: Int)
 
     fun displayEditSuccessActivity(id: String)
 }

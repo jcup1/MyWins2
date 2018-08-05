@@ -46,7 +46,7 @@ public class SuccessesPresenterTest {
 //
 //        when(successesRepository.getSuccesses("", SORT_DATE_ADDED, true)).thenReturn(new ArrayList<Success>());
 //
-//        presenter.loadSuccesses(getSearchText());
+//        presenter.onExtrasLoaded(getSearchText());
 //
 //        verify(view).displayNoDefaultSuccesses();
 //
@@ -57,7 +57,7 @@ public class SuccessesPresenterTest {
 //
 //        when(successesRepository.getSuccesses("", SORT_DATE_ADDED, true)).thenReturn(successList);
 //
-//        presenter.loadSuccesses(getSearchText());
+//        presenter.onExtrasLoaded(getSearchText());
 //
 //        verify(view).displayDefaultSuccesses(successList);
 //

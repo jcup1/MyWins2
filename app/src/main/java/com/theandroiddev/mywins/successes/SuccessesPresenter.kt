@@ -95,7 +95,7 @@ class SuccessesPresenter @Inject() constructor(
             successToRemoveList.add(successSentToRemoveQueue)
             //TODO handle it
             if (successList?.isEmpty() == true) {
-                //loadSuccesses();
+                //onExtrasLoaded();
                 view.displayNoSuccesses()
             }
         }
@@ -394,7 +394,7 @@ class SuccessesPresenter @Inject() constructor(
 
     fun clearSearch() {
         searchTerm = ""
-        //loadSuccesses();
+        //onExtrasLoaded();
 
     }
 

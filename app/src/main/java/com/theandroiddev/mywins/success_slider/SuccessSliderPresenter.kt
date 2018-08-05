@@ -19,24 +19,24 @@ constructor(
 
     private var successList: ArrayList<Success> = ArrayList()
 
-    fun loadSuccesses(searchFilter: SearchFilter) {
+    fun onExtrasLoaded(searchFilter: SearchFilter, position: Int) {
         successList = successesRepository.getSuccesses(searchFilter)
 
         ifViewAttached { view ->
-            view.displaySuccesses(successList)
+            view.displaySuccesses(successList, position)
         }
     }
 
-    fun openDB() {
+    fun onCreate() {
         successesRepository.openDB()
     }
 
-    fun closeDB() {
+    fun onDestroy() {
         successesRepository.closeDB()
     }
 
-    fun startEditSuccess(currentItem: Int) {
-        d { "startEditSuccess: id " + successList[currentItem].id }
+    fun sliderFabClicked(currentItem: Int) {
+        d { "sliderFabClicked: id " + successList[currentItem].id }
         ifViewAttached { view ->
             view.displayEditSuccessActivity(successList[currentItem].id)
         }
