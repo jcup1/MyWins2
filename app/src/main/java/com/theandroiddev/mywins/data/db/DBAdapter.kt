@@ -54,7 +54,7 @@ class DBAdapter(context: Context) {
         sqLiteDatabase?.insert(TB_NAME_SUCCESSES, SUCCESS_ID, getSuccessContentValues(success))
     }
 
-    private fun retrieveSuccess(searchTerm: String?, sort: String): Cursor? {
+    private fun retrieveSuccess(searchTerm: String?, sortType: String?): Cursor? {
 
         if (sqLiteDatabase != null) {
             val columns = arrayOf(SUCCESS_ID, TITLE, CATEGORY, IMPORTANCE, DESCRIPTION, DATE_STARTED, DATE_ENDED)
@@ -62,7 +62,7 @@ class DBAdapter(context: Context) {
                 val sql = "SELECT * FROM $TB_NAME_SUCCESSES WHERE $TITLE LIKE '%$searchTerm%'"
                 sqLiteDatabase?.rawQuery(sql, null)
             } else {
-                sqLiteDatabase?.query(TB_NAME_SUCCESSES, columns, null, null, null, null, sort)
+                sqLiteDatabase?.query(TB_NAME_SUCCESSES, columns, null, null, null, null, sortType)
             }
         } else return null
 
@@ -152,7 +152,7 @@ class DBAdapter(context: Context) {
         return null
     }
 
-    fun getSuccesses(searchTerm: String, sortType: String,
+    fun getSuccesses(searchTerm: String?, sortType: String?,
                      isSortingAscending: Boolean): ArrayList<Success> {
 
         var success: Success

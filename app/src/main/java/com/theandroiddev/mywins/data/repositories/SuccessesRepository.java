@@ -16,10 +16,6 @@ public interface SuccessesRepository {
 
     ArrayList<Success> getSuccesses(SearchFilter searchFilter);
 
-    void registerRepository(DatabaseSuccessesRepository databaseSuccessesRepository);
-
-    void unRegisterRepository();
-
     void removeSuccesses(ArrayList<Success> successToRemoveList);
 
     Success getSuccess(Long id);
