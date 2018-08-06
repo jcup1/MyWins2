@@ -1,10 +1,22 @@
 # MyWins2
 
-This project is suspended.
+# UPDATE
+This project was suspended
+
+BUT IM IN THE PROCESS OF REFACTORING IT
+
+New version will include:
+  -better architecture(more layers, MVP + mosby)
+  -error handling
+  -supporting newer SDK verisons
+  -unit testing
+
 
 Better version of MyWins app.
-  
-  This new version will include things like:
+
+This project is suspended.
+
+This app will include things like:
     
     -MVP pattern  
     -Repository pattern  
@@ -15,3 +27,4 @@ Better version of MyWins app.
     -Testing with Mockito  
     -Better design  
     -Better UX
+    -Room
