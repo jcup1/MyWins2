@@ -1,5 +1,3 @@
-# MyWins2
-
 # UPDATE
 This project was suspended
 
@@ -11,6 +9,7 @@ New version will include:
   -supporting newer SDK verisons
   -unit testing
 
+# MyWins2
 
 Better version of MyWins app.
 
