@@ -18,13 +18,14 @@ import com.theandroiddev.mywins.edit_success.EditSuccessActivity
 import com.theandroiddev.mywins.mvp.MvpDaggerAppCompatActivity
 import com.theandroiddev.mywins.utils.Constants.REQUEST_CODE_INSERT
 import kotlinx.android.synthetic.main.activity_slider.*
-import java.util.*
 
 /**
  * Created by jakub on 27.10.17.
  */
 
 class SuccessSliderActivity : MvpDaggerAppCompatActivity<SuccessSliderView, SuccessSliderPresenter>(), SuccessSliderView, ActionHandler {
+
+    var adapter: ScreenSlidePagerAdapter? = null
 
     override fun onDestroy() {
         presenter.onDestroy()
@@ -40,6 +41,9 @@ class SuccessSliderActivity : MvpDaggerAppCompatActivity<SuccessSliderView, Succ
         initFab(slider_fab)
 
         presenter.onCreate()
+
+        adapter = ScreenSlidePagerAdapter(supportFragmentManager)
+        slider_pager.adapter = adapter
 
         val extras = intent.extras
         val searchFilter: SearchFilter?
@@ -64,7 +68,7 @@ class SuccessSliderActivity : MvpDaggerAppCompatActivity<SuccessSliderView, Succ
 
     private fun sliderFabClicked() {
 
-        presenter.sliderFabClicked(slider_pager.currentItem)
+        presenter.sliderFabClicked(slider_pager.currentItem, adapter?.successes)
 
     }
 
@@ -74,6 +78,7 @@ class SuccessSliderActivity : MvpDaggerAppCompatActivity<SuccessSliderView, Succ
         if (requestCode == REQUEST_CODE_INSERT && data != null) {
             if (resultCode == Activity.RESULT_OK) {
 
+                presenter.onRequestCodeInsert()
                 Snackbar.make(slider_constraint, "Saved", Toast.LENGTH_SHORT).show()
             }
         }
@@ -95,8 +100,9 @@ class SuccessSliderActivity : MvpDaggerAppCompatActivity<SuccessSliderView, Succ
 
     override fun displaySuccesses(successes: ArrayList<Success>, position: Int) {
 
-        slider_pager.adapter = ScreenSlidePagerAdapter(supportFragmentManager, successes)
+        adapter?.successes = successes
         slider_pager.currentItem = position
+        adapter?.notifyDataSetChanged()
 
     }
 
@@ -113,7 +119,9 @@ class SuccessSliderActivity : MvpDaggerAppCompatActivity<SuccessSliderView, Succ
         sliderFabClicked()
     }
 
-    internal class ScreenSlidePagerAdapter(fm: FragmentManager, var successes: List<Success>) : FragmentStatePagerAdapter(fm) {
+    class ScreenSlidePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
+
+        var successes = ArrayList<Success>()
 
         override fun getItem(position: Int): Fragment {
             val bundle = Bundle()

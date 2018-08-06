@@ -40,16 +40,16 @@ import java.util.*
 
 class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSuccessPresenter>(), SuccessImageAdapter.OnSuccessImageClickListener, View.OnLongClickListener, EditSuccessView {
 
-    var drawableSelector: DrawableSelector? = null
-    var dateHelper: DateHelper? = null
-    var imagePicker: ImagePicker? = null
+    private var drawableSelector: DrawableSelector? = null
+    private var dateHelper: DateHelper? = null
+    private var imagePicker: ImagePicker? = null
 
     private var animShow: Animation? = null
     private var animHide: Animation? = null
     private var cameraModule: CameraModule? = null
     private var noDistractionMode: Boolean = false
     private var successImageAdapter: SuccessImageAdapter? = null
-    internal var simpleCallback: ItemTouchHelper.SimpleCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.UP or ItemTouchHelper.DOWN) {
+    private var simpleCallback: ItemTouchHelper.SimpleCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.UP or ItemTouchHelper.DOWN) {
 
         override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
             return false
@@ -58,7 +58,7 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
 
             val position = viewHolder.adapterPosition
-            presenter.onSwiped(successImageAdapter?.successImages?.get(position), position)
+            presenter.onSwiped(position, successImageAdapter?.successImages?.get(position))
 
         }
     }
@@ -70,9 +70,9 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
         animHide = AnimationUtils.loadAnimation(this, R.anim.view_hide)
     }
 
-    private fun undoToRemove(successImage: SuccessImage, position: Int) {
+    private fun undoToRemove(position: Int, successImage: SuccessImage) {
 
-        presenter.onUndoToRemove(successImage, position)
+        presenter.onUndoToRemove(position, successImage)
 
     }
 
@@ -169,13 +169,12 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
         drawableSelector?.selectCategoryImage(edit_category_iv, success.category, edit_category)
         drawableSelector?.selectImportanceImage(edit_importance_iv, success.importance)
 
-        successImageAdapter = SuccessImageAdapter(successImages, this, R.layout.success_image_layout, this)
-        edit_image_recycler_view.adapter = successImageAdapter
+        successImageAdapter?.successImages = successImages
         successImageAdapter?.notifyDataSetChanged()
 
     }
 
-    override fun displaySuccessImageRemovedSnackbar(successImage: SuccessImage, position: Int) {
+    override fun displaySuccessImageRemovedSnackbar(position: Int, successImage: SuccessImage) {
 
         successImageAdapter?.successImages?.remove(successImage)
         successImageAdapter?.notifyItemRemoved(position)
@@ -183,11 +182,11 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
         val snackbar = Snackbar
                 .make(edit_success_layout, getString(R.string.snack_image_removed), Snackbar.LENGTH_LONG)
 
-        snackbar.setAction(getString(R.string.snack_undo)) { undoToRemove(successImage, position) }
+        snackbar.setAction(getString(R.string.snack_undo)) { undoToRemove(position, successImage) }
         snackbar.show()
     }
 
-    override fun displayUndoRemovingSuccessImage(successImage: SuccessImage, position: Int) {
+    override fun displayUndoRemovingSuccessImage(position: Int, successImage: SuccessImage) {
         successImageAdapter?.successImages?.add(position, successImage)
         successImageAdapter?.notifyItemInserted(position)
         edit_image_recycler_view.scrollToPosition(position)
@@ -244,6 +243,9 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
 
         val itemTouchHelper = ItemTouchHelper(simpleCallback)
         itemTouchHelper.attachToRecyclerView(edit_image_recycler_view)
+
+        successImageAdapter = SuccessImageAdapter(this, R.layout.success_image_layout, this)
+        edit_image_recycler_view.adapter = successImageAdapter
 
     }
 
@@ -319,7 +321,7 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
         return cameraModule as ImmediateCameraModule
     }
 
-    override fun updateImagePath(successImage: SuccessImage, selectedImagePosition: Int) {
+    override fun updateImagePath(selectedImagePosition: Int, successImage: SuccessImage) {
         successImageAdapter?.updateSuccessImage(selectedImagePosition, successImage)
         successImageAdapter?.notifyItemChanged(selectedImagePosition)
         val imagePickerAdapter = CustomImagePickerAdapter(this)
@@ -389,7 +391,7 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
 
         popupMenu.setOnMenuItemClickListener { item ->
             if (item.itemId == R.id.remove_image_menu) {
-                presenter.onSuccessImageRemoved(successImageAdapter?.successImages?.get(position), position)
+                presenter.onSuccessImageRemoved(position, successImageAdapter?.successImages?.get(position))
             }
             true
         }
@@ -445,10 +447,9 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
         finish()
     }
 
-    override fun displaySuccessImages(successImageList: ArrayList<SuccessImage>) {
+    override fun displaySuccessImages(successImages: ArrayList<SuccessImage>) {
 
-        successImageAdapter = SuccessImageAdapter(successImageList, this, R.layout.success_image_layout, this)
-        edit_image_recycler_view.adapter = successImageAdapter
+        successImageAdapter?.successImages = successImages
         successImageAdapter?.notifyDataSetChanged()
     }
 

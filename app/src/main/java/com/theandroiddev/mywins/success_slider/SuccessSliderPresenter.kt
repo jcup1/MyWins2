@@ -5,7 +5,6 @@ import com.theandroiddev.mywins.data.models.SearchFilter
 import com.theandroiddev.mywins.data.models.Success
 import com.theandroiddev.mywins.data.repositories.SuccessesRepository
 import com.theandroiddev.mywins.mvp.MvpPresenter
-import java.util.*
 import javax.inject.Inject
 
 /**
@@ -17,13 +16,11 @@ constructor(
         private var successesRepository: SuccessesRepository
 ) : MvpPresenter<SuccessSliderView>() {
 
-    private var successList: ArrayList<Success> = ArrayList()
-
     fun onExtrasLoaded(searchFilter: SearchFilter, position: Int) {
-        successList = successesRepository.getSuccesses(searchFilter)
+        val successes = successesRepository.getSuccesses(searchFilter)
 
         ifViewAttached { view ->
-            view.displaySuccesses(successList, position)
+            view.displaySuccesses(successes, position)
         }
     }
 
@@ -35,11 +32,17 @@ constructor(
         successesRepository.closeDB()
     }
 
-    fun sliderFabClicked(currentItem: Int) {
-        d { "sliderFabClicked: id " + successList[currentItem].id }
-        ifViewAttached { view ->
-            view.displayEditSuccessActivity(successList[currentItem].id ?: 0)
+    fun sliderFabClicked(currentItem: Int, successes: ArrayList<Success>?) {
+        if (successes != null) {
+            d { "sliderFabClicked: id " + successes[currentItem].id }
+            ifViewAttached { view ->
+                view.displayEditSuccessActivity(successes[currentItem].id ?: 0)
+            }
         }
+    }
+
+    fun onRequestCodeInsert() {
+
     }
 
 }

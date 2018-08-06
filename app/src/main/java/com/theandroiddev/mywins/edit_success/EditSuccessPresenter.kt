@@ -43,18 +43,18 @@ constructor(
         return SuccessImage(null, id, "")
     }
 
-    fun onSwiped(successImage: SuccessImage?, position: Int) {
+    fun onSwiped(position: Int, successImage: SuccessImage?) {
 
         ifViewAttached { view ->
             if (successImage != null) {
-                view.displaySuccessImageRemovedSnackbar(successImage, position)
+                view.displaySuccessImageRemovedSnackbar(position, successImage)
             }
         }
     }
 
-    fun onUndoToRemove(successImage: SuccessImage, position: Int) {
+    fun onUndoToRemove(position: Int, successImage: SuccessImage) {
         ifViewAttached { view ->
-            view.displayUndoRemovingSuccessImage(successImage, position)
+            view.displayUndoRemovingSuccessImage(position, successImage)
         }
 
     }
@@ -89,7 +89,7 @@ constructor(
             ifViewAttached { view ->
                 val successImage = successImages[selectedImagePosition]
                 successImage.imagePath = images[0].path
-                view.updateImagePath(successImage, selectedImagePosition)
+                view.updateImagePath(selectedImagePosition, successImage)
             }
 
         } else {//selected = 0
@@ -155,11 +155,11 @@ constructor(
         }
     }
 
-    fun onSuccessImageRemoved(successImage: SuccessImage?, position: Int) {
+    fun onSuccessImageRemoved(position: Int, successImage: SuccessImage?) {
 
         ifViewAttached { view ->
             if (successImage != null) {
-                view.displaySuccessImageRemovedSnackbar(successImage, position)
+                view.displaySuccessImageRemovedSnackbar(position, successImage)
             }
         }
     }

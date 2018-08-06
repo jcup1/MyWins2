@@ -16,10 +16,11 @@ import java.io.File
 import java.util.*
 
 class SuccessImageAdapter(
-        var successImages: ArrayList<SuccessImage> = ArrayList(),
         private val listener: OnSuccessImageClickListener,
         private val successImageLayout: Int,
         private val context: Context?) : RecyclerView.Adapter<ViewHolder>() {
+
+    var successImages: ArrayList<SuccessImage> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(successImageLayout, parent, false)

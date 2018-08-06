@@ -6,8 +6,8 @@ import com.theandroiddev.mywins.mvp.MvpView
 
 interface SuccessSliderFragmentView : MvpView {
 
-    fun displaySuccessData(success: Success, successImageList: ArrayList<SuccessImage>)
+    fun displaySuccessData(success: Success, successImages: ArrayList<SuccessImage>)
 
-    fun startImageActivity(imagePaths: ArrayList<String>, position: Int)
+    fun startImageActivity(position: Int, imagePaths: ArrayList<String>)
 
 }

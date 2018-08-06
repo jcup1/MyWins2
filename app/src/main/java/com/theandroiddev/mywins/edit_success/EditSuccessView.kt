@@ -10,11 +10,11 @@ interface EditSuccessView : MvpView {
 
     fun displaySlider()
 
-    fun displaySuccessImages(successImageList: ArrayList<SuccessImage>)
+    fun displaySuccessImages(successImages: ArrayList<SuccessImage>)
 
-    fun displaySuccessImageRemovedSnackbar(successImage: SuccessImage, position: Int)
+    fun displaySuccessImageRemovedSnackbar(position: Int, successImage: SuccessImage)
 
-    fun displayUndoRemovingSuccessImage(successImage: SuccessImage, position: Int)
+    fun displayUndoRemovingSuccessImage(position: Int, successImage: SuccessImage)
 
     fun displaySuccessData(success: Success, successImages: ArrayList<SuccessImage>)
 
@@ -22,7 +22,7 @@ interface EditSuccessView : MvpView {
 
     fun displayDeleteMenu(position: Int, cardView: CardView)
 
-    fun updateImagePath(successImage: SuccessImage, selectedImagePosition: Int)
+    fun updateImagePath(selectedImagePosition: Int, successImage: SuccessImage)
 
     fun addSuccessImages(successImages: ArrayList<SuccessImage>)
 

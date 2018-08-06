@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.INVISIBLE
@@ -38,7 +37,6 @@ class SuccessSliderFragment : MvpDaggerFragment<SuccessSliderFragmentView, Succe
     private var successImageAdapter: SuccessImageAdapter? = null
     private var actionHandler: ActionHandler? = null
     private var drawableSelector: DrawableSelector? = null
-    var recyclerView: RecyclerView? = null
 
     private var id: Long? = null
 
@@ -80,12 +78,15 @@ class SuccessSliderFragment : MvpDaggerFragment<SuccessSliderFragmentView, Succe
     private fun initRecycler() {
 
         val linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        recyclerView?.layoutManager = linearLayoutManager
-        recyclerView?.setHasFixedSize(true)
+        show_image_recycler_view.layoutManager = linearLayoutManager
+        show_image_recycler_view.setHasFixedSize(true)
+
+        successImageAdapter = SuccessImageAdapter(this, R.layout.success_image_layout, context)
+        show_image_recycler_view.adapter = successImageAdapter
 
     }
 
-    override fun displaySuccessData(success: Success, successImageList: ArrayList<SuccessImage>) {
+    override fun displaySuccessData(success: Success, successImages: ArrayList<SuccessImage>) {
 
         item_title.tag = success.id
         item_title.text = success.title
@@ -98,21 +99,18 @@ class SuccessSliderFragment : MvpDaggerFragment<SuccessSliderFragmentView, Succe
         drawableSelector?.selectCategoryImage(item_category_iv, success.category, item_category)
         drawableSelector?.selectImportanceImage(item_importance_iv, success.importance)
 
-        if (successImageList.isEmpty()) {
+        if (successImages.isEmpty()) {
             no_images_tv.visibility = VISIBLE
         } else {
             no_images_tv.visibility = INVISIBLE
         }
 
-        successImageAdapter = SuccessImageAdapter(successImageList, this, R.layout.success_image_layout, context)
-
-        recyclerView?.adapter = successImageAdapter
-
+        successImageAdapter?.successImages = successImages
         successImageAdapter?.notifyDataSetChanged()
 
     }
 
-    override fun startImageActivity(imagePaths: ArrayList<String>, position: Int) {
+    override fun startImageActivity(position: Int, imagePaths: ArrayList<String>) {
 
         val intent = Intent(activity, ImageActivity::class.java)
         intent.putStringArrayListExtra("imagePaths", imagePaths)
@@ -138,7 +136,7 @@ class SuccessSliderFragment : MvpDaggerFragment<SuccessSliderFragmentView, Succe
 
     override fun onSuccessImageClick(successImage: SuccessImage, successImageIv: ImageView, position: Int, constraintLayout: ConstraintLayout, cardView: CardView) {
 
-        presenter.onSuccessImageClick(position)
+        presenter.onSuccessImageClick(position, successImageAdapter?.successImages)
 
     }
 

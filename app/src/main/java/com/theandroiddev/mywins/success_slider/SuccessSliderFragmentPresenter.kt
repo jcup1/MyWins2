@@ -9,8 +9,6 @@ class SuccessSliderFragmentPresenter @Inject constructor(
 
 ) : MvpPresenter<SuccessSliderFragmentView>() {
 
-    private val successImageList = ArrayList<SuccessImage>()
-
     fun onResume(id: Long?) {
 
         if (id != null) {
@@ -24,17 +22,20 @@ class SuccessSliderFragmentPresenter @Inject constructor(
         }
     }
 
-    fun onSuccessImageClick(position: Int) {
-        val imagePaths = ArrayList<String>()
+    fun onSuccessImageClick(position: Int, successImages: ArrayList<SuccessImage>?) {
 
-        for (i in successImageList.indices) {
-            imagePaths.add(successImageList[i].imagePath)
+        if (successImages != null) {
+
+            val imagePaths = ArrayList<String>()
+
+            for (i in successImages.indices) {
+                imagePaths.add(successImages[i].imagePath)
+            }
+
+            ifViewAttached { view ->
+                view.startImageActivity(position, imagePaths)
+            }
         }
-
-        ifViewAttached { view ->
-            view.startImageActivity(imagePaths, position)
-        }
-
     }
 
 }
