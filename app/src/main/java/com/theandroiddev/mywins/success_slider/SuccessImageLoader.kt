@@ -8,7 +8,7 @@ interface SuccessImageLoader {
 
     abstract fun getSuccessImages(id: Long): ArrayList<SuccessImage>
 
-    abstract fun getSuccess(id: Long): Success
+    abstract fun fetchSuccess(id: Long): Success?
 
     abstract fun openDB()
 

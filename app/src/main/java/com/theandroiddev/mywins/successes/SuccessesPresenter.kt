@@ -93,9 +93,11 @@ class SuccessesPresenter @Inject() constructor(
 
                 if (clickedPosition != NOT_ACTIVE) {
                     val id = successes[clickedPosition].id
-                    val updatedSuccess = successesRepository.getSuccess(id)
-                    ifViewAttached { view ->
-                        view.displaySuccessChanged(clickedPosition, updatedSuccess)
+                    val updatedSuccess = successesRepository.fetchSuccess(id)
+                    if (updatedSuccess != null) {
+                        ifViewAttached { view ->
+                            view.displaySuccessChanged(clickedPosition, updatedSuccess)
+                        }
                     }
                 }
             }
@@ -355,7 +357,7 @@ class SuccessesPresenter @Inject() constructor(
     fun checkPreferences() {
         if (preferencesHelper?.isFirstRun == true) {
             //TODO add to database
-            successesRepository.saveSuccesses(successesRepository.defaultSuccesses)
+            successesRepository.saveSuccesses(successesRepository.getDefaultSuccesses())
 
             preferencesHelper?.setNotFirstRun()
         }

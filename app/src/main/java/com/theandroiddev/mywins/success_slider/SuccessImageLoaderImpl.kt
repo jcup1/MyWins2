@@ -18,8 +18,8 @@ class SuccessImageLoaderImpl @Inject constructor(
         return successesRepository.getSuccessImages(id)
     }
 
-    override fun getSuccess(id: Long): Success {
-        return successesRepository.getSuccess(id)
+    override fun fetchSuccess(id: Long): Success? {
+        return successesRepository.fetchSuccess(id)
     }
 
     override fun openDB() {

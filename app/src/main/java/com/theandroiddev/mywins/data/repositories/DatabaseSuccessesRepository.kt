@@ -35,7 +35,7 @@ constructor(private val context: Context) : SuccessesRepository {
         dbAdapter?.removeSuccess(successToRemoveList)
     }
 
-    override fun getSuccess(id: Long?): Success? {
+    override fun fetchSuccess(id: Long?): Success? {
         return dbAdapter?.fetchSuccess(id)
     }
 

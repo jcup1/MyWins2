@@ -13,11 +13,13 @@ class SuccessSliderFragmentPresenter @Inject constructor(
 
         if (id != null) {
 
-            val success = successImageLoader.getSuccess(id)
+            val success = successImageLoader.fetchSuccess(id)
             val successImages = successImageLoader.getSuccessImages(id)
 
             ifViewAttached { view ->
-                view.displaySuccessData(success, successImages)
+                if (success != null) {
+                    view.displaySuccessData(success, successImages)
+                }
             }
         }
     }

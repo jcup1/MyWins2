@@ -63,14 +63,16 @@ constructor(
 
         editSuccessId = id
 
-        val success = successImageLoader.getSuccess(id)
+        val success = successImageLoader.fetchSuccess(id)
 
         val successImages = successImageLoader.getSuccessImages(id)
 
         successImages.add(0, SuccessImage(null, id, ""))
 
-        ifViewAttached { view ->
-            view.displaySuccessData(success, successImages)
+        if (success != null) {
+            ifViewAttached { view ->
+                view.displaySuccessData(success, successImages)
+            }
         }
     }
 
