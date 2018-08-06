@@ -26,7 +26,7 @@ interface SuccessesView : MvpView {
 
     fun successRemoved(position: Int)
 
-    fun displaySuccessChanged()
+    fun displaySuccessChanged(position: Int, updatedSuccess: Success)
 
     fun displayCategory(category: String)
 
@@ -41,5 +41,9 @@ interface SuccessesView : MvpView {
     fun displaySliderAnimation(successes: ArrayList<Success>, success: Success, position: Int, titleTv: TextView, categoryTv: TextView, dateStartedTv: TextView, dateEndedTv: TextView, categoryIv: ImageView, importanceIv: ImageView, constraintLayout: ConstraintLayout, cardView: CardView)
 
     fun displaySearch()
+
+    fun restoreSuccess(position: Int, backupSuccess: Success)
+
+    fun displaySuccessRemoved(position: Int, backupSuccess: Success)
 }
 

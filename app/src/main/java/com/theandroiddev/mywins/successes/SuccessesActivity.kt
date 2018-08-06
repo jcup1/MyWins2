@@ -3,7 +3,6 @@ package com.theandroiddev.mywins.successes
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.Snackbar
@@ -40,15 +39,21 @@ import kotlinx.android.synthetic.main.search_bar.*
 import java.util.*
 
 class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPresenter>(), android.view.View.OnClickListener, SuccessAdapter.OnItemClickListener, SuccessesView {
+    override fun displaySuccessRemoved(position: Int, backupSuccess: Success) {
+        successAdapter?.successes?.removeAt(position)
+        successRemoved(position)
+        successAdapter?.successesToRemove?.add(backupSuccess)
+        //TODO handle it
+        if (successAdapter?.successes?.isEmpty() == true) {
+            //onExtrasLoaded();
+            displayNoSuccesses()
+        }
+    }
+
     var floatingActionsMenu: FloatingActionsMenu? = null
     var successAdapter: SuccessAdapter? = null
 
     var action: ActionBar? = null
-    var videoDrawable: Drawable? = null
-    var moneyDrawable: Drawable? = null
-    var journeyDrawable: Drawable? = null
-    var sportDrawable: Drawable? = null
-    var learnDrawable: Drawable? = null
 
     var simpleCallback: ItemTouchHelper.SimpleCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
@@ -73,7 +78,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
 
     override fun onPause() {
         super.onPause()
-        presenter?.removeSuccessesFromQueue()
+        presenter?.onPause(successAdapter?.successesToRemove)
 
     }
 
@@ -86,8 +91,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
     override fun onResume() {
         super.onResume()
 
-        if (edtSearch != null)
-            presenter?.onResumeActivity(this, clickedPosition, edtSearch)
+        presenter?.onResumeActivity(successAdapter?.successes, clickedPosition)
 
     }
 
@@ -103,8 +107,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
         if (floatingActionsMenu?.isExpanded == true) {
             floatingActionsMenu?.collapse()
         } else if (searchBox != null) {
-
-            presenter?.handleMenuSearch()
+            presenter?.onBackPressed()
         } else {
 
             super.onBackPressed()
@@ -139,7 +142,6 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
         val successesConfig = SuccessesConfig()
 
         successesConfig.configFABs(applicationContext,
-                videoDrawable, moneyDrawable, journeyDrawable, sportDrawable, learnDrawable,
                 action_learn, action_sport, action_journey, action_money, action_video)
 
         action_learn.setOnClickListener(this)
@@ -202,6 +204,14 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
 
     }
 
+    override fun restoreSuccess(position: Int, backupSuccess: Success) {
+        successAdapter?.successes?.add(position, backupSuccess)
+        successAdapter?.successesToRemove?.remove(backupSuccess)
+        recycler_view?.scrollToPosition(position)
+        successAdapter?.notifyItemInserted(position)
+
+    }
+
     private fun onSliderResultSuccess(data: Intent) {
         val position = data.getIntExtra("position", 0)
 
@@ -227,13 +237,14 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
     }
 
     private fun showUndoSnackbar(position: Int) {
-        presenter?.backupSuccess(position)
+        successAdapter?.backupSuccess = successAdapter?.successes?.get(position)
+
         val snackbar = Snackbar
                 .make(main_constraint, getString(R.string.snack_success_removed), Snackbar.LENGTH_LONG)
-                .setAction(getString(R.string.snack_undo)) { presenter?.undoToRemove(position) }
+                .setAction(getString(R.string.snack_undo)) { presenter?.onUndoToRemove(position, successAdapter?.backupSuccess) }
         snackbar.show()
 
-        presenter?.sendToRemoveQueue(position)
+        presenter?.sendToRemoveQueue(position, successAdapter?.successes, successAdapter?.backupSuccess)
     }
 
     override fun onItemClick(success: Success, position: Int, titleTv: TextView, categoryTv: TextView, dateStartedTv: TextView, dateEndedTv: TextView, categoryIv: ImageView, importanceIv: ImageView, constraintLayout: ConstraintLayout, cardView: CardView) {
@@ -291,7 +302,8 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
         successAdapter?.notifyItemRemoved(position)
     }
 
-    override fun displaySuccessChanged() {
+    override fun displaySuccessChanged(position: Int, updatedSuccess: Success) {
+        successAdapter?.successes?.set(position, updatedSuccess)
         successAdapter?.notifyItemChanged(clickedPosition)
     }
 

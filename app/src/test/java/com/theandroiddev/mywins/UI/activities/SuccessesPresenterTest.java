@@ -55,11 +55,11 @@ public class SuccessesPresenterTest {
 //    @Test
 //    public void shouldPassDefaultSuccessesToView() {
 //
-//        when(successesRepository.getSuccesses("", SORT_DATE_ADDED, true)).thenReturn(successList);
+//        when(successesRepository.getSuccesses("", SORT_DATE_ADDED, true)).thenReturn(successes);
 //
 //        presenter.onExtrasLoaded(getSearchText());
 //
-//        verify(view).displayDefaultSuccesses(successList);
+//        verify(view).displayDefaultSuccesses(successes);
 //
 //    }
 

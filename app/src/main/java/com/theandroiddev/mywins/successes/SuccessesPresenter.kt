@@ -21,7 +21,6 @@ import com.theandroiddev.mywins.mvp.MvpPresenter
 import com.theandroiddev.mywins.utils.Constants
 import com.theandroiddev.mywins.utils.Constants.*
 import io.codetail.animation.ViewAnimationUtils
-import java.util.*
 import javax.inject.Inject
 
 /**
@@ -31,13 +30,10 @@ import javax.inject.Inject
 class SuccessesPresenter @Inject() constructor(
         private val successesRepository: SuccessesRepository
 ) : MvpPresenter<SuccessesView>() {
-    private var successList: ArrayList<Success>? = null
-    private val successToRemoveList: ArrayList<Success>
-    private var backupSuccess: Success? = null
     private var preferencesHelper: PreferencesHelper? = null
 
-    private var sortType: String? = null
-    private var isSortingAscending: Boolean = false
+    private var sortType: String = Constants.SORT_DATE_ADDED
+    private var isSortingAscending: Boolean = true
     private var isSearchOpened = false
     private var searchTerm: String? = null
 
@@ -45,85 +41,64 @@ class SuccessesPresenter @Inject() constructor(
     val searchFilter: SearchFilter
         get() = SearchFilter(searchTerm, sortType, isSortingAscending)
 
-    init {
-        successList = ArrayList()
-        successToRemoveList = ArrayList()
-        sortType = Constants.SORT_DATE_ADDED
-        isSortingAscending = true
-    }
-
-
     fun loadSuccesses() {
 
-        successList = successesRepository.getSuccesses(searchFilter)
-        val successesToDisplay = successList
+        val successes = successesRepository.getSuccesses(searchFilter)
 
-        if (successesToDisplay?.isEmpty() == true || successesToDisplay == null) {
-            view.displayNoSuccesses()
-        } else {
-            view.displaySuccesses(successesToDisplay)
-        }
-    }
+        if (successes?.isEmpty() == true || successes == null) {
 
-    fun removeSuccessesFromQueue() {
-        successesRepository.removeSuccesses(successToRemoveList)
-        successToRemoveList.clear()
-
-    }
-
-
-    fun undoToRemove(position: Int) {
-
-        val successToUndoRemove = backupSuccess
-
-        if (successToUndoRemove != null) {
-            successList?.add(position, successToUndoRemove)
-            view.undoToRemove(position)
-            successToRemoveList.remove(successToUndoRemove)
-        }
-
-    }
-
-
-    fun sendToRemoveQueue(position: Int) {
-
-        val successSentToRemoveQueue = backupSuccess
-
-        if (successSentToRemoveQueue != null) {
-            successList?.removeAt(position)
-            view.successRemoved(position)
-            successToRemoveList.add(successSentToRemoveQueue)
-            //TODO handle it
-            if (successList?.isEmpty() == true) {
-                //onExtrasLoaded();
+            ifViewAttached { view ->
                 view.displayNoSuccesses()
+            }
+        } else {
+
+            ifViewAttached { view ->
+                view.displaySuccesses(successes)
+            }
+
+        }
+    }
+
+    fun onPause(successesToRemove: ArrayList<Success>?) {
+        if (successesToRemove != null) {
+            successesRepository.removeSuccesses(successesToRemove)
+        }
+    }
+
+
+    fun onUndoToRemove(position: Int, backupSuccess: Success?) {
+
+        if (backupSuccess != null) {
+            ifViewAttached { view ->
+                view.restoreSuccess(position, backupSuccess)
             }
         }
 
     }
 
 
-    fun backupSuccess(position: Int) {
-        backupSuccess = successList?.get(position)
+    fun sendToRemoveQueue(position: Int, successes: ArrayList<Success>?, backupSuccess: Success?) {
+
+        if (successes != null && backupSuccess != null) {
+            ifViewAttached { view ->
+                view.displaySuccessRemoved(position, backupSuccess)
+            }
+        }
+
     }
 
-
-    fun updateSuccess(clickedPosition: Int) {
+    fun updateSuccess(clickedPosition: Int, successes: ArrayList<Success>) {
         //TODO check it later
-        val successList = successList
-        val successesRepository = successesRepository
-        if (successList != null) {
-            if (preferencesHelper?.isFirstSuccessAdded == true && successList.size > clickedPosition) {
+        if (successes.size > clickedPosition) {
 
                 if (clickedPosition != NOT_ACTIVE) {
-                    val id = successList[clickedPosition].id
-                    successList[clickedPosition] = successesRepository.getSuccess(id)
+                    val id = successes[clickedPosition].id
+                    val updatedSuccess = successesRepository.getSuccess(id)
                     ifViewAttached { view ->
-                        view.displaySuccessChanged()
+                        view.displaySuccessChanged(clickedPosition, updatedSuccess)
                     }
                 }
             }
-        }
 
     }
 
@@ -143,7 +118,7 @@ class SuccessesPresenter @Inject() constructor(
         val id = item.itemId
 
         if (id == R.id.action_search) {
-            handleMenuSearch()
+            onBackPressed()
         }//TODO it's so dumb
         if (id == R.id.action_date_started) {
 
@@ -208,25 +183,30 @@ class SuccessesPresenter @Inject() constructor(
     }
 
 
-    fun handleMenuSearch() {
-
-        val successList = successList
-        if (successList != null) {
+    fun onBackPressed() {
             if (isSearchOpened) {
-                view.hideSearchBar()
                 isSearchOpened = false
-                this.successList = successesRepository.getSuccesses(searchFilter)
-                view.displaySuccesses(successList)
+                ifViewAttached { view ->
+                    view.hideSearchBar()
+                }
+                val successesToDisplay = successesRepository.getSuccesses(searchFilter)
+                ifViewAttached { view ->
+                    view.displaySuccesses(successesToDisplay)
+                }
             } else {
-                view.displaySearchBar()
                 isSearchOpened = true
+                ifViewAttached { view ->
+                    view.displaySearchBar()
+                }
             }
-        }
+
     }
 
 
     fun showSearch() {
-        view.displaySearch()
+        ifViewAttached { view ->
+            view.displaySearch()
+        }
     }
 
 
@@ -245,9 +225,11 @@ class SuccessesPresenter @Inject() constructor(
     }
 
 
-    fun onResumeActivity(view: SuccessesView, clickedPosition: Int, searchBox: EditText) {
+    fun onResumeActivity(successes: ArrayList<Success>?, clickedPosition: Int) {
 
-        updateSuccess(clickedPosition)
+        if (successes != null) {
+            updateSuccess(clickedPosition, successes)
+        }
 
     }
 
@@ -363,7 +345,9 @@ class SuccessesPresenter @Inject() constructor(
         }
         successesRepository.addSuccess(s)
         loadSuccesses()
-        view.displayUpdatedSuccesses()
+        ifViewAttached { view ->
+            view.displayUpdatedSuccesses()
+        }
 
     }
 
@@ -385,10 +369,14 @@ class SuccessesPresenter @Inject() constructor(
 
     fun startSlider(success: Success, position: Int, titleTv: TextView, categoryTv: TextView, dateStartedTv: TextView, dateEndedTv: TextView, categoryIv: ImageView, importanceIv: ImageView, constraintLayout: ConstraintLayout, cardView: CardView) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            view.displaySliderAnimation(successesRepository.getSuccesses(searchFilter), success, position, titleTv, categoryTv, dateStartedTv, dateEndedTv, categoryIv, importanceIv, constraintLayout, cardView)
+            ifViewAttached { view ->
+                view.displaySliderAnimation(successesRepository.getSuccesses(searchFilter), success, position, titleTv, categoryTv, dateStartedTv, dateEndedTv, categoryIv, importanceIv, constraintLayout, cardView)
+            }
 
         } else {
-            view.displaySlider(successesRepository.getSuccesses(searchFilter))
+            ifViewAttached { view ->
+                view.displaySlider(successesRepository.getSuccesses(searchFilter))
+            }
 
         }
     }
@@ -405,9 +393,6 @@ class SuccessesPresenter @Inject() constructor(
         successesRepository.closeDB()
     }
 
-    private fun clearSuccesses() {
-        successList?.clear()
-    }
 
     override fun detachView() {
 

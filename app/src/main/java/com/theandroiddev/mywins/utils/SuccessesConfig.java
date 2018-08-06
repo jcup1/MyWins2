@@ -1,9 +1,6 @@
 package com.theandroiddev.mywins.utils;
 
 import android.content.Context;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.Drawable;
 import android.support.v4.content.res.ResourcesCompat;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -16,8 +13,11 @@ import com.theandroiddev.mywins.R;
 public class SuccessesConfig {
 
     public void configFABs(Context context,
-                           Drawable videoDrawable, Drawable moneyDrawable, Drawable journeyDrawable, Drawable sportDrawable, Drawable learnDrawable,
-                           FloatingActionButton actionLearn, FloatingActionButton actionSport, FloatingActionButton actionJourney, FloatingActionButton actionBusiness, FloatingActionButton actionVideo) {
+                           FloatingActionButton actionLearn,
+                           FloatingActionButton actionSport,
+                           FloatingActionButton actionJourney,
+                           FloatingActionButton actionBusiness,
+                           FloatingActionButton actionVideo) {
 
         actionLearn.setSize(FloatingActionButton.SIZE_MINI);
         actionSport.setSize(FloatingActionButton.SIZE_MINI);
@@ -32,39 +32,39 @@ public class SuccessesConfig {
         int color_learn = ResourcesCompat.getColor(context.getResources(), R.color.learn, null);
         int color_white = ResourcesCompat.getColor(context.getResources(), R.color.white, null);
 
-        videoDrawable = ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_video, null);
-        moneyDrawable = ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_money, null);
-        journeyDrawable = ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_journey, null);
-        sportDrawable = ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_sport, null);
-        learnDrawable = ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_learn, null);
+//        videoDrawable = ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_video, null);
+//        moneyDrawable = ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_money, null);
+//        journeyDrawable = ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_journey, null);
+//        sportDrawable = ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_sport, null);
+//        learnDrawable = ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_learn, null);
+//
+//
+//        if (videoDrawable != null) {
+//            videoDrawable.setColorFilter(new PorterDuffColorFilter(color_white, PorterDuff.Mode.SRC_IN));
+//            actionVideo.setIconDrawable(videoDrawable);
+//        }
+//        if (moneyDrawable != null) {
+//            moneyDrawable.setColorFilter(new PorterDuffColorFilter(color_white, PorterDuff.Mode.SRC_IN));
+//            actionBusiness.setIconDrawable(moneyDrawable);
+//        }
+//        if (journeyDrawable != null) {
+//            journeyDrawable.setColorFilter(new PorterDuffColorFilter(color_white, PorterDuff.Mode.SRC_IN));
+//            actionJourney.setIconDrawable(journeyDrawable);
+//        }
+//        if (sportDrawable != null) {
+//            sportDrawable.setColorFilter(new PorterDuffColorFilter(color_white, PorterDuff.Mode.SRC_IN));
+//            actionSport.setIconDrawable(sportDrawable);
+//        }
+//        if (learnDrawable != null) {
+//            learnDrawable.setColorFilter(new PorterDuffColorFilter(color_white, PorterDuff.Mode.SRC_IN));
+//            actionLearn.setIconDrawable(learnDrawable);
+//        }
 
-
-        if (videoDrawable != null) {
-            videoDrawable.setColorFilter(new PorterDuffColorFilter(color_white, PorterDuff.Mode.SRC_IN));
-            actionVideo.setIconDrawable(videoDrawable);
-        }
-        if (moneyDrawable != null) {
-            moneyDrawable.setColorFilter(new PorterDuffColorFilter(color_white, PorterDuff.Mode.SRC_IN));
-            actionBusiness.setIconDrawable(moneyDrawable);
-        }
-        if (journeyDrawable != null) {
-            journeyDrawable.setColorFilter(new PorterDuffColorFilter(color_white, PorterDuff.Mode.SRC_IN));
-            actionJourney.setIconDrawable(journeyDrawable);
-        }
-        if (sportDrawable != null) {
-            sportDrawable.setColorFilter(new PorterDuffColorFilter(color_white, PorterDuff.Mode.SRC_IN));
-            actionSport.setIconDrawable(sportDrawable);
-        }
-        if (learnDrawable != null) {
-            learnDrawable.setColorFilter(new PorterDuffColorFilter(color_white, PorterDuff.Mode.SRC_IN));
-            actionLearn.setIconDrawable(learnDrawable);
-        }
-
-        actionVideo.setColorNormal(color_video);
-        actionBusiness.setColorNormal(color_money);
-        actionJourney.setColorNormal(color_journey);
-        actionSport.setColorNormal(color_sport);
-        actionLearn.setColorNormal(color_learn);
+//        actionVideo.setColorNormal(color_video);
+//        actionBusiness.setColorNormal(color_money);
+//        actionJourney.setColorNormal(color_journey);
+//        actionSport.setColorNormal(color_sport);
+//        actionLearn.setColorNormal(color_learn);
 
 
     }

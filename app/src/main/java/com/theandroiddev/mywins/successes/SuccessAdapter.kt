@@ -11,7 +11,6 @@ import android.widget.TextView
 import com.theandroiddev.mywins.data.models.Success
 import com.theandroiddev.mywins.utils.DrawableSelector
 import kotlinx.android.synthetic.main.success_layout.view.*
-import java.util.*
 import javax.inject.Inject
 
 /**
@@ -23,8 +22,9 @@ class SuccessAdapter @Inject constructor(
         private val listener: OnItemClickListener,
         private val drawableSelector: DrawableSelector) : RecyclerView.Adapter<SuccessAdapter.ViewHolder>() {
 
-    private var successList: List<Success> = ArrayList()
-
+    var successes = ArrayList<Success>()
+    var successesToRemove = ArrayList<Success>()
+    var backupSuccess: Success? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(itemLayout, parent, false)
@@ -34,24 +34,24 @@ class SuccessAdapter @Inject constructor(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        holder.titleTv.text = successList.get(position).title
-        holder.categoryTv.text = successList.get(position).category
-        holder.dateStartedTv.text = successList.get(position).dateStarted
-        holder.dateEndedTv.text = successList.get(position).dateEnded
-        drawableSelector.selectCategoryImage(holder.categoryIv, successList.get(position).category, holder.categoryTv)
-        drawableSelector.selectImportanceImage(holder.importanceIv, successList.get(position).importance)
+        holder.titleTv.text = successes.get(position).title
+        holder.categoryTv.text = successes.get(position).category
+        holder.dateStartedTv.text = successes.get(position).dateStarted
+        holder.dateEndedTv.text = successes.get(position).dateEnded
+        drawableSelector.selectCategoryImage(holder.categoryIv, successes.get(position).category, holder.categoryTv)
+        drawableSelector.selectImportanceImage(holder.importanceIv, successes.get(position).importance)
 
 
-        holder.bind(successList.get(position), listener, position)
+        holder.bind(successes.get(position), listener, position)
 
     }
 
     override fun getItemCount(): Int {
-        return successList.size
+        return successes.size
     }
 
     fun updateSuccessList(successList: ArrayList<Success>) {
-        this.successList = successList
+        this.successes = successList
         notifyDataSetChanged()
     }
 
