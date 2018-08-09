@@ -45,7 +45,7 @@ class SuccessesPresenter @Inject() constructor(
 
         val successes = successesRepository.getSuccesses(searchFilter)
 
-        if (successes?.isEmpty() == true || successes == null) {
+        if (successes.isEmpty()) {
 
             ifViewAttached { view ->
                 view.displayNoSuccesses()
@@ -106,7 +106,9 @@ class SuccessesPresenter @Inject() constructor(
 
 
     fun categoryPicked(category: String) {
-        view.displayCategory(category)
+        ifViewAttached { view ->
+            view.displayCategory(category)
+        }
     }
 
 
