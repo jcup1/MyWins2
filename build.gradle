@@ -21,6 +21,7 @@ allprojects {
     repositories {
         jcenter()
         maven { url 'https://www.jitpack.io' }
+        maven { url "http://dl.bintray.com/jetbrains/spek" }
 
     }
 
