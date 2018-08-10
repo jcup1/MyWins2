@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'de.mannodermaus.android-junit5'
 
 androidExtensions {
     experimental = true
@@ -85,15 +86,25 @@ dependencies {
 
     // JUnit
     testImplementation 'junit:junit:4.12'
+    testImplementation 'org.junit.platform:junit-platform-runner:1.0.3'
 
     // Mockito
     testImplementation 'org.mockito:mockito-core:2.19.0'
 
     // Spek
     implementation 'org.jetbrains.spek:spek-api:1.1.5'
-    testImplementation 'org.jetbrains.spek:spek-api:1.1.5'
-    testImplementation 'org.jetbrains.spek:spek-junit-platform-engine:1.1.0-beta3'
-    testImplementation 'org.junit.platform:junit-platform-runner:1.0.3'
+    testImplementation("org.jetbrains.spek:spek-api:1.1.5") {
+        exclude group: "org.jetbrains.kotlin"
+    }
+    testImplementation("org.jetbrains.spek:spek-junit-platform-engine:1.1.5") {
+        exclude group: "org.junit.platform"
+        exclude group: "org.jetbrains.kotlin"
+    }
+
+
+    // Kluent
+    testImplementation 'org.amshove.kluent:kluent:1.40'
+    testImplementation 'org.amshove.kluent:kluent-android:1.40'
 
     // Circular reveal
     implementation 'com.github.ozodrukh.CircularReveal:circualreveal:2.1.0'

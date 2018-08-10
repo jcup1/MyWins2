@@ -30,7 +30,7 @@ import javax.inject.Inject
 class SuccessesPresenter @Inject() constructor(
         private val successesRepository: SuccessesRepository
 ) : MvpPresenter<SuccessesView>() {
-    private var preferencesHelper: PreferencesHelper? = null
+    var preferencesHelper: PreferencesHelper? = null
 
     private var sortType: String = Constants.SORT_DATE_ADDED
     private var isSortingAscending: Boolean = true
