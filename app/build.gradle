@@ -30,6 +30,12 @@ android {
         }
     }
 
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
+
+
 }
 
 kapt {
@@ -37,7 +43,7 @@ kapt {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     // Android framework
     implementation 'com.android.support:appcompat-v7:27.1.1'
@@ -60,7 +66,7 @@ dependencies {
     kapt 'android.arch.persistence.room:compiler:1.1.1'
 
     // RxJava
-    implementation "io.reactivex.rxjava2:rxjava:2.1.7"
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
 
@@ -68,7 +74,9 @@ dependencies {
     implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     implementation "com.google.dagger:dagger-android:$dagger_version"
-    implementation "com.google.dagger:dagger-android-support:$dagger_version" // if you use the support libraries
+    implementation "com.google.dagger:dagger-android-support:$dagger_version"
+
+    // if you use the support libraries
     annotationProcessor "com.google.dagger:dagger-android-processor:$dagger_version"
     kapt "com.google.dagger:dagger-android-processor:$dagger_version"
     provided 'javax.annotation:jsr250-api:1.0'
@@ -93,14 +101,13 @@ dependencies {
 
     // Spek
     implementation 'org.jetbrains.spek:spek-api:1.1.5'
-    testImplementation("org.jetbrains.spek:spek-api:1.1.5") {
+    testImplementation('org.jetbrains.spek:spek-api:1.1.5') {
         exclude group: "org.jetbrains.kotlin"
     }
-    testImplementation("org.jetbrains.spek:spek-junit-platform-engine:1.1.5") {
+    testImplementation('org.jetbrains.spek:spek-junit-platform-engine:1.1.5') {
         exclude group: "org.junit.platform"
         exclude group: "org.jetbrains.kotlin"
     }
-
 
     // Kluent
     testImplementation 'org.amshove.kluent:kluent:1.40'

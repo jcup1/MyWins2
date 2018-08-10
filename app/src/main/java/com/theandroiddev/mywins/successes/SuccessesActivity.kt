@@ -107,7 +107,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
         if (floatingActionsMenu?.isExpanded == true) {
             floatingActionsMenu?.collapse()
         } else if (searchBox != null) {
-            presenter?.onBackPressed()
+            presenter?.onBackPressed(true)
         } else {
 
             super.onBackPressed()
@@ -125,7 +125,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
         setUpFABs()
         initCircularReveal()
         setUpRecycler()
-        presenter?.onCreateActivity(applicationContext, this, preferencesHelper)
+        presenter?.onCreateActivity(preferencesHelper)
 
 
     }
@@ -171,7 +171,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        presenter?.handleOptionsItemSelected(item)
+        presenter?.handleOptionsItemSelected(item, searchBox != null)
 
         return super.onOptionsItemSelected(item)
     }
@@ -244,7 +244,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
                 .setAction(getString(R.string.snack_undo)) { presenter?.onUndoToRemove(position, successAdapter?.backupSuccess) }
         snackbar.show()
 
-        presenter?.sendToRemoveQueue(position, successAdapter?.successes, successAdapter?.backupSuccess)
+        presenter?.sendToRemoveQueue(position, successAdapter?.backupSuccess)
     }
 
     override fun onItemClick(success: Success, position: Int, titleTv: TextView, categoryTv: TextView, dateStartedTv: TextView, dateEndedTv: TextView, categoryIv: ImageView, importanceIv: ImageView, constraintLayout: ConstraintLayout, cardView: CardView) {
@@ -292,12 +292,6 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
         successAdapter?.updateSuccessList(successList)
     }
 
-    override fun undoToRemove(position: Int) {
-        presenter?.loadSuccesses()
-        recycler_view?.scrollToPosition(position)
-
-    }
-
     override fun successRemoved(position: Int) {
         successAdapter?.notifyItemRemoved(position)
     }
@@ -318,7 +312,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
         }
         searchAction?.icon = ContextCompat.getDrawable(this, R.drawable.ic_search)
         searchBox = null
-        presenter?.clearSearch()
+        presenter?.onHideSearchBar()
     }
 
     override fun displaySearchBar() {
@@ -344,8 +338,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
             }
 
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                presenter?.setSearchTerm(searchText)
-                presenter?.loadSuccesses()
+                presenter?.onSearchTextChanged(searchText)
             }
 
             override fun afterTextChanged(editable: Editable) {
@@ -353,8 +346,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
             }
         })
         searchBox?.setOnEditorActionListener { v, actionId, event ->
-            presenter?.setSearchTerm(searchText)
-            presenter?.showSearch()
+            presenter?.onEditorActionListener(searchText)
 
             true
         }
@@ -415,13 +407,13 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
 
     private fun hideSoftKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        presenter?.hideSoftKeyboard(searchBox, imm)
+        presenter?.onHideSoftKeyboard(searchBox, imm)
 
     }
 
     private fun showSoftKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        presenter?.showSoftKeyboard(imm, searchBox)
+        presenter?.onShowSoftKeyboard(imm, searchBox)
 
     }
 

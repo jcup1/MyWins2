@@ -1,7 +1,6 @@
 package com.theandroiddev.mywins.successes
 
 import android.animation.Animator
-import android.content.Context
 import android.graphics.Color
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.CardView
@@ -34,14 +33,13 @@ class SuccessesPresenter @Inject() constructor(
 
     private var sortType: String = Constants.SORT_DATE_ADDED
     private var isSortingAscending: Boolean = true
-    private var isSearchOpened = false
     private var searchTerm: String? = null
 
 
     val searchFilter: SearchFilter
         get() = SearchFilter(searchTerm, sortType, isSortingAscending)
 
-    fun loadSuccesses() {
+    fun loadSuccesses(searchFilter: SearchFilter) {
 
         val successes = successesRepository.getSuccesses(searchFilter)
 
@@ -77,9 +75,9 @@ class SuccessesPresenter @Inject() constructor(
     }
 
 
-    fun sendToRemoveQueue(position: Int, successes: ArrayList<Success>?, backupSuccess: Success?) {
+    fun sendToRemoveQueue(position: Int, backupSuccess: Success?) {
 
-        if (successes != null && backupSuccess != null) {
+        if (backupSuccess != null) {
             ifViewAttached { view ->
                 view.displaySuccessRemoved(position, backupSuccess)
             }
@@ -91,7 +89,7 @@ class SuccessesPresenter @Inject() constructor(
         //TODO check it later
         if (successes.size > clickedPosition) {
 
-                if (clickedPosition != NOT_ACTIVE) {
+            if (clickedPosition > NOT_ACTIVE) {
                     val id = successes[clickedPosition].id
                     val updatedSuccess = successesRepository.fetchSuccess(id)
                     if (updatedSuccess != null) {
@@ -118,11 +116,11 @@ class SuccessesPresenter @Inject() constructor(
     }
 
 
-    fun handleOptionsItemSelected(item: MenuItem) {
+    fun handleOptionsItemSelected(item: MenuItem, isSearchOpened: Boolean) {
         val id = item.itemId
 
         if (id == R.id.action_search) {
-            onBackPressed()
+            onBackPressed(isSearchOpened)
         }//TODO it's so dumb
         if (id == R.id.action_date_started) {
 
@@ -131,7 +129,7 @@ class SuccessesPresenter @Inject() constructor(
             } else {
                 isSortingAscending = !isSortingAscending
             }
-            loadSuccesses()
+            loadSuccesses(searchFilter)
 
         }
         if (id == R.id.action_date_ended) {
@@ -141,7 +139,7 @@ class SuccessesPresenter @Inject() constructor(
             } else {
                 isSortingAscending = !isSortingAscending
             }
-            loadSuccesses()
+            loadSuccesses(searchFilter)
 
         }
         if (id == R.id.action_title) {
@@ -151,7 +149,7 @@ class SuccessesPresenter @Inject() constructor(
             } else {
                 isSortingAscending = !isSortingAscending
             }
-            loadSuccesses()
+            loadSuccesses(searchFilter)
 
         }
         if (id == R.id.action_date_added) {
@@ -161,7 +159,7 @@ class SuccessesPresenter @Inject() constructor(
             } else {
                 isSortingAscending = !isSortingAscending
             }
-            loadSuccesses()
+            loadSuccesses(searchFilter)
 
         }
         if (id == R.id.action_importance) {
@@ -171,7 +169,7 @@ class SuccessesPresenter @Inject() constructor(
             } else {
                 isSortingAscending = !isSortingAscending
             }
-            loadSuccesses()
+            loadSuccesses(searchFilter)
 
         }
         if (id == R.id.action_description) {
@@ -181,15 +179,14 @@ class SuccessesPresenter @Inject() constructor(
             } else {
                 isSortingAscending = !isSortingAscending
             }
-            loadSuccesses()
+            loadSuccesses(searchFilter)
 
         }
     }
 
 
-    fun onBackPressed() {
+    fun onBackPressed(isSearchOpened: Boolean) {
             if (isSearchOpened) {
-                isSearchOpened = false
                 ifViewAttached { view ->
                     view.hideSearchBar()
                 }
@@ -198,7 +195,6 @@ class SuccessesPresenter @Inject() constructor(
                     view.displaySuccesses(successesToDisplay)
                 }
             } else {
-                isSearchOpened = true
                 ifViewAttached { view ->
                     view.displaySearchBar()
                 }
@@ -214,13 +210,18 @@ class SuccessesPresenter @Inject() constructor(
     }
 
 
-    fun onCreateActivity(context: Context, view: SuccessesView, prefs: PreferencesHelper) {
+    fun onCreateActivity(prefs: PreferencesHelper) {
 
         setPrefHelper(prefs)
-        setSearchTerm("")
+        this.searchTerm = ""
         openDB()
-        checkPreferences()
-        loadSuccesses()
+        checkPreferences(preferencesHelper)
+        loadSuccesses(searchFilter)
+    }
+
+    fun onEditorActionListener(searchTerm: String) {
+        this.searchTerm = searchTerm
+        showSearch()
     }
 
 
@@ -238,7 +239,7 @@ class SuccessesPresenter @Inject() constructor(
     }
 
 
-    fun showSoftKeyboard(imm: InputMethodManager?, searchBox: EditText?) {
+    fun onShowSoftKeyboard(imm: InputMethodManager?, searchBox: EditText?) {
 
         if (searchBox != null) {
             imm?.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.SHOW_IMPLICIT)
@@ -246,7 +247,7 @@ class SuccessesPresenter @Inject() constructor(
     }
 
 
-    fun hideSoftKeyboard(searchBox: EditText?, imm: InputMethodManager?) {
+    fun onHideSoftKeyboard(searchBox: EditText?, imm: InputMethodManager?) {
 
         if (imm != null && searchBox != null) {
             imm.hideSoftInputFromWindow(searchBox.windowToken, 0)
@@ -254,6 +255,9 @@ class SuccessesPresenter @Inject() constructor(
 
     }
 
+    fun onHideSearchBar() {
+        clearSearch()
+    }
 
     fun setSuccessListVisible(recyclerView: RecyclerView, emptyListTv: TextView) {
         recyclerView.visibility = android.view.View.VISIBLE
@@ -336,8 +340,9 @@ class SuccessesPresenter @Inject() constructor(
     }
 
 
-    fun setSearchTerm(searchTerm: String) {
+    fun onSearchTextChanged(searchTerm: String) {
         this.searchTerm = searchTerm
+        loadSuccesses(searchFilter)
     }
 
 
@@ -348,7 +353,7 @@ class SuccessesPresenter @Inject() constructor(
             preferencesHelper?.setFirstSuccessAdded()
         }
         successesRepository.addSuccess(s)
-        loadSuccesses()
+        loadSuccesses(searchFilter)
         ifViewAttached { view ->
             view.displayUpdatedSuccesses()
         }
@@ -356,12 +361,12 @@ class SuccessesPresenter @Inject() constructor(
     }
 
 
-    fun checkPreferences() {
+    fun checkPreferences(preferencesHelper: PreferencesHelper?) {
         if (preferencesHelper?.isFirstRun == true) {
             //TODO add to database
             successesRepository.saveSuccesses(successesRepository.getDefaultSuccesses())
 
-            preferencesHelper?.setNotFirstRun()
+            preferencesHelper.setNotFirstRun()
         }
     }
 

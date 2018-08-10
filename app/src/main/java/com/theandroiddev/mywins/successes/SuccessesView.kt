@@ -22,8 +22,6 @@ interface SuccessesView : MvpView {
 
     fun updateAdapterList(successList: ArrayList<Success>)
 
-    fun undoToRemove(position: Int)
-
     fun successRemoved(position: Int)
 
     fun displaySuccessChanged(position: Int, updatedSuccess: Success)
