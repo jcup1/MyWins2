@@ -27,7 +27,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu
 import com.theandroiddev.mywins.InsertSuccessActivity
 import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.data.models.Success
-import com.theandroiddev.mywins.data.prefs.PreferencesHelper
+import com.theandroiddev.mywins.data.prefs.SharedPreferencesService
 import com.theandroiddev.mywins.mvp.MvpDaggerAppCompatActivity
 import com.theandroiddev.mywins.success_slider.SuccessSliderActivity
 import com.theandroiddev.mywins.utils.Constants.*
@@ -120,7 +120,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val preferencesHelper = PreferencesHelper(this)
+        val preferencesHelper = SharedPreferencesService(this)
         setSupportActionBar(show_toolbar)
         setUpFABs()
         initCircularReveal()
@@ -194,12 +194,12 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
             if (resultCode == Activity.RESULT_CANCELED) {
                 onSuccessNotAdded()
             }
-        }
-
-        if (requestCode == REQUEST_CODE_SLIDER) {
+        } else if (requestCode == REQUEST_CODE_SLIDER) {
             if (resultCode == Activity.RESULT_OK) {
                 onSliderResultSuccess(data)
             }
+        } else {
+
         }
 
     }

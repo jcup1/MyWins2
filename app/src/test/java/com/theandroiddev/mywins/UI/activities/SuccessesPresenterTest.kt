@@ -5,7 +5,7 @@ import com.nhaarman.mockito_kotlin.whenever
 import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.data.models.SearchFilter
 import com.theandroiddev.mywins.data.models.Success
-import com.theandroiddev.mywins.data.prefs.PreferencesHelper
+import com.theandroiddev.mywins.data.prefs.SharedPreferencesService
 import com.theandroiddev.mywins.data.repositories.SuccessesRepository
 import com.theandroiddev.mywins.successes.SuccessesPresenter
 import com.theandroiddev.mywins.successes.SuccessesView
@@ -24,7 +24,7 @@ import kotlin.test.assertNotNull
 class SuccessesPresenterTest : Spek({
 
     val successesRepository = Mockito.mock(SuccessesRepository::class.java)
-    val preferencesHelper = mock(PreferencesHelper::class.java)
+    val preferencesHelper = mock(SharedPreferencesService::class.java)
     val presenter = SuccessesPresenter(successesRepository)
     val presenterSpy = spy(presenter)
     val view = Mockito.mock(SuccessesView::class.java)
@@ -184,7 +184,7 @@ class SuccessesPresenterTest : Spek({
 
         it("should set preferences helper") {
             presenter.setPrefHelper(preferencesHelper)
-            assertNotNull(presenter.preferencesHelper)
+            assertNotNull(presenter.sharedPreferencesService)
         }
     }
 

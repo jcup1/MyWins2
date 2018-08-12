@@ -21,10 +21,11 @@ class DBAdapter(context: Context) {
         get() {
 
             val successList = ArrayList<Success>()
-
-            for (i in 0 until dummySuccessesSize) {
+            var i = 0
+            if (i <= 5) {
                 successList.add(Success(null, dummyTitle[i], dummyCategory[i], dummyDescription[i],
                         dummyStartDate[i], dummyEndDate[i], dummyImportance[i]))
+                i++
             }
 
             return successList

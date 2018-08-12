@@ -14,7 +14,7 @@ import android.widget.TextView
 import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.data.models.SearchFilter
 import com.theandroiddev.mywins.data.models.Success
-import com.theandroiddev.mywins.data.prefs.PreferencesHelper
+import com.theandroiddev.mywins.data.prefs.SharedPreferencesService
 import com.theandroiddev.mywins.data.repositories.SuccessesRepository
 import com.theandroiddev.mywins.mvp.MvpPresenter
 import com.theandroiddev.mywins.utils.Constants
@@ -27,9 +27,9 @@ import javax.inject.Inject
  */
 
 class SuccessesPresenter @Inject() constructor(
-        private val successesRepository: SuccessesRepository
+        private val successesRepository: SuccessesRepository,
+        private val sharedPreferencesService: SharedPreferencesService
 ) : MvpPresenter<SuccessesView>() {
-    var preferencesHelper: PreferencesHelper? = null
 
     private var sortType: String = Constants.SORT_DATE_ADDED
     private var isSortingAscending: Boolean = true
@@ -108,13 +108,6 @@ class SuccessesPresenter @Inject() constructor(
             view.displayCategory(category)
         }
     }
-
-
-    fun setPrefHelper(preferencesHelper: PreferencesHelper) {
-        this.preferencesHelper = preferencesHelper
-
-    }
-
 
     fun handleOptionsItemSelected(item: MenuItem, isSearchOpened: Boolean) {
         val id = item.itemId
@@ -210,12 +203,11 @@ class SuccessesPresenter @Inject() constructor(
     }
 
 
-    fun onCreateActivity(prefs: PreferencesHelper) {
+    fun onCreateActivity(prefs: SharedPreferencesService) {
 
-        setPrefHelper(prefs)
         this.searchTerm = ""
         openDB()
-        checkPreferences(preferencesHelper)
+        checkPreferences()
         loadSuccesses(searchFilter)
     }
 
@@ -348,9 +340,9 @@ class SuccessesPresenter @Inject() constructor(
 
     fun addSuccess(s: Success) {
 
-        if (preferencesHelper?.isFirstSuccessAdded == true) {
+        if (sharedPreferencesService.isFirstSuccessAdded == true) {
             successesRepository.clearDatabase()
-            preferencesHelper?.setFirstSuccessAdded()
+            sharedPreferencesService.setFirstSuccessAdded()
         }
         successesRepository.addSuccess(s)
         loadSuccesses(searchFilter)
@@ -361,12 +353,12 @@ class SuccessesPresenter @Inject() constructor(
     }
 
 
-    fun checkPreferences(preferencesHelper: PreferencesHelper?) {
-        if (preferencesHelper?.isFirstRun == true) {
+    private fun checkPreferences() {
+        if (sharedPreferencesService.isFirstRun) {
             //TODO add to database
             successesRepository.saveSuccesses(successesRepository.getDefaultSuccesses())
 
-            preferencesHelper.setNotFirstRun()
+            sharedPreferencesService.setNotFirstRun()
         }
     }
 
