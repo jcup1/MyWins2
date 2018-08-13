@@ -1,6 +1,5 @@
 package com.theandroiddev.mywins.data.repositories
 
-import android.content.Context
 import com.theandroiddev.mywins.data.db.DBAdapter
 import com.theandroiddev.mywins.data.models.SearchFilter
 import com.theandroiddev.mywins.data.models.Success
@@ -12,68 +11,60 @@ import javax.inject.Inject
  * Created by jakub on 04.11.17.
  */
 
-class DatabaseSuccessesRepository @Inject
-constructor(private val context: Context) : SuccessesRepository {
+class DatabaseSuccessesRepository @Inject constructor(private var dbAdapter: DBAdapter) : SuccessesRepository {
 
-    private var dbAdapter: DBAdapter? = null
-
-    init {
-        dbAdapter = DBAdapter(context)
-    }
 
     override fun updateForDeleteSuccess(successToRemoveList: ArrayList<Success>) {
-        dbAdapter?.removeSuccess(successToRemoveList)
+        dbAdapter.removeSuccess(successToRemoveList)
     }
 
     override fun getSuccesses(searchFilter: SearchFilter): ArrayList<Success> {
-        dbAdapter = DBAdapter(context)
-        return dbAdapter?.getSuccesses(searchFilter.searchTerm, searchFilter.sortType, searchFilter.isSortingAscending)
-                ?: ArrayList()
+        return dbAdapter.getSuccesses(searchFilter.searchTerm, searchFilter.sortType, searchFilter.isSortingAscending)
     }
 
     override fun removeSuccesses(successToRemoveList: ArrayList<Success>) {
-        dbAdapter?.removeSuccess(successToRemoveList)
+        dbAdapter.removeSuccess(successToRemoveList)
     }
 
     override fun fetchSuccess(id: Long?): Success? {
-        return dbAdapter?.fetchSuccess(id)
+        return dbAdapter.fetchSuccess(id)
     }
 
     override fun getDefaultSuccesses(): ArrayList<Success> {
-        return dbAdapter?.defaultSuccesses ?: ArrayList()
+        return dbAdapter.defaultSuccesses
     }
 
     override fun addSuccess(s: Success) {
-        dbAdapter?.addSuccess(s)
+        dbAdapter.addSuccess(s)
     }
 
     override fun closeDB() {
-        dbAdapter?.closeDB()
+        dbAdapter.closeDB()
     }
 
     override fun openDB() {
-        dbAdapter?.openDB()
+        dbAdapter.openDB()
     }
 
     override fun getSuccessImages(id: Long?): ArrayList<SuccessImage> {
-        return dbAdapter?.getSuccessImages(id) ?: ArrayList()
+        return dbAdapter.getSuccessImages(id)
     }
 
     override fun editSuccess(editSuccess: Success) {
-        dbAdapter?.editSuccess(editSuccess)
+        dbAdapter.editSuccess(editSuccess)
     }
 
     override fun editSuccessImages(successImageList: ArrayList<SuccessImage>, successId: Long?) {
-        dbAdapter?.editSuccessImages(successImageList, successId)
+        dbAdapter.editSuccessImages(successImageList, successId)
     }
 
     override fun saveSuccesses(defaultSuccesses: ArrayList<Success>) {
         for (s in defaultSuccesses)
-            dbAdapter?.addSuccess(s)
+            dbAdapter.addSuccess(s)
     }
 
     override fun clearDatabase() {
-        dbAdapter?.clear()
+        dbAdapter.clear()
     }
 
 }

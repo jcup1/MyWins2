@@ -24,7 +24,6 @@ import com.esafirm.imagepicker.features.camera.ImmediateCameraModule
 import com.esafirm.imagepicker.model.Image
 import com.theandroiddev.mywins.ImportancePopupActivity
 import com.theandroiddev.mywins.R
-import com.theandroiddev.mywins.data.db.DBAdapter
 import com.theandroiddev.mywins.data.models.Success
 import com.theandroiddev.mywins.data.models.SuccessImage
 import com.theandroiddev.mywins.images.CustomImagePickerAdapter
@@ -62,7 +61,7 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
 
         }
     }
-    private var dbAdapter: DBAdapter? = null
+
     private var mImageUri: Uri? = null
 
     private fun initAnimation() {
@@ -107,7 +106,6 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
     private fun initObjects() {
         this.drawableSelector = DrawableSelector(this)
         this.dateHelper = DateHelper(this)
-        this.dbAdapter = DBAdapter(this)
 
     }
 

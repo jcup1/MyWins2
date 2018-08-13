@@ -16,7 +16,6 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.mockito.Mockito
 import org.mockito.Mockito.*
-import kotlin.test.assertNotNull
 
 /**
  * Created by jakub on 28.10.17.
@@ -25,7 +24,7 @@ class SuccessesPresenterTest : Spek({
 
     val successesRepository = Mockito.mock(SuccessesRepository::class.java)
     val preferencesHelper = mock(SharedPreferencesService::class.java)
-    val presenter = SuccessesPresenter(successesRepository)
+    val presenter = SuccessesPresenter(successesRepository, preferencesHelper)
     val presenterSpy = spy(presenter)
     val view = Mockito.mock(SuccessesView::class.java)
 
@@ -177,14 +176,6 @@ class SuccessesPresenterTest : Spek({
             val category = "business"
             presenter.categoryPicked(category)
             verify(view, times(1)).displayCategory(category)
-        }
-    }
-
-    given("set preferences helper") {
-
-        it("should set preferences helper") {
-            presenter.setPrefHelper(preferencesHelper)
-            assertNotNull(presenter.sharedPreferencesService)
         }
     }
 

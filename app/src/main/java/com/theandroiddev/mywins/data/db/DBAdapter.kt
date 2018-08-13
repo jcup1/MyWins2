@@ -1,21 +1,22 @@
 package com.theandroiddev.mywins.data.db
 
 import android.content.ContentValues
-import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.theandroiddev.mywins.data.models.Success
 import com.theandroiddev.mywins.data.models.SuccessImage
 import com.theandroiddev.mywins.utils.Constants.*
 import java.util.*
+import javax.inject.Inject
 
 /**
  * Created by jakub on 14.08.17.
  */
 
-class DBAdapter(context: Context) {
+class DBAdapter @Inject constructor(
+        val dbHelper: DBHelper
+) {
     private var sqLiteDatabase: SQLiteDatabase? = null
-    private val dbHelper: DBHelper
 
     val defaultSuccesses: ArrayList<Success>
         get() {
@@ -33,9 +34,6 @@ class DBAdapter(context: Context) {
 
     init {
 
-        //TODO fix database leaks
-
-        dbHelper = DBHelper(context)
         openDB()
 
     }
