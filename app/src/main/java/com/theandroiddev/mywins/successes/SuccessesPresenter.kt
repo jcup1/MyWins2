@@ -18,7 +18,12 @@ import com.theandroiddev.mywins.data.prefs.SharedPreferencesService
 import com.theandroiddev.mywins.data.repositories.SuccessesRepository
 import com.theandroiddev.mywins.mvp.MvpPresenter
 import com.theandroiddev.mywins.utils.Constants
-import com.theandroiddev.mywins.utils.Constants.*
+import com.theandroiddev.mywins.utils.Constants.Companion.CATEGORY_JOURNEY
+import com.theandroiddev.mywins.utils.Constants.Companion.CATEGORY_LEARN
+import com.theandroiddev.mywins.utils.Constants.Companion.CATEGORY_MONEY
+import com.theandroiddev.mywins.utils.Constants.Companion.CATEGORY_SPORT
+import com.theandroiddev.mywins.utils.Constants.Companion.CATEGORY_VIDEO
+import com.theandroiddev.mywins.utils.Constants.Companion.NOT_ACTIVE
 import io.codetail.animation.ViewAnimationUtils
 import javax.inject.Inject
 

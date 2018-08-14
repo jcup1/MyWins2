@@ -5,7 +5,32 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.theandroiddev.mywins.data.models.Success
 import com.theandroiddev.mywins.data.models.SuccessImage
-import com.theandroiddev.mywins.utils.Constants.*
+import com.theandroiddev.mywins.utils.Constants
+import com.theandroiddev.mywins.utils.Constants.Companion.ADD_ON_TOP
+import com.theandroiddev.mywins.utils.Constants.Companion.CATEGORY
+import com.theandroiddev.mywins.utils.Constants.Companion.CATEGORY_VALUE
+import com.theandroiddev.mywins.utils.Constants.Companion.DATE_ENDED
+import com.theandroiddev.mywins.utils.Constants.Companion.DATE_ENDED_VALUE
+import com.theandroiddev.mywins.utils.Constants.Companion.DATE_STARTED
+import com.theandroiddev.mywins.utils.Constants.Companion.DATE_STARTED_VALUE
+import com.theandroiddev.mywins.utils.Constants.Companion.DESCRIPTION
+import com.theandroiddev.mywins.utils.Constants.Companion.DESCRIPTION_VALUE
+import com.theandroiddev.mywins.utils.Constants.Companion.IMAGE_ID
+import com.theandroiddev.mywins.utils.Constants.Companion.IMAGE_PATH
+import com.theandroiddev.mywins.utils.Constants.Companion.IMPORTANCE
+import com.theandroiddev.mywins.utils.Constants.Companion.IMPORTANCE_VALUE
+import com.theandroiddev.mywins.utils.Constants.Companion.SUCCESS_ID
+import com.theandroiddev.mywins.utils.Constants.Companion.SUCCESS_ID_VALUE
+import com.theandroiddev.mywins.utils.Constants.Companion.TB_NAME_IMAGES
+import com.theandroiddev.mywins.utils.Constants.Companion.TB_NAME_SUCCESSES
+import com.theandroiddev.mywins.utils.Constants.Companion.TITLE
+import com.theandroiddev.mywins.utils.Constants.Companion.TITLE_VALUE
+import com.theandroiddev.mywins.utils.Constants.Companion.dummyCategory
+import com.theandroiddev.mywins.utils.Constants.Companion.dummyDescription
+import com.theandroiddev.mywins.utils.Constants.Companion.dummyEndDate
+import com.theandroiddev.mywins.utils.Constants.Companion.dummyImportance
+import com.theandroiddev.mywins.utils.Constants.Companion.dummyStartDate
+import com.theandroiddev.mywins.utils.Constants.Companion.dummyTitle
 import java.util.*
 import javax.inject.Inject
 
@@ -18,24 +43,18 @@ class DBAdapter @Inject constructor(
 ) {
     private var sqLiteDatabase: SQLiteDatabase? = null
 
-    val defaultSuccesses: ArrayList<Success>
-        get() {
-
-            val successList = ArrayList<Success>()
-            var i = 0
-            if (i <= 5) {
-                successList.add(Success(null, dummyTitle[i], dummyCategory[i], dummyDescription[i],
-                        dummyStartDate[i], dummyEndDate[i], dummyImportance[i]))
-                i++
-            }
-
-            return successList
-        }
+    val defaultSuccesses: ArrayList<Success> = arrayListOf()
 
     init {
 
         openDB()
-
+        Constants()
+        var i = 0
+        while (i < 5) {
+            defaultSuccesses.add(Success(null, dummyTitle[i], dummyCategory[i], dummyDescription[i],
+                    dummyStartDate[i], dummyEndDate[i], dummyImportance[i]))
+            i++
+        }
     }
 
     fun openDB() {

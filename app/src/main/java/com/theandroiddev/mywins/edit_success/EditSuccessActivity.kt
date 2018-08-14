@@ -29,8 +29,8 @@ import com.theandroiddev.mywins.data.models.SuccessImage
 import com.theandroiddev.mywins.images.CustomImagePickerAdapter
 import com.theandroiddev.mywins.images.SuccessImageAdapter
 import com.theandroiddev.mywins.mvp.MvpDaggerAppCompatActivity
-import com.theandroiddev.mywins.utils.Constants.REQUEST_CODE_IMPORTANCE
-import com.theandroiddev.mywins.utils.Constants.dummyImportanceDefault
+import com.theandroiddev.mywins.utils.Constants.Companion.REQUEST_CODE_IMPORTANCE
+import com.theandroiddev.mywins.utils.Constants.Companion.dummyImportanceDefault
 import com.theandroiddev.mywins.utils.DateHelper
 import com.theandroiddev.mywins.utils.DrawableSelector
 import kotlinx.android.synthetic.main.activity_edit_success.*

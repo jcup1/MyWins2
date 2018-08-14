@@ -16,13 +16,9 @@ import android.widget.TextView;
 
 import com.theandroiddev.mywins.data.models.Success;
 import com.theandroiddev.mywins.edit_success.EditDescriptionActivity;
+import com.theandroiddev.mywins.utils.Constants;
 import com.theandroiddev.mywins.utils.DateHelper;
 import com.theandroiddev.mywins.utils.DrawableSelector;
-
-import static com.theandroiddev.mywins.utils.Constants.EXTRA_DESCRIPTION;
-import static com.theandroiddev.mywins.utils.Constants.EXTRA_INSERT_SUCCESS_ITEM;
-import static com.theandroiddev.mywins.utils.Constants.REQUEST_CODE_DESCRIPTION;
-import static com.theandroiddev.mywins.utils.Constants.dummyImportanceDefault;
 
 public class InsertSuccessActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -54,7 +50,7 @@ public class InsertSuccessActivity extends AppCompatActivity implements View.OnC
         categoryTv.setText(category);
 
         drawableSelector.selectCategoryImage(categoryIv, category, categoryTv);
-        drawableSelector.setImportance(dummyImportanceDefault, importanceTv, importance1Iv, importance2Iv, importance3Iv, importance4Iv);
+        drawableSelector.setImportance(Constants.Companion.getDummyImportanceDefault(), importanceTv, importance1Iv, importance2Iv, importance3Iv, importance4Iv);
 
     }
 
@@ -183,7 +179,7 @@ public class InsertSuccessActivity extends AppCompatActivity implements View.OnC
         //Log.e(TAG, "sendData: uuid" + s.getId() );
 
 
-        returnIntent.putExtra(EXTRA_INSERT_SUCCESS_ITEM, s);
+        returnIntent.putExtra(Constants.Companion.getEXTRA_INSERT_SUCCESS_ITEM(), s);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }
@@ -193,7 +189,7 @@ public class InsertSuccessActivity extends AppCompatActivity implements View.OnC
 
         Intent intent = new Intent(InsertSuccessActivity.this, EditDescriptionActivity.class);
         intent.putExtra("description", description_et.getText().toString());
-        startActivityForResult(intent, REQUEST_CODE_DESCRIPTION);
+        startActivityForResult(intent, Constants.Companion.getREQUEST_CODE_DESCRIPTION());
 
     }
 
@@ -201,9 +197,9 @@ public class InsertSuccessActivity extends AppCompatActivity implements View.OnC
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_CODE_DESCRIPTION) {
+        if (requestCode == Constants.Companion.getREQUEST_CODE_DESCRIPTION()) {
             if (resultCode == RESULT_OK) {
-                String description = data.getExtras().getString(EXTRA_DESCRIPTION);
+                String description = data.getExtras().getString(Constants.Companion.getEXTRA_DESCRIPTION());
                 description_et.setText(description);
 
             }

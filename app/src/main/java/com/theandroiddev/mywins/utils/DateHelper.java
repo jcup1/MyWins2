@@ -15,10 +15,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.theandroiddev.mywins.utils.Constants.DATE;
-import static com.theandroiddev.mywins.utils.Constants.DATE_FORMAT;
-
-
 /**
  * Created by jakub on 03.09.17.
  */
@@ -57,7 +53,7 @@ public class DateHelper {
 
     private void updateLabel(String d, TextView dateStarted, TextView dateEnded) {
 
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat(Constants.Companion.getDATE_FORMAT(), Locale.US);
 
         if (d.equals(context.getString(R.string.date_started_empty))) {
             dateStarted.setText(sdf.format(myCalendar.getTime()));
@@ -72,7 +68,7 @@ public class DateHelper {
     }
 
     public String checkBlankDate(String s) {
-        if (s.contains(DATE)) {
+        if (s.contains(Constants.Companion.getDATE())) {
             return "";
         } else return s;
     }
@@ -89,7 +85,7 @@ public class DateHelper {
 
         if (!dateStartedTv.getText().toString().contains("Date")) {
             if (!TextUtils.isEmpty(dateStartedTv.getText().toString()) && !TextUtils.isEmpty(dateEndedTv.getText().toString())) {
-                SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+                SimpleDateFormat sdf = new SimpleDateFormat(Constants.Companion.getDATE_FORMAT());
                 try {
                     Date date1 = sdf.parse(dateStartedTv.getText().toString());
                     Date date2 = sdf.parse(dateEndedTv.getText().toString());

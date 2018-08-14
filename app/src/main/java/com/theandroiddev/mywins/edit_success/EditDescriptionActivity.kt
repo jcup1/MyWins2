@@ -7,7 +7,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 import com.theandroiddev.mywins.R
-import com.theandroiddev.mywins.utils.Constants.EXTRA_DESCRIPTION
+import com.theandroiddev.mywins.utils.Constants.Companion.EXTRA_DESCRIPTION
 import kotlinx.android.synthetic.main.activity_edit_description.*
 import kotlinx.android.synthetic.main.content_edit_description.*
 

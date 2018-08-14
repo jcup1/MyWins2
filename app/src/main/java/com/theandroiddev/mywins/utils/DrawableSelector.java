@@ -26,23 +26,23 @@ public class DrawableSelector {
         int id = R.drawable.ic_other; //default: other
         int color = R.color.other;
 
-        if (category.equalsIgnoreCase(Constants.CATEGORY_VIDEO)) {
+        if (category.equalsIgnoreCase(Constants.Companion.getCATEGORY_VIDEO())) {
             id = R.drawable.ic_video;
             color = R.color.video;
         }
-        if (category.equalsIgnoreCase(Constants.CATEGORY_SPORT)) {
+        if (category.equalsIgnoreCase(Constants.Companion.getCATEGORY_SPORT())) {
             id = R.drawable.ic_sport;
             color = R.color.sport;
         }
-        if (category.equalsIgnoreCase(Constants.CATEGORY_MONEY)) {
+        if (category.equalsIgnoreCase(Constants.Companion.getCATEGORY_MONEY())) {
             id = R.drawable.ic_money;
             color = R.color.money;
         }
-        if (category.equalsIgnoreCase(Constants.CATEGORY_JOURNEY)) {
+        if (category.equalsIgnoreCase(Constants.Companion.getCATEGORY_JOURNEY())) {
             id = R.drawable.ic_journey;
             color = R.color.journey;
         }
-        if (category.equalsIgnoreCase(Constants.CATEGORY_LEARN)) {
+        if (category.equalsIgnoreCase(Constants.Companion.getCATEGORY_LEARN())) {
             id = R.drawable.ic_learn;
             color = R.color.learn;
         }
@@ -58,16 +58,16 @@ public class DrawableSelector {
 
         int id = R.drawable.importance_medium; //default: other
 
-        if (importance == Constants.IMPORTANCE_HUGE_VALUE) {
+        if (importance == Constants.Companion.getIMPORTANCE_HUGE_VALUE()) {
             id = R.drawable.importance_huge;
         }
-        if (importance == Constants.IMPORTANCE_BIG_VALUE) {
+        if (importance == Constants.Companion.getIMPORTANCE_BIG_VALUE()) {
             id = R.drawable.importance_big;
         }
-        if (importance == Constants.IMPORTANCE_MEDIUM_VALUE) {
+        if (importance == Constants.Companion.getIMPORTANCE_MEDIUM_VALUE()) {
             id = R.drawable.importance_medium;
         }
-        if (importance == Constants.IMPORTANCE_SMALL_VALUE) {
+        if (importance == Constants.Companion.getIMPORTANCE_SMALL_VALUE()) {
             id = R.drawable.importance_small;
         }
 
@@ -144,17 +144,17 @@ public class DrawableSelector {
 
     public int getImportance(String s) {
 
-        if (s.equals(Constants.IMPORTANCE_HUGE)) {
-            return Constants.IMPORTANCE_HUGE_VALUE;
+        if (s.equals(Constants.Companion.getIMPORTANCE_HUGE())) {
+            return Constants.Companion.getIMPORTANCE_HUGE_VALUE();
         }
-        if (s.equals(Constants.IMPORTANCE_BIG)) {
-            return Constants.IMPORTANCE_BIG_VALUE;
+        if (s.equals(Constants.Companion.getIMPORTANCE_BIG())) {
+            return Constants.Companion.getIMPORTANCE_BIG_VALUE();
         }
-        if (s.equals(Constants.IMPORTANCE_MEDIUM)) {
-            return Constants.IMPORTANCE_MEDIUM_VALUE;
+        if (s.equals(Constants.Companion.getIMPORTANCE_MEDIUM())) {
+            return Constants.Companion.getIMPORTANCE_MEDIUM_VALUE();
         }
-        if (s.equals(Constants.IMPORTANCE_SMALL)) {
-            return Constants.IMPORTANCE_SMALL_VALUE;
+        if (s.equals(Constants.Companion.getIMPORTANCE_SMALL())) {
+            return Constants.Companion.getIMPORTANCE_SMALL_VALUE();
         }
         return 3;
     }

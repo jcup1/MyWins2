@@ -16,7 +16,7 @@ import com.theandroiddev.mywins.data.models.SearchFilter
 import com.theandroiddev.mywins.data.models.Success
 import com.theandroiddev.mywins.edit_success.EditSuccessActivity
 import com.theandroiddev.mywins.mvp.MvpDaggerAppCompatActivity
-import com.theandroiddev.mywins.utils.Constants.REQUEST_CODE_INSERT
+import com.theandroiddev.mywins.utils.Constants.Companion.REQUEST_CODE_INSERT
 import kotlinx.android.synthetic.main.activity_slider.*
 
 /**

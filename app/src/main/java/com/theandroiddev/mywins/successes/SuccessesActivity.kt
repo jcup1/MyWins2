@@ -30,7 +30,10 @@ import com.theandroiddev.mywins.data.models.Success
 import com.theandroiddev.mywins.data.prefs.SharedPreferencesService
 import com.theandroiddev.mywins.mvp.MvpDaggerAppCompatActivity
 import com.theandroiddev.mywins.success_slider.SuccessSliderActivity
-import com.theandroiddev.mywins.utils.Constants.*
+import com.theandroiddev.mywins.utils.Constants.Companion.EXTRA_INSERT_SUCCESS_ITEM
+import com.theandroiddev.mywins.utils.Constants.Companion.NOT_ACTIVE
+import com.theandroiddev.mywins.utils.Constants.Companion.REQUEST_CODE_INSERT
+import com.theandroiddev.mywins.utils.Constants.Companion.REQUEST_CODE_SLIDER
 import com.theandroiddev.mywins.utils.DrawableSelector
 import com.theandroiddev.mywins.utils.SuccessesConfig
 import kotlinx.android.synthetic.main.activity_main.*

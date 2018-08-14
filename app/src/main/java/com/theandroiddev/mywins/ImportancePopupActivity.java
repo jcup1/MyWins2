@@ -12,9 +12,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.theandroiddev.mywins.utils.Constants;
 import com.theandroiddev.mywins.utils.DrawableSelector;
-
-import static com.theandroiddev.mywins.utils.Constants.dummyImportanceDefault;
 
 public class ImportancePopupActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "ImportancePopupActivity";
@@ -57,7 +56,7 @@ public class ImportancePopupActivity extends AppCompatActivity implements View.O
         popupImportance.setText(String.valueOf(importance));
 
 
-        drawableSelector.setImportance(dummyImportanceDefault, popupImportance, importanceIv1, importanceIv2, importanceIv3, importanceIv4);
+        drawableSelector.setImportance(Constants.Companion.getDummyImportanceDefault(), popupImportance, importanceIv1, importanceIv2, importanceIv3, importanceIv4);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             popupDone.setBackgroundTintList(getResources().getColorStateList(R.color.accent, null));
