@@ -1,8 +1,10 @@
 package com.theandroiddev.mywins.successes
 
+import android.animation.Animator
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.Snackbar
@@ -18,6 +20,7 @@ import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
@@ -36,6 +39,7 @@ import com.theandroiddev.mywins.utils.Constants.Companion.REQUEST_CODE_INSERT
 import com.theandroiddev.mywins.utils.Constants.Companion.REQUEST_CODE_SLIDER
 import com.theandroiddev.mywins.utils.DrawableSelector
 import com.theandroiddev.mywins.utils.SuccessesConfig
+import io.codetail.animation.ViewAnimationUtils
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.search_bar.*
@@ -53,7 +57,6 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
         }
     }
 
-    var floatingActionsMenu: FloatingActionsMenu? = null
     var successAdapter: SuccessAdapter? = null
 
     var action: ActionBar? = null
@@ -107,8 +110,8 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
 
     override fun onBackPressed() {
 
-        if (floatingActionsMenu?.isExpanded == true) {
-            floatingActionsMenu?.collapse()
+        if (multiple_actions?.isExpanded == true) {
+            multiple_actions?.collapse()
         } else if (searchBox != null) {
             presenter?.onBackPressed(true)
         } else {
@@ -136,7 +139,80 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
     private fun initCircularReveal() {
         shadow_view.visibility = android.view.View.GONE
 
-        floatingActionsMenu = findViewById(R.id.multiple_actions)
+        multiple_actions.setOnFloatingActionsMenuUpdateListener(object : FloatingActionsMenu.OnFloatingActionsMenuUpdateListener {
+            override fun onMenuExpanded() {
+
+
+                if (searchBox != null) {
+                    presenter.onHideSearchBar()
+                }
+                showCircularReveal(shadow_view)
+            }
+
+            override fun onMenuCollapsed() {
+                hideCircularReveal(shadow_view)
+            }
+        })
+
+        shadow_view.setOnClickListener {
+            if (multiple_actions.isExpanded) {
+                multiple_actions.collapse()
+            }
+        }
+
+
+    }
+
+    private fun showCircularReveal(myView: android.view.View) {
+        myView.setBackgroundColor(Color.argb(0, 0, 0, 0))
+        myView.visibility = android.view.View.VISIBLE
+        myView.post {
+            myView.setBackgroundColor(Color.argb(127, 0, 0, 0))
+            val cx = myView.left + myView.right
+            val cy = myView.top + myView.bottom
+            val dx = Math.max(cx, myView.width - cx)
+            val dy = Math.max(cy, myView.height - cy)
+            val finalRadius = Math.hypot(dx.toDouble(), dy.toDouble()).toFloat()
+            val animator = ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0f, finalRadius)
+            animator.interpolator = AccelerateDecelerateInterpolator()
+            animator.duration = 375
+
+            animator.start()
+        }
+
+    }
+
+    private fun hideCircularReveal(myView: android.view.View) {
+        myView.visibility = android.view.View.VISIBLE
+        myView.post {
+            val cx = myView.left + myView.right
+            val cy = myView.top + myView.bottom
+            val dx = Math.max(cx, myView.width - cx)
+            val dy = Math.max(cy, myView.height - cy)
+            val finalRadius = Math.hypot(dx.toDouble(), dy.toDouble()).toFloat()
+            val animator = ViewAnimationUtils.createCircularReveal(myView, cx, cy, finalRadius, 0f)
+            animator.interpolator = AccelerateDecelerateInterpolator()
+            animator.setDuration(375).addListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animator: Animator) {
+
+                }
+
+                override fun onAnimationEnd(animator: Animator) {
+                    myView.visibility = android.view.View.GONE
+                }
+
+                override fun onAnimationCancel(animator: Animator) {
+
+                }
+
+                override fun onAnimationRepeat(animator: Animator) {
+
+                }
+            })
+
+            animator.start()
+        }
+
 
     }
 
@@ -256,9 +332,8 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
 
     }
 
-    override fun onLongItemClick(position: Int, cardview: CardView) {
-        val popupMenu: PopupMenu
-        popupMenu = PopupMenu(this@SuccessesActivity, cardview)
+    override fun onLongItemClick(position: Int, cardView: CardView) {
+        val popupMenu = PopupMenu(this@SuccessesActivity, cardView)
 
         popupMenu.menuInflater.inflate(R.menu.menu_item, popupMenu.menu)
         popupMenu.show()
@@ -366,7 +441,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
         val intent = Intent(this@SuccessesActivity, InsertSuccessActivity::class.java)
         intent.putExtra("categoryName", category)
         startActivityForResult(intent, REQUEST_CODE_INSERT)
-        floatingActionsMenu?.collapse()
+        multiple_actions?.collapse()
 
     }
 
