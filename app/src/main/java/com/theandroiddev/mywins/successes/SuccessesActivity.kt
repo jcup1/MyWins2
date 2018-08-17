@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.Snackbar
+import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.CardView
@@ -19,6 +20,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
@@ -34,6 +36,13 @@ import com.theandroiddev.mywins.data.prefs.SharedPreferencesService
 import com.theandroiddev.mywins.mvp.MvpDaggerAppCompatActivity
 import com.theandroiddev.mywins.success_slider.SuccessSliderActivity
 import com.theandroiddev.mywins.utils.Constants.Companion.EXTRA_INSERT_SUCCESS_ITEM
+import com.theandroiddev.mywins.utils.Constants.Companion.EXTRA_SUCCESS_CARD_VIEW
+import com.theandroiddev.mywins.utils.Constants.Companion.EXTRA_SUCCESS_CATEGORY
+import com.theandroiddev.mywins.utils.Constants.Companion.EXTRA_SUCCESS_CATEGORY_IV
+import com.theandroiddev.mywins.utils.Constants.Companion.EXTRA_SUCCESS_DATE_ENDED
+import com.theandroiddev.mywins.utils.Constants.Companion.EXTRA_SUCCESS_DATE_STARTED
+import com.theandroiddev.mywins.utils.Constants.Companion.EXTRA_SUCCESS_IMPORTANCE_IV
+import com.theandroiddev.mywins.utils.Constants.Companion.EXTRA_SUCCESS_TITLE
 import com.theandroiddev.mywins.utils.Constants.Companion.NOT_ACTIVE
 import com.theandroiddev.mywins.utils.Constants.Companion.REQUEST_CODE_INSERT
 import com.theandroiddev.mywins.utils.Constants.Companion.REQUEST_CODE_SLIDER
@@ -42,7 +51,6 @@ import com.theandroiddev.mywins.utils.SuccessesConfig
 import io.codetail.animation.ViewAnimationUtils
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.android.synthetic.main.search_bar.*
 import java.util.*
 
 class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPresenter>(), android.view.View.OnClickListener, SuccessAdapter.OnItemClickListener, SuccessesView {
@@ -61,6 +69,8 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
 
     var action: ActionBar? = null
 
+    var searchBox: EditText? = null
+
     var simpleCallback: ItemTouchHelper.SimpleCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
         override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
@@ -74,7 +84,6 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
         }
     }
     private var searchAction: MenuItem? = null
-    private var searchBox: EditText? = null
     private var clickedPosition = NOT_ACTIVE
 
     private val searchText: String
@@ -98,6 +107,9 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
         super.onResume()
 
         presenter?.onResumeActivity(successAdapter?.successes, clickedPosition)
+        if (searchBox != null) {
+            showSoftKeyboard()
+        }
 
     }
 
@@ -144,7 +156,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
 
 
                 if (searchBox != null) {
-                    presenter.onHideSearchBar()
+                    hideSearchBar()
                 }
                 showCircularReveal(shadow_view)
             }
@@ -387,8 +399,8 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
             action?.setDisplayShowTitleEnabled(true)
         }
         searchAction?.icon = ContextCompat.getDrawable(this, R.drawable.ic_search)
-        searchBox = null
         presenter?.onHideSearchBar()
+        searchBox = null
     }
 
     override fun displaySearchBar() {
@@ -404,11 +416,12 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
         if (action != null) {
             action?.setCustomView(view, layoutParams)
             action?.setDisplayShowTitleEnabled(false)
+            searchBox = action?.customView?.findViewById(R.id.edt_search)
             showSoftKeyboard()
 
         }
 
-        edtSearch?.addTextChangedListener(object : TextWatcher {
+        searchBox?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
 
             }
@@ -459,21 +472,18 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
         intent.putExtra("searchfilter", presenter?.searchFilter)
         intent.putExtra("position", clickedPosition)
 
-        //        Pair<android.view.View, String> p1, p2, p3, p4, p5, p6, p7;
-        //        p1 = Pair.create((android.view.View) titleTv, EXTRA_SUCCESS_TITLE);
-        //        p2 = Pair.create((android.view.View) categoryTv, EXTRA_SUCCESS_CATEGORY);
-        //        p3 = Pair.create((android.view.View) dateStartedTv, EXTRA_SUCCESS_DATE_STARTED);
-        //        p4 = Pair.create((android.view.View) dateEndedTv, EXTRA_SUCCESS_DATE_ENDED);
-        //        p5 = Pair.create((android.view.View) categoryIv, EXTRA_SUCCESS_CATEGORY_IV);
-        //        p6 = Pair.create((android.view.View) importanceIv, EXTRA_SUCCESS_IMPORTANCE_IV);
-        //        p7 = Pair.create((android.view.View) cardView, EXTRA_SUCCESS_CARD_VIEW);
-        //
-        //        ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
-        //                this,
-        //                p1, p2, p3, p4, p5, p6, p7);
+        val p1 = android.support.v4.util.Pair(titleTv as View, EXTRA_SUCCESS_TITLE)
+        val p2 = android.support.v4.util.Pair(categoryTv as View, EXTRA_SUCCESS_CATEGORY)
+        val p3 = android.support.v4.util.Pair(dateStartedTv as View, EXTRA_SUCCESS_DATE_STARTED)
+        val p4 = android.support.v4.util.Pair(dateEndedTv as View, EXTRA_SUCCESS_DATE_ENDED)
+        val p5 = android.support.v4.util.Pair(categoryIv as View, EXTRA_SUCCESS_CATEGORY_IV)
+        val p6 = android.support.v4.util.Pair(importanceIv as View, EXTRA_SUCCESS_IMPORTANCE_IV)
+        val p7 = android.support.v4.util.Pair(cardView as View, EXTRA_SUCCESS_CARD_VIEW)
 
-        //        startActivity(intent, activityOptionsCompat.toBundle());
-        startActivity(intent)
+        val activityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                this, p1, p2, p3, p4, p5, p6, p7)
+
+        startActivity(intent, activityOptionsCompat.toBundle())
     }
 
     override fun displaySearch() {
@@ -483,7 +493,9 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
 
     private fun hideSoftKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        presenter?.onHideSoftKeyboard(searchBox, imm)
+        if (searchBox != null) {
+            presenter?.onHideSoftKeyboard(searchBox, imm)
+        }
 
     }
 
