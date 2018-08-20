@@ -21,7 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".successes.SuccessesActivity"
+            android:name="com.theandroiddev.mywins.presentation.successes.SuccessesActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -31,26 +31,25 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".InsertSuccessActivity"
-            android:screenOrientation="portrait"
+            android:name=".presentation.insert_success.InsertSuccessActivity"
             android:theme="@style/AppTheme.Dialog"/>
         <activity
-            android:name=".edit_success.EditSuccessActivity"
+            android:name="com.theandroiddev.mywins.presentation.edit_success.EditSuccessActivity"
             android:label="@string/title_activity_edit_success"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize">
         </activity>
         <activity
-            android:name=".ImportancePopupActivity"
+            android:name=".presentation.importance_popup.ImportancePopupActivity"
             android:theme="@style/AppTheme.Dialog">
         </activity>
         <activity
-            android:name=".images.ImageActivity"
+            android:name="com.theandroiddev.mywins.presentation.image.ImageActivity"
             android:theme="@style/AppTheme.Dialog.No.Bg">
         </activity>
-        <activity android:name=".edit_success.EditDescriptionActivity">
+        <activity android:name="com.theandroiddev.mywins.presentation.edit_success.EditDescriptionActivity">
         </activity>
-        <activity android:name=".success_slider.SuccessSliderActivity">
+        <activity android:name="com.theandroiddev.mywins.presentation.success_slider.SuccessSliderActivity">
 
         </activity>
 

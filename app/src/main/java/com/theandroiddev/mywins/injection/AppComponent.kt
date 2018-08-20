@@ -1,6 +1,7 @@
 package com.theandroiddev.mywins.injection
 
 import android.app.Application
+import com.theandroiddev.mywins.injection.module.*
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjector
@@ -17,8 +18,9 @@ import javax.inject.Singleton
     AndroidSupportInjectionModule::class,
     ActivityBuildersModule::class,
     AppModule::class,
+    DataSourceModule::class,
+    DatabaseModule::class,
     ServicesModule::class,
-    RepositoryModule::class,
     CommonModule::class,
     FragmentBuildersModule::class])
 

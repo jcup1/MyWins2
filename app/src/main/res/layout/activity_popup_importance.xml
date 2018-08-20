@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        tools:context=".ImportancePopupActivity">
+        tools:context=".presentation.importance_popup.ImportancePopupActivity">
 
         <TextView
             android:id="@+id/popup_importance_tv"
