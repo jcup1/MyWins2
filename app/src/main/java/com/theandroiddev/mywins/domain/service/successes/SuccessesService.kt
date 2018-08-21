@@ -29,7 +29,8 @@ interface SuccessesService {
 
     fun editSuccess(editSuccess: SuccessEntity): Completable
 
-    fun editSuccessImages(successImageList: MutableList<SuccessImageEntity>, successId: Long): Completable
+    fun editSuccessImages(successImageList: MutableList<SuccessImageEntity>, successId: Long):
+            Completable
 
     fun saveSuccesses(defaultSuccesses: MutableList<SuccessEntity>): Completable
 

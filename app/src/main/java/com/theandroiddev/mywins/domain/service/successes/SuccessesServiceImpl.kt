@@ -31,7 +31,7 @@ class SuccessesServiceImpl @Inject constructor(
 
     override fun getSuccesses(searchFilter: SearchFilter): Flowable<MutableList<SuccessEntity>> {
         return successesDataSourceImpl.getSuccesses(searchFilter.searchTerm.orEmpty(),
-                searchFilter.sortType.orEmpty(), searchFilter.isSortingAscending)
+                searchFilter.sortType ?: "title", searchFilter.isSortingAscending)
                 .subscribeOn(Schedulers.io())
     }
 

@@ -67,7 +67,7 @@ class SuccessesDataSourceImpl @Inject constructor(
     }
 
     override fun fetchSuccess(id: Long): Single<SuccessEntity> {
-        return Single.just(successDao.fetchSuccessById(id))
+        return Single.fromCallable { successDao.fetchSuccessById(id) }.subscribeOn(Schedulers.io())
     }
 
     override fun getSuccesses(searchTerm: String, sortType: String,
@@ -93,7 +93,7 @@ class SuccessesDataSourceImpl @Inject constructor(
     override fun editSuccess(showSuccess: SuccessEntity): Completable {
         return Completable.fromCallable {
             successDao.update(showSuccess)
-        }
+        }.subscribeOn(Schedulers.io())
     }
 
     override fun editSuccessImages(successImages: MutableList<SuccessImageEntity>, successId: Long): Completable {

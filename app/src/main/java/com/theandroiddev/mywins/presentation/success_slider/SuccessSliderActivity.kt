@@ -15,8 +15,8 @@ import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.data.entity.SuccessEntity
 import com.theandroiddev.mywins.mvp.MvpDaggerAppCompatActivity
 import com.theandroiddev.mywins.presentation.edit_success.EditSuccessActivity
+import com.theandroiddev.mywins.presentation.successes.SuccessesBundle
 import com.theandroiddev.mywins.utils.Constants.Companion.REQUEST_CODE_INSERT
-import com.theandroiddev.mywins.utils.SearchFilter
 import kotlinx.android.synthetic.main.activity_slider.*
 
 /**
@@ -25,24 +25,30 @@ import kotlinx.android.synthetic.main.activity_slider.*
 
 class SuccessSliderActivity : MvpDaggerAppCompatActivity<SuccessSliderView, SuccessSliderPresenter>(), SuccessSliderView, ActionHandler {
 
-    var adapter: ScreenSlidePagerAdapter? = null
+    lateinit var adapter: ScreenSlidePagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_slider)
 
         slider_fab.setOnClickListener { sliderFabClicked() }
+        adapter = ScreenSlidePagerAdapter(supportFragmentManager)
 
         initFab(slider_fab)
-        adapter = ScreenSlidePagerAdapter(supportFragmentManager)
         slider_pager.adapter = adapter
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+
         val extras = intent.extras
-        val searchFilter: SearchFilter?
         if (extras != null) {
-            searchFilter = extras.getParcelable("searchfilter")
-            val position = extras.getInt("position")
-            presenter.onExtrasLoaded(searchFilter, position)
+            val bundle = extras.getSerializable("bundle")
+
+            if (bundle != null && bundle is SuccessesBundle) {
+                presenter.onExtrasLoaded(bundle.successes, bundle.position)
+            }
         }
 
     }
@@ -60,7 +66,7 @@ class SuccessSliderActivity : MvpDaggerAppCompatActivity<SuccessSliderView, Succ
 
     private fun sliderFabClicked() {
 
-        presenter.sliderFabClicked(slider_pager.currentItem, adapter?.successes)
+        presenter.sliderFabClicked(slider_pager.currentItem, adapter.successes)
 
     }
 
@@ -92,9 +98,9 @@ class SuccessSliderActivity : MvpDaggerAppCompatActivity<SuccessSliderView, Succ
 
     override fun displaySuccesses(successes: MutableList<SuccessEntity>, position: Int) {
 
-        adapter?.successes = successes
+        adapter.successes = successes
         slider_pager.currentItem = position
-        adapter?.notifyDataSetChanged()
+        adapter.notifyDataSetChanged()
 
     }
 

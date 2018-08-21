@@ -3,6 +3,7 @@ package com.theandroiddev.mywins.presentation.success_slider
 import com.theandroiddev.mywins.data.entity.SuccessImageEntity
 import com.theandroiddev.mywins.mvp.MvpPresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class SuccessSliderFragmentPresenter @Inject constructor(
@@ -15,10 +16,11 @@ class SuccessSliderFragmentPresenter @Inject constructor(
         if (id != null) {
 
             successImageLoader.fetchSuccess(id)
-                    .map { successEntity ->
+                    .subscribeOn(Schedulers.io())
+                    .subscribe { successEntity ->
                         successImageLoader.getSuccessImages(id)
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .map { successImageEntities ->
+                                .subscribe { successImageEntities ->
                                     ifViewAttached { view ->
                                         view.displaySuccessData(successEntity, successImageEntities)
                                     }

@@ -54,23 +54,23 @@ import kotlinx.android.synthetic.main.content_main.*
 class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPresenter>(),
         android.view.View.OnClickListener, SuccessAdapter.OnItemClickListener, SuccessesView {
     override fun displaySuccessRemoved(position: Int, backupSuccess: SuccessEntity) {
-        successAdapter?.successes?.removeAt(position)
+        successAdapter.successes.removeAt(position)
         successRemoved(position)
-        successAdapter?.successesToRemove?.add(backupSuccess)
+        successAdapter.successesToRemove.add(backupSuccess)
         //TODO handle it
-        if (successAdapter?.successes?.isEmpty() == true) {
+        if (successAdapter.successes.isEmpty() == true) {
             //onExtrasLoaded();
             displayNoSuccesses()
         }
     }
 
-    var successAdapter: SuccessAdapter? = null
+    private lateinit var successAdapter: SuccessAdapter
 
-    var action: ActionBar? = null
+    private var action: ActionBar? = null
 
     var searchBox: EditText? = null
 
-    var simpleCallback: ItemTouchHelper.SimpleCallback = object : ItemTouchHelper.SimpleCallback(
+    private var simpleCallback: ItemTouchHelper.SimpleCallback = object : ItemTouchHelper.SimpleCallback(
             0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
         override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
@@ -94,14 +94,14 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
 
     override fun onPause() {
         super.onPause()
-        presenter?.onPause(successAdapter?.successesToRemove)
+        presenter?.onPause(successAdapter.successesToRemove)
 
     }
 
     override fun onResume() {
         super.onResume()
 
-        presenter?.onResumeActivity(successAdapter?.successes, clickedPosition)
+        presenter?.onResumeActivity(successAdapter.successes, clickedPosition)
         if (searchBox != null) {
             showSoftKeyboard()
         }
@@ -117,12 +117,10 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
 
     override fun onBackPressed() {
 
-        if (multiple_actions?.isExpanded == true) {
-            multiple_actions?.collapse()
-        } else if (searchBox != null) {
-            presenter?.toggleSearchBar(true)
-        } else {
-            super.onBackPressed()
+        when {
+            multiple_actions?.isExpanded == true -> multiple_actions?.collapse()
+            searchBox != null -> presenter?.toggleSearchBar(true)
+            else -> super.onBackPressed()
         }
 
     }
@@ -288,10 +286,10 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
     }
 
     override fun restoreSuccess(position: Int, backupSuccess: SuccessEntity) {
-        successAdapter?.successes?.add(position, backupSuccess)
-        successAdapter?.successesToRemove?.remove(backupSuccess)
+        successAdapter.successes.add(position, backupSuccess)
+        successAdapter.successesToRemove.remove(backupSuccess)
         recycler_view?.scrollToPosition(position)
-        successAdapter?.notifyItemInserted(position)
+        successAdapter.notifyItemInserted(position)
 
     }
 
@@ -302,15 +300,15 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
 
     }
 
-    fun onSuccessNotAdded() {
+    private fun onSuccessNotAdded() {
         Snackbar.make(main_constraint, getString(R.string.snack_success_not_added),
                 Snackbar.LENGTH_SHORT).show()
 
     }
 
-    fun onSuccessAdded(data: Intent) {
-        val s = data.extras?.getParcelable<SuccessEntity>(EXTRA_INSERT_SUCCESS_ITEM)
-        if (s != null) {
+    private fun onSuccessAdded(data: Intent) {
+        val s = data.extras?.getSerializable(EXTRA_INSERT_SUCCESS_ITEM)
+        if (s != null && s is SuccessEntity) {
             presenter?.addSuccess(s)
         }
     }
@@ -321,17 +319,17 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
     }
 
     private fun showUndoSnackbar(position: Int) {
-        successAdapter?.backupSuccess = successAdapter?.successes?.get(position)
+        successAdapter.backupSuccess = successAdapter.successes[position]
 
         val snackbar = Snackbar
                 .make(main_constraint, getString(R.string.snack_success_removed),
                         Snackbar.LENGTH_LONG)
                 .setAction(getString(R.string.snack_undo)) {
-                    presenter?.onUndoToRemove(position, successAdapter?.backupSuccess)
+                    presenter?.onUndoToRemove(position, successAdapter.backupSuccess)
                 }
         snackbar.show()
 
-        presenter?.sendToRemoveQueue(position, successAdapter?.backupSuccess)
+        presenter?.sendToRemoveQueue(position, successAdapter.backupSuccess)
     }
 
     override fun onItemClick(success: SuccessEntity, position: Int, titleTv: TextView, categoryTv: TextView,
@@ -340,7 +338,8 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
 
         this.clickedPosition = position
         hideSoftKeyboard()
-        presenter?.startSlider(success, position, titleTv, categoryTv, dateStartedTv, dateEndedTv, categoryIv,
+        successAdapter.successes
+        presenter?.startSlider(successAdapter.successes, success, position, titleTv, categoryTv, dateStartedTv, dateEndedTv, categoryIv,
                 importanceIv, constraintLayout, cardView)
 
     }
@@ -363,7 +362,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
     }
 
     override fun displayDefaultSuccesses(successList: MutableList<SuccessEntity>) {
-        successAdapter?.updateSuccessList(successList)
+        successAdapter.updateSuccessList(successList)
         presenter?.setSuccessListVisible(recycler_view, empty_list_text)
 
     }
@@ -373,21 +372,21 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
     }
 
     override fun displaySuccesses(successList: MutableList<SuccessEntity>) {
-        successAdapter?.updateSuccessList(successList)
+        successAdapter.updateSuccessList(successList)
         presenter?.setSuccessListVisible(recycler_view, empty_list_text)
     }
 
     override fun updateAdapterList(successList: MutableList<SuccessEntity>) {
-        successAdapter?.updateSuccessList(successList)
+        successAdapter.updateSuccessList(successList)
     }
 
     override fun successRemoved(position: Int) {
-        successAdapter?.notifyItemRemoved(position)
+        successAdapter.notifyItemRemoved(position)
     }
 
     override fun displaySuccessChanged(position: Int, updatedSuccess: SuccessEntity) {
-        successAdapter?.successes?.set(position, updatedSuccess)
-        successAdapter?.notifyItemChanged(clickedPosition)
+        successAdapter.successes[position] = updatedSuccess
+        successAdapter.notifyItemChanged(clickedPosition)
     }
 
     override fun hideSearchBar() {
@@ -447,7 +446,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
     }
 
     override fun displayUpdatedSuccesses() {
-        successAdapter?.notifyDataSetChanged()
+        successAdapter.notifyDataSetChanged()
     }
 
     override fun displayCategory(category: String) {
@@ -475,8 +474,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
 
         val intent = Intent(this@SuccessesActivity, SuccessSliderActivity::class.java)
 
-        intent.putExtra("searchfilter", presenter?.searchFilter)
-        intent.putExtra("position", clickedPosition)
+        intent.putExtra("bundle", SuccessesBundle(position, successes))
 
         val p1 = android.support.v4.util.Pair(titleTv as View, EXTRA_SUCCESS_TITLE)
         val p2 = android.support.v4.util.Pair(categoryTv as View, EXTRA_SUCCESS_CATEGORY)

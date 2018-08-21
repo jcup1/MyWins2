@@ -322,28 +322,23 @@ class SuccessesPresenter @Inject() constructor(
         }
     }
 
-    fun startSlider(success: SuccessEntity, position: Int, titleTv: TextView, categoryTv: TextView,
+    fun startSlider(successEntities: MutableList<SuccessEntity>, success: SuccessEntity, position: Int, titleTv: TextView, categoryTv: TextView,
                     dateStartedTv: TextView, dateEndedTv: TextView, categoryIv: ImageView,
                     importanceIv: ImageView, constraintLayout: ConstraintLayout, cardView: CardView) {
 
-        successesService.getSuccesses(searchFilter)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .map { successEntities ->
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 
-                        ifViewAttached { view ->
-                            view.displaySliderAnimation(successEntities, success, position, titleTv,
-                                    categoryTv, dateStartedTv, dateEndedTv, categoryIv, importanceIv,
-                                    constraintLayout, cardView)
-                        }
-                    } else {
-                        ifViewAttached { view ->
-                            view.displaySlider(successEntities)
-                        }
+            ifViewAttached { view ->
+                view.displaySliderAnimation(successEntities, success, position, titleTv,
+                        categoryTv, dateStartedTv, dateEndedTv, categoryIv, importanceIv,
+                        constraintLayout, cardView)
+            }
+        } else {
+            ifViewAttached { view ->
+                view.displaySlider(successEntities)
+            }
 
-                    }
-                }
+        }
 
     }
 

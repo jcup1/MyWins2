@@ -10,6 +10,7 @@ import com.theandroiddev.mywins.domain.service.successes.SuccessesService
 import com.theandroiddev.mywins.mvp.MvpPresenter
 import com.theandroiddev.mywins.presentation.success_slider.SuccessImageLoader
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 /**
@@ -52,11 +53,13 @@ constructor(
 
         editSuccessId = id
 
-        successImageLoader.fetchSuccess(id).map { successEntity ->
+        successImageLoader.fetchSuccess(id)
+                .subscribeOn(Schedulers.io())
+                .subscribe { successEntity ->
 
             successImageLoader.getSuccessImages(id)
                     .observeOn(AndroidSchedulers.mainThread())
-                    .map { successImageEntities ->
+                    .subscribe { successImageEntities ->
 
                         successImageEntities.add(0, SuccessImageEntity(null, id, ""))
 
@@ -116,18 +119,24 @@ constructor(
             for (image in successImages) {
                 image.successId = editSuccessId
             }
-            successesService.editSuccess(success)
-            val id = success.id
-            if (id != null) {
-                successesService.editSuccessImages(successImages, id)
-            } else {
-                //TODO handle errors
+            successesService.editSuccess(success).subscribe {
+                //TODO handle result
+
+                val id = success.id
+                if (id != null) {
+                    successesService.editSuccessImages(successImages, id).subscribe {
+                        //TODO result
+                        ifViewAttached { view ->
+                            view.displaySlider()
+                        }
+                    }
+                } else {
+                    //TODO handle errors
+                }
             }
+
         }
 
-        ifViewAttached { view ->
-            view.displaySlider()
-        }
     }
 
     fun onCameraResultOk(successImages: MutableList<SuccessImageEntity>?, resultImages: MutableList<Image>,
