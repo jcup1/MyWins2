@@ -62,7 +62,7 @@ class SuccessesDataSourceImpl @Inject constructor(
 
     override fun addSuccesses(successes: MutableList<SuccessEntity>): Completable {
         return Completable.fromCallable {
-            successDao.insertAll(successes)
+            successDao.insertAll(successes[0])
         }
     }
 
@@ -98,7 +98,7 @@ class SuccessesDataSourceImpl @Inject constructor(
 
     override fun editSuccessImages(successImages: MutableList<SuccessImageEntity>, successId: Long): Completable {
         return Completable.fromCallable {
-            successImageDao.deleteSuccessImages(successId)
+            //            successImageDao.deleteSuccessImages(successId)
             successImageDao.insertAll(successImages)
         }
     }

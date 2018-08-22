@@ -20,7 +20,7 @@ interface SuccessDao {
     fun fetchSuccessById(id: Long): SuccessEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(successList: MutableList<SuccessEntity>)
+    fun insertAll(success: SuccessEntity)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun update(success: SuccessEntity): Int

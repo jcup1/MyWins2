@@ -296,10 +296,14 @@ class SuccessesPresenter @Inject() constructor(
             sharedPreferencesService.setFirstSuccessAdded()
         }
         successesService.addSuccess(s)
-        loadSuccesses(searchFilter)
-        ifViewAttached { view ->
-            view.displayUpdatedSuccesses()
-        }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    loadSuccesses(searchFilter)
+                    ifViewAttached { view ->
+                        view.displayUpdatedSuccesses()
+                    }
+                }
 
     }
 

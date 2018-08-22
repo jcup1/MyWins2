@@ -11,7 +11,7 @@ interface SuccessImageDao {
     fun getAll(successId: Long): MutableList<SuccessImageEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(successImageList: MutableList<SuccessImageEntity>)
+    fun insertAll(successImageList: List<SuccessImageEntity>)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun update(successImage: SuccessImageEntity)
@@ -19,7 +19,7 @@ interface SuccessImageDao {
     @Delete
     fun delete(successImage: SuccessImageEntity)
 
-    @Query("DELETE FROM SuccessImageEntity WHERE successId LIKE :successId")
+    @Query("DELETE FROM SuccessImageEntity WHERE successId = :successId")
     fun deleteSuccessImages(successId: Long)
 
     @Query("delete from SuccessImageEntity")
