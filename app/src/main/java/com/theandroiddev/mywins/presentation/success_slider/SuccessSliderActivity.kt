@@ -37,11 +37,6 @@ class SuccessSliderActivity : MvpDaggerAppCompatActivity<SuccessSliderView, Succ
         initFab(slider_fab)
         slider_pager.adapter = adapter
 
-    }
-
-    override fun onStart() {
-        super.onStart()
-
         val extras = intent.extras
         if (extras != null) {
             val bundle = extras.getSerializable("bundle")
