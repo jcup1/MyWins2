@@ -61,9 +61,10 @@ class SuccessesDataSourceImpl @Inject constructor(
     }
 
     override fun addSuccesses(successes: MutableList<SuccessEntity>): Completable {
-        return Completable.fromCallable {
-            successDao.insertAll(successes[0])
+        return Completable.fromAction {
+            successDao.insertAll(successes)
         }
+
     }
 
     override fun fetchSuccess(id: Long): Single<SuccessEntity> {
@@ -91,20 +92,20 @@ class SuccessesDataSourceImpl @Inject constructor(
     }
 
     override fun editSuccess(showSuccess: SuccessEntity): Completable {
-        return Completable.fromCallable {
+        return Completable.fromAction {
             successDao.update(showSuccess)
         }.subscribeOn(Schedulers.io())
     }
 
     override fun editSuccessImages(successImages: MutableList<SuccessImageEntity>, successId: Long): Completable {
-        return Completable.fromCallable {
-            //            successImageDao.deleteSuccessImages(successId)
+        return Completable.fromAction {
+            successImageDao.deleteSuccessImages(successId)
             successImageDao.insertAll(successImages)
         }
     }
 
     override fun removeSuccess(successesToRemove: MutableList<SuccessEntity>): Completable {
-        return Completable.fromCallable {
+        return Completable.fromAction {
             for (success in successesToRemove) {
                 successDao.delete(success)
 
@@ -114,7 +115,7 @@ class SuccessesDataSourceImpl @Inject constructor(
     }
 
     override fun clearDatabase(): Completable {
-        return Completable.fromCallable {
+        return Completable.fromAction {
             successDao.removeAll()
             successImageDao.removeAll()
         }

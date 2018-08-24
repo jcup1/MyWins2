@@ -57,18 +57,18 @@ constructor(
                 .subscribeOn(Schedulers.io())
                 .subscribe { successEntity ->
 
-            successImageLoader.getSuccessImages(id)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { successImageEntities ->
+                    successImageLoader.getSuccessImages(id)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe { successImageEntities ->
 
-                        successImageEntities.add(0, SuccessImageEntity(null, id, ""))
+                                successImageEntities.add(0, SuccessImageEntity(null, id, ""))
 
-                        ifViewAttached { view ->
-                            view.displaySuccessData(successEntity, successImageEntities)
-                        }
-                    }
+                                ifViewAttached { view ->
+                                    view.displaySuccessData(successEntity, successImageEntities)
+                                }
+                            }
 
-        }
+                }
 
     }
 
@@ -119,21 +119,27 @@ constructor(
             for (image in successImages) {
                 image.successId = editSuccessId
             }
-            successesService.editSuccess(success).subscribe {
-                //TODO handle result
+            successesService.editSuccess(success)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        //TODO handle result
 
-                val id = success.id
-                if (id != null) {
-                    successesService.editSuccessImages(successImages, id).subscribe {
-                        //TODO result
-                        ifViewAttached { view ->
-                            view.displaySlider()
+                        val id = success.id
+                        if (id != null) {
+                            successesService.editSuccessImages(successImages, id)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe {
+                                        //TODO result
+                                        ifViewAttached { view ->
+                                            view.displaySlider()
+                                        }
+                                    }
+                        } else {
+                            //TODO handle errors
                         }
                     }
-                } else {
-                    //TODO handle errors
-                }
-            }
 
         }
 

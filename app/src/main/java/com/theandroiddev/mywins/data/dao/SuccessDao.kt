@@ -20,15 +20,15 @@ interface SuccessDao {
     fun fetchSuccessById(id: Long): SuccessEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(success: SuccessEntity)
+    fun insertAll(successes: MutableList<SuccessEntity>)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun update(success: SuccessEntity): Int
+    fun update(success: SuccessEntity)
 
     @Delete
-    fun delete(success: SuccessEntity): Int
+    fun delete(success: SuccessEntity)
 
     @Query("delete from success")
-    fun removeAll(): Int
+    fun removeAll()
 
 }
