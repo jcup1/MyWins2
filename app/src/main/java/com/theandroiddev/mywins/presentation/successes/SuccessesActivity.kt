@@ -30,10 +30,15 @@ import android.widget.TextView
 import com.getbase.floatingactionbutton.FloatingActionButton
 import com.getbase.floatingactionbutton.FloatingActionsMenu
 import com.theandroiddev.mywins.R
-import com.theandroiddev.mywins.data.entity.SuccessEntity
-import com.theandroiddev.mywins.mvp.MvpDaggerAppCompatActivity
+import com.theandroiddev.mywins.core.mvp.MvpDaggerAppCompatActivity
+import com.theandroiddev.mywins.core.mvp.startActivity
+import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceModel
+import com.theandroiddev.mywins.domain.service.successes.toModel
 import com.theandroiddev.mywins.presentation.insert_success.InsertSuccessActivity
+import com.theandroiddev.mywins.presentation.insert_success.InsertSuccessBundle
 import com.theandroiddev.mywins.presentation.success_slider.SuccessSliderActivity
+import com.theandroiddev.mywins.presentation.success_slider.SuccessSliderBundle
+import com.theandroiddev.mywins.utils.Constants.Companion.Category
 import com.theandroiddev.mywins.utils.Constants.Companion.EXTRA_INSERT_SUCCESS_ITEM
 import com.theandroiddev.mywins.utils.Constants.Companion.EXTRA_SUCCESS_CARD_VIEW
 import com.theandroiddev.mywins.utils.Constants.Companion.EXTRA_SUCCESS_CATEGORY
@@ -51,14 +56,14 @@ import io.codetail.animation.ViewAnimationUtils
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
-class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPresenter>(),
+class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBundle, SuccessesPresenter>(),
         android.view.View.OnClickListener, SuccessAdapter.OnItemClickListener, SuccessesView {
-    override fun displaySuccessRemoved(position: Int, backupSuccess: SuccessEntity) {
+
+    override fun displaySuccessRemoved(position: Int, backupSuccess: SuccessModel) {
         successAdapter.successes.removeAt(position)
         successRemoved(position)
         successAdapter.successesToRemove.add(backupSuccess)
-        //TODO handle it
-        if (successAdapter.successes.isEmpty() == true) {
+        if (successAdapter.successes.isEmpty()) {
             //onExtrasLoaded();
             displayNoSuccesses()
         }
@@ -94,14 +99,14 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
 
     override fun onPause() {
         super.onPause()
-        presenter?.onPause(successAdapter.successesToRemove)
+        presenter.onPause(successAdapter.successesToRemove)
 
     }
 
     override fun onResume() {
         super.onResume()
 
-        presenter?.onResumeActivity(successAdapter.successes, clickedPosition)
+        presenter.onResumeActivity(successAdapter.successes, clickedPosition)
         if (searchBox != null) {
             showSoftKeyboard()
         }
@@ -285,7 +290,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
 
     }
 
-    override fun restoreSuccess(position: Int, backupSuccess: SuccessEntity) {
+    override fun restoreSuccess(position: Int, backupSuccess: SuccessModel) {
         successAdapter.successes.add(position, backupSuccess)
         successAdapter.successesToRemove.remove(backupSuccess)
         recycler_view?.scrollToPosition(position)
@@ -307,9 +312,9 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
     }
 
     private fun onSuccessAdded(data: Intent) {
-        val s = data.extras?.getSerializable(EXTRA_INSERT_SUCCESS_ITEM)
-        if (s != null && s is SuccessEntity) {
-            presenter?.addSuccess(s)
+        val success = data.extras?.getSerializable(EXTRA_INSERT_SUCCESS_ITEM)
+        if (success != null && success is SuccessModel) {
+            presenter?.addSuccess(success)
         }
     }
 
@@ -325,14 +330,17 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
                 .make(main_constraint, getString(R.string.snack_success_removed),
                         Snackbar.LENGTH_LONG)
                 .setAction(getString(R.string.snack_undo)) {
-                    presenter?.onUndoToRemove(position, successAdapter.backupSuccess)
+
+                    val backupSuccessModel = successAdapter.backupSuccess
+                    presenter?.onUndoToRemove(position, backupSuccessModel)
+
                 }
         snackbar.show()
 
         presenter?.sendToRemoveQueue(position, successAdapter.backupSuccess)
     }
 
-    override fun onItemClick(success: SuccessEntity, position: Int, titleTv: TextView, categoryTv: TextView,
+    override fun onItemClick(success: SuccessModel, position: Int, titleTv: TextView, categoryTv: TextView,
                              dateStartedTv: TextView, dateEndedTv: TextView, categoryIv: ImageView,
                              importanceIv: ImageView, constraintLayout: ConstraintLayout, cardView: CardView) {
 
@@ -361,7 +369,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
         }
     }
 
-    override fun displayDefaultSuccesses(successList: MutableList<SuccessEntity>) {
+    override fun displayDefaultSuccesses(successList: MutableList<SuccessModel>) {
         successAdapter.updateSuccessList(successList)
         presenter?.setSuccessListVisible(recycler_view, empty_list_text)
 
@@ -371,12 +379,12 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
         presenter?.setSuccessListInvisible(recycler_view, empty_list_text)
     }
 
-    override fun displaySuccesses(successList: MutableList<SuccessEntity>) {
-        successAdapter.updateSuccessList(successList)
+    override fun displaySuccesses(successes: List<SuccessModel>) {
+        successAdapter.updateSuccessList(successes)
         presenter?.setSuccessListVisible(recycler_view, empty_list_text)
     }
 
-    override fun updateAdapterList(successList: MutableList<SuccessEntity>) {
+    override fun updateAdapterList(successList: MutableList<SuccessModel>) {
         successAdapter.updateSuccessList(successList)
     }
 
@@ -384,7 +392,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
         successAdapter.notifyItemRemoved(position)
     }
 
-    override fun displaySuccessChanged(position: Int, updatedSuccess: SuccessEntity) {
+    override fun displaySuccessChanged(position: Int, updatedSuccess: SuccessModel) {
         successAdapter.successes[position] = updatedSuccess
         successAdapter.notifyItemChanged(clickedPosition)
     }
@@ -449,24 +457,22 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesPre
         successAdapter.notifyDataSetChanged()
     }
 
-    override fun displayCategory(category: String) {
+    override fun displayCategory(category: Category) {
 
-        val intent = Intent(this@SuccessesActivity, InsertSuccessActivity::class.java)
-        intent.putExtra("categoryName", category)
-        startActivityForResult(intent, REQUEST_CODE_INSERT)
+        startActivity<InsertSuccessActivity>(InsertSuccessBundle(category), REQUEST_CODE_INSERT)
         multiple_actions?.collapse()
 
     }
 
-    override fun displaySlider(successList: MutableList<SuccessEntity>) {
-        val intent = Intent(this@SuccessesActivity, SuccessSliderActivity::class.java)
-        intent.putExtra("searchfilter", presenter?.searchFilter)
-        intent.putExtra("position", clickedPosition)
-        startActivityForResult(intent, REQUEST_CODE_SLIDER)
+    override fun displaySlider(successes: MutableList<SuccessModel>) {
+
+        startActivity<SuccessSliderActivity>(SuccessSliderBundle(clickedPosition, successes),
+                REQUEST_CODE_SLIDER)
+
     }
 
-    override fun displaySliderAnimation(successes: MutableList<SuccessEntity>,
-                                        success: SuccessEntity, position: Int,
+    override fun displaySliderAnimation(successes: MutableList<SuccessModel>,
+                                        success: SuccessModel, position: Int,
                                         titleTv: TextView, categoryTv: TextView,
                                         dateStartedTv: TextView, dateEndedTv: TextView,
                                         categoryIv: ImageView, importanceIv: ImageView,

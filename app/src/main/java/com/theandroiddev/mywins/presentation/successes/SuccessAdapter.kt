@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.theandroiddev.mywins.data.entity.SuccessEntity
 import com.theandroiddev.mywins.utils.DrawableSelector
 import kotlinx.android.synthetic.main.success_layout.view.*
 import javax.inject.Inject
@@ -22,9 +21,9 @@ class SuccessAdapter @Inject constructor(
         private val listener: OnItemClickListener,
         private val drawableSelector: DrawableSelector) : RecyclerView.Adapter<SuccessAdapter.ViewHolder>() {
 
-    var successes = mutableListOf<SuccessEntity>()
-    var successesToRemove = mutableListOf<SuccessEntity>()
-    var backupSuccess: SuccessEntity? = null
+    var successes = mutableListOf<SuccessModel>()
+    var successesToRemove = mutableListOf<SuccessModel>()
+    var backupSuccess: SuccessModel? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(itemLayout, parent, false)
@@ -34,15 +33,19 @@ class SuccessAdapter @Inject constructor(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        holder.titleTv.text = successes.get(position).title
-        holder.categoryTv.text = successes.get(position).category
-        holder.dateStartedTv.text = successes.get(position).dateStarted
-        holder.dateEndedTv.text = successes.get(position).dateEnded
-        drawableSelector.selectCategoryImage(holder.categoryIv, successes.get(position).category, holder.categoryTv)
-        drawableSelector.selectImportanceImage(holder.importanceIv, successes.get(position).importance)
+        holder.titleTv.text = successes[position].title
+        holder.categoryTv.text = holder.categoryTv.context.getString(successes[position].category.res)
+        holder.dateStartedTv.text = successes[position].dateStarted
+        holder.dateEndedTv.text = successes[position].dateEnded
+        drawableSelector.selectCategoryImage(
+                holder.categoryIv,
+                successes[position].category,
+                holder.categoryTv)
+        drawableSelector.selectImportanceImage(
+                holder.importanceIv,
+                successes[position].importance)
 
-
-        holder.bind(successes.get(position), listener, position)
+        holder.bind(successes[position], listener, position)
 
     }
 
@@ -50,14 +53,14 @@ class SuccessAdapter @Inject constructor(
         return successes.size
     }
 
-    fun updateSuccessList(successList: MutableList<SuccessEntity>) {
-        this.successes = successList
+    fun updateSuccessList(successList: List<SuccessModel>) {
+        this.successes = successList.toMutableList()
         notifyDataSetChanged()
     }
 
 
     interface OnItemClickListener {
-        fun onItemClick(success: SuccessEntity,
+        fun onItemClick(success: SuccessModel,
                         position: Int,
                         titleTv: TextView,
                         categoryTv: TextView,
@@ -82,7 +85,7 @@ class SuccessAdapter @Inject constructor(
         var constraintLayout = itemView.item_constraint_layout
         var cardView = itemView.item_card_view
 
-        fun bind(success: SuccessEntity, listener: OnItemClickListener, position: Int) {
+        fun bind(success: SuccessModel, listener: OnItemClickListener, position: Int) {
 
             itemView.setOnClickListener {
                 listener.onItemClick(success, position, titleTv, categoryTv, dateStartedTv, dateEndedTv,

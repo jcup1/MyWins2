@@ -4,13 +4,13 @@ buildscript {
     ext.kotlin_version = '1.2.60'
     ext.dagger_version = '2.14.1'
     ext.JUnit5_version = '1.2.0.0'
-    ext.gradle_version = '4.6'
+    ext.gradle_version = '3.2.0'
     repositories {
         jcenter()
         google()
     }
     dependencies {
-//        classpath "com.android.tools.build:gradle:$gradle_version"
+        classpath "com.android.tools.build:gradle:$gradle_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "de.mannodermaus.gradle.plugins:android-junit5:$JUnit5_version"
 

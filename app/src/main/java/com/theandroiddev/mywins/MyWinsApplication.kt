@@ -1,6 +1,6 @@
 package com.theandroiddev.mywins
 
-import com.theandroiddev.mywins.injection.DaggerAppComponent
+import com.theandroiddev.mywins.core.injection.DaggerAppComponent
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
 

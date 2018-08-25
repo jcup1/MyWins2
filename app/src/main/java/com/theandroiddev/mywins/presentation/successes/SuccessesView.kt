@@ -4,8 +4,8 @@ import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.CardView
 import android.widget.ImageView
 import android.widget.TextView
-import com.theandroiddev.mywins.data.entity.SuccessEntity
-import com.theandroiddev.mywins.mvp.MvpView
+import com.theandroiddev.mywins.core.mvp.MvpView
+import com.theandroiddev.mywins.utils.Constants.Companion.Category
 
 /**
  * Created by jakub on 12.11.17.
@@ -13,19 +13,19 @@ import com.theandroiddev.mywins.mvp.MvpView
 
 interface SuccessesView : MvpView {
 
-    fun displayDefaultSuccesses(successList: MutableList<SuccessEntity>)
+    fun displayDefaultSuccesses(successList: MutableList<SuccessModel>)
 
     fun displayNoSuccesses()
 
-    fun displaySuccesses(successList: MutableList<SuccessEntity>)
+    fun displaySuccesses(successes: List<SuccessModel>)
 
-    fun updateAdapterList(successList: MutableList<SuccessEntity>)
+    fun updateAdapterList(successList: MutableList<SuccessModel>)
 
     fun successRemoved(position: Int)
 
-    fun displaySuccessChanged(position: Int, updatedSuccess: SuccessEntity)
+    fun displaySuccessChanged(position: Int, updatedSuccess: SuccessModel)
 
-    fun displayCategory(category: String)
+    fun displayCategory(category: Category)
 
     fun hideSearchBar()
 
@@ -33,9 +33,9 @@ interface SuccessesView : MvpView {
 
     fun displayUpdatedSuccesses()
 
-    fun displaySlider(successList: MutableList<SuccessEntity>)
+    fun displaySlider(successes: MutableList<SuccessModel>)
 
-    fun displaySliderAnimation(successes: MutableList<SuccessEntity>, success: SuccessEntity,
+    fun displaySliderAnimation(successes: MutableList<SuccessModel>, success: SuccessModel,
                                position: Int, titleTv: TextView, categoryTv: TextView,
                                dateStartedTv: TextView, dateEndedTv: TextView,
                                categoryIv: ImageView, importanceIv: ImageView,
@@ -43,8 +43,8 @@ interface SuccessesView : MvpView {
 
     fun displaySearch()
 
-    fun restoreSuccess(position: Int, backupSuccess: SuccessEntity)
+    fun restoreSuccess(position: Int, backupSuccess: SuccessModel)
 
-    fun displaySuccessRemoved(position: Int, backupSuccess: SuccessEntity)
+    fun displaySuccessRemoved(position: Int, backupSuccess: SuccessModel)
 }
 

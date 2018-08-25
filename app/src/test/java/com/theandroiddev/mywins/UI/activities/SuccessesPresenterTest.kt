@@ -3,7 +3,7 @@ package com.theandroiddev.mywins.UI.activities
 import android.view.MenuItem
 import com.nhaarman.mockito_kotlin.whenever
 import com.theandroiddev.mywins.R
-import com.theandroiddev.mywins.data.entity.SuccessEntity
+import com.theandroiddev.mywins.data.model.SuccessEntity
 import com.theandroiddev.mywins.domain.service.shared_preferences.SharedPreferencesService
 import com.theandroiddev.mywins.domain.service.successes.SuccessesService
 import com.theandroiddev.mywins.presentation.successes.SuccessesPresenter
@@ -40,15 +40,15 @@ class SuccessesPresenterTest : Spek({
 
     presenter.attachView(view)
 
-    given("loading successes") {
+    given("loading Successes") {
 
-        on("successes available") {
+        on("Successes available") {
             val successList = mutableListOf<SuccessEntity>()
 
             successList.add(SuccessEntity())
             successList.add(SuccessEntity())
 
-            it("should display 2 successes") {
+            it("should display 2 Successes") {
                 val searchFilter = SearchFilter(null, Constants.SORT_DATE_ADDED, true)
                 `when`(successesRepository.getSuccesses(searchFilter))
                         .thenReturn(successList.asFlowable())
@@ -59,10 +59,10 @@ class SuccessesPresenterTest : Spek({
             }
         }
 
-        on("no successes") {
+        on("no Successes") {
             val successList = mutableListOf<SuccessEntity>()
 
-            it("should display no successes") {
+            it("should display no Successes") {
                 val searchFilter = SearchFilter(null, Constants.SORT_DATE_ADDED, true)
                 `when`(successesRepository.getSuccesses(searchFilter))
                         .thenReturn(successList.asFlowable())
@@ -78,7 +78,7 @@ class SuccessesPresenterTest : Spek({
     given("pause") {
 
         on("success was backed up") {
-            it("should remove successes") {
+            it("should remove Successes") {
                 val successes = mutableListOf(SuccessEntity(), SuccessEntity())
                 presenter.onPause(successes)
                 verify(successesRepository, times(1)).removeSuccesses(successes)
@@ -86,7 +86,7 @@ class SuccessesPresenterTest : Spek({
         }
 
         on("success wasn't backed up") {
-            it("should not remove successes") {
+            it("should not remove Successes") {
                 val successes: MutableList<SuccessEntity>? = null
 
                 presenter.onPause(successes)
@@ -129,7 +129,7 @@ class SuccessesPresenterTest : Spek({
             }
         }
 
-        on("valid successes sent to remove queue") {
+        on("valid Successes sent to remove queue") {
             it("should not display success removed") {
                 val position = 0
                 val success = SuccessEntity()
@@ -142,7 +142,7 @@ class SuccessesPresenterTest : Spek({
 
     given("update success") {
 
-        on("successes not available") {
+        on("Successes not available") {
             it("should no update success") {
                 val position = 0
                 val successes = mutableListOf<SuccessEntity>()
@@ -160,7 +160,7 @@ class SuccessesPresenterTest : Spek({
             }
         }
 //TODO fix tests
-//        on("valid clicked position and successes available") {
+//        on("valid clicked position and Successes available") {
 //            it("should display success removed") {
 //                val position = 0
 //                val updatedSuccess = SuccessEntity(
@@ -173,15 +173,15 @@ class SuccessesPresenterTest : Spek({
 //                        0
 //                )
 //
-//                val successes = mutableListOf(updatedSuccess)
+//                val Successes = mutableListOf(updatedSuccess)
 //
-//                val id = successes[position].id
+//                val id = Successes[position].id
 //                if(id == null) {
 //                    Assert.fail()
 //                } else {
 //                    `when`(successesRepository.fetchSuccess(id))
 //                            .thenReturn(updatedSuccess.asSingle())
-//                    presenter.updateSuccess(position, successes)
+//                    presenter.updateSuccess(position, Successes)
 //                    verify(view, times(1)).displaySuccessChanged(position, updatedSuccess)
 //                }
 //
@@ -202,7 +202,7 @@ class SuccessesPresenterTest : Spek({
 
         on("search is opened") {
 
-            it("hide search bar and display successes") {
+            it("hide search bar and display Successes") {
                 val successesToDisplay = mutableListOf(SuccessEntity(), SuccessEntity())
 
                 `when`(successesRepository.getSuccesses(presenter.searchFilter))

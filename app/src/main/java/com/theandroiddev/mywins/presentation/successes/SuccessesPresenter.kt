@@ -9,17 +9,17 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import com.theandroiddev.mywins.R
-import com.theandroiddev.mywins.data.entity.SuccessEntity
 import com.theandroiddev.mywins.domain.service.shared_preferences.SharedPreferencesService
 import com.theandroiddev.mywins.domain.service.successes.SuccessesService
-import com.theandroiddev.mywins.mvp.MvpPresenter
-import com.theandroiddev.mywins.utils.Constants
-import com.theandroiddev.mywins.utils.Constants.Companion.CATEGORY_JOURNEY
-import com.theandroiddev.mywins.utils.Constants.Companion.CATEGORY_LEARN
-import com.theandroiddev.mywins.utils.Constants.Companion.CATEGORY_MONEY
-import com.theandroiddev.mywins.utils.Constants.Companion.CATEGORY_SPORT
-import com.theandroiddev.mywins.utils.Constants.Companion.CATEGORY_VIDEO
+import com.theandroiddev.mywins.core.mvp.MvpPresenter
+import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceArgument
+import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceResult
+import com.theandroiddev.mywins.domain.service.successes.toModel
+import com.theandroiddev.mywins.presentation.edit_success.hasOne
+import com.theandroiddev.mywins.utils.Constants.Companion.Category
+import com.theandroiddev.mywins.utils.Constants.Companion.Category.*
 import com.theandroiddev.mywins.utils.Constants.Companion.NOT_ACTIVE
+import com.theandroiddev.mywins.utils.Constants.Companion.SortType
 import com.theandroiddev.mywins.utils.SearchFilter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -32,9 +32,13 @@ import javax.inject.Inject
 class SuccessesPresenter @Inject() constructor(
         private val successesService: SuccessesService,
         private val sharedPreferencesService: SharedPreferencesService
-) : MvpPresenter<SuccessesView>() {
+) : MvpPresenter<SuccessesView, SuccessesBundle>() {
 
-    private var sortType: String = Constants.SORT_DATE_ADDED
+    override fun onViewCreated() {
+
+    }
+
+    private var sortType: SortType = SortType.DATE_ADDED
     private var isSortingAscending: Boolean = true
     private var searchTerm: String? = ""
 
@@ -47,69 +51,85 @@ class SuccessesPresenter @Inject() constructor(
         successesService.getSuccesses(searchFilter)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { successEntities ->
-                    if (successEntities.isEmpty()) {
+                .subscribe { successesServiceResult ->
+                    when (successesServiceResult) {
+                        is SuccessesServiceResult.Successes -> {
+                            if (successesServiceResult.successes.isEmpty()) {
 
-                        ifViewAttached { view ->
-                            view.displayNoSuccesses()
+                                ifViewAttached { view ->
+                                    view.displayNoSuccesses()
+                                }
+                            } else {
+
+                                ifViewAttached { view ->
+                                    view.displaySuccesses(successesServiceResult.successes.map {
+                                        it.toModel()
+                                    })
+                                }
+
+                            }
                         }
-                    } else {
-
-                        ifViewAttached { view ->
-                            view.displaySuccesses(successEntities)
+                        is SuccessesServiceResult.Error -> {
+                            ifViewAttached { view ->
+                                view.alerts?.displayUnexpectedError()
+                            }
                         }
-
                     }
+
                 }
 
     }
 
-    fun onPause(successesToRemove: MutableList<SuccessEntity>?) {
-        if (successesToRemove != null) {
-            successesService.removeSuccesses(successesToRemove)
-        }
+    fun onPause(successesToRemove: MutableList<SuccessModel>) {
+        val argument = SuccessesServiceArgument.Successes(
+                successesToRemove.map { it.toSuccessesServiceModel() }
+        )
+        successesService.removeSuccesses(argument)
     }
 
 
-    fun onUndoToRemove(position: Int, backupSuccess: SuccessEntity?) {
+    fun onUndoToRemove(position: Int, backupSuccess: SuccessModel?) {
 
         if (backupSuccess != null) {
             ifViewAttached { view ->
                 view.restoreSuccess(position, backupSuccess)
             }
-        }
-
-    }
-
-
-    fun sendToRemoveQueue(position: Int, backupSuccess: SuccessEntity?) {
-
-        if (backupSuccess != null) {
+        } else {
             ifViewAttached { view ->
-                view.displaySuccessRemoved(position, backupSuccess)
+                view.alerts?.displayUnexpectedError()
             }
         }
 
     }
 
-    fun updateSuccess(clickedPosition: Int, successes: MutableList<SuccessEntity>) {
+
+    fun sendToRemoveQueue(position: Int, backupSuccess: SuccessModel?) {
+
+        if (backupSuccess != null) {
+            ifViewAttached { view ->
+                view.displaySuccessRemoved(position, backupSuccess)
+            }
+        } else {
+            ifViewAttached { view ->
+                view.alerts?.displayUnexpectedError()
+            }
+        }
+
+    }
+
+    fun updateSuccess(clickedPosition: Int, successes: MutableList<SuccessModel>) {
         //TODO check it later
         if (successes.size > clickedPosition) {
 
             if (clickedPosition > NOT_ACTIVE) {
                 val id = successes[clickedPosition].id
                 if (id != null) {
-                    successesService.fetchSuccess(id)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe { successEntity ->
-                                ifViewAttached { view ->
-                                    view.displaySuccessChanged(clickedPosition, successEntity)
-                                }
-                            }
+                    fetchSuccess(id, clickedPosition)
 
                 } else {
-                    //TODO handle errors
+                    ifViewAttached { view ->
+                        view.alerts?.displayUnexpectedError()
+                    }
                 }
 
             }
@@ -117,8 +137,42 @@ class SuccessesPresenter @Inject() constructor(
 
     }
 
+    private fun fetchSuccess(id: Long, clickedPosition: Int) {
+        successesService.fetchSuccess(id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { successesServiceResult ->
 
-    fun categoryPicked(category: String) {
+                    when (successesServiceResult) {
+                        is SuccessesServiceResult.Successes -> {
+                            if (successesServiceResult.successes.hasOne()) {
+                                val successesServiceModel =
+                                        successesServiceResult.successes.first()
+                                ifViewAttached { view ->
+                                    view.displaySuccessChanged(
+                                            clickedPosition,
+                                            successesServiceModel.toModel()
+                                    )
+                                }
+                            } else {
+                                ifViewAttached { view ->
+                                    view.alerts?.displayUnexpectedError()
+                                }
+                            }
+
+                        }
+                        is SuccessesServiceResult.Error -> {
+                            ifViewAttached { view ->
+                                view.alerts?.displayUnexpectedError()
+                            }
+                        }
+                    }
+
+                }
+    }
+
+
+    fun categoryPicked(category: Category) {
         ifViewAttached { view ->
             view.displayCategory(category)
         }
@@ -132,8 +186,8 @@ class SuccessesPresenter @Inject() constructor(
         }//TODO it's so dumb
         if (id == R.id.action_date_started) {
 
-            if (sortType != Constants.SORT_DATE_STARTED) {
-                sortType = Constants.SORT_DATE_STARTED
+            if (sortType != SortType.DATE_STARTED) {
+                sortType = SortType.DATE_STARTED
             } else {
                 isSortingAscending = !isSortingAscending
             }
@@ -142,8 +196,8 @@ class SuccessesPresenter @Inject() constructor(
         }
         if (id == R.id.action_date_ended) {
 
-            if (sortType != Constants.SORT_DATE_ENDED) {
-                sortType = Constants.SORT_DATE_ENDED
+            if (sortType != SortType.DATE_ENDED) {
+                sortType = SortType.DATE_ENDED
             } else {
                 isSortingAscending = !isSortingAscending
             }
@@ -152,8 +206,8 @@ class SuccessesPresenter @Inject() constructor(
         }
         if (id == R.id.action_title) {
 
-            if (sortType != Constants.SORT_TITLE) {
-                sortType = Constants.SORT_TITLE
+            if (sortType != SortType.TITLE) {
+                sortType = SortType.TITLE
             } else {
                 isSortingAscending = !isSortingAscending
             }
@@ -162,8 +216,8 @@ class SuccessesPresenter @Inject() constructor(
         }
         if (id == R.id.action_date_added) {
 
-            if (sortType != Constants.SORT_DATE_ADDED) {
-                sortType = Constants.SORT_DATE_ADDED
+            if (sortType != SortType.DATE_ADDED) {
+                sortType = SortType.DATE_ADDED
             } else {
                 isSortingAscending = !isSortingAscending
             }
@@ -172,8 +226,8 @@ class SuccessesPresenter @Inject() constructor(
         }
         if (id == R.id.action_importance) {
 
-            if (sortType != Constants.SORT_IMPORTANCE) {
-                sortType = Constants.SORT_IMPORTANCE
+            if (sortType != SortType.IMPORTANCE) {
+                sortType = SortType.IMPORTANCE
             } else {
                 isSortingAscending = !isSortingAscending
             }
@@ -182,8 +236,8 @@ class SuccessesPresenter @Inject() constructor(
         }
         if (id == R.id.action_description) {
 
-            if (sortType != Constants.SORT_DESCRIPTION) {
-                sortType = Constants.SORT_DESCRIPTION
+            if (sortType != SortType.DESCRIPTION) {
+                sortType = SortType.DESCRIPTION
             } else {
                 isSortingAscending = !isSortingAscending
             }
@@ -201,10 +255,23 @@ class SuccessesPresenter @Inject() constructor(
             successesService.getSuccesses(searchFilter)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { successEntities ->
-                        ifViewAttached { view ->
-                            view.displaySuccesses(successEntities)
+                    .subscribe { successesServiceResult ->
+
+                        when (successesServiceResult) {
+                            is SuccessesServiceResult.Successes -> {
+                                ifViewAttached { view ->
+                                    view.displaySuccesses(
+                                            successesServiceResult.successes.map { it.toModel() }
+                                    )
+                                }
+                            }
+                            is SuccessesServiceResult.Error -> {
+                                ifViewAttached { view ->
+                                    view.alerts?.displayUnexpectedError()
+                                }
+                            }
                         }
+
                     }
 
         } else {
@@ -227,11 +294,9 @@ class SuccessesPresenter @Inject() constructor(
         showSearch()
     }
 
-    fun onResumeActivity(successes: MutableList<SuccessEntity>?, clickedPosition: Int) {
+    fun onResumeActivity(successes: MutableList<SuccessModel>, clickedPosition: Int) {
 
-        if (successes != null) {
-            updateSuccess(clickedPosition, successes)
-        }
+        updateSuccess(clickedPosition, successes)
 
     }
 
@@ -272,11 +337,11 @@ class SuccessesPresenter @Inject() constructor(
 
         when (id) {
 
-            R.id.action_learn -> categoryPicked(CATEGORY_LEARN)
-            R.id.action_sport -> categoryPicked(CATEGORY_SPORT)
-            R.id.action_journey -> categoryPicked(CATEGORY_JOURNEY)
-            R.id.action_money -> categoryPicked(CATEGORY_MONEY)
-            R.id.action_video -> categoryPicked(CATEGORY_VIDEO)
+            R.id.action_learn -> categoryPicked(LEARN)
+            R.id.action_sport -> categoryPicked(SPORT)
+            R.id.action_journey -> categoryPicked(JOURNEY)
+            R.id.action_money -> categoryPicked(MONEY)
+            R.id.action_video -> categoryPicked(VIDEO)
 
             else -> {
             }
@@ -289,13 +354,14 @@ class SuccessesPresenter @Inject() constructor(
     }
 
 
-    fun addSuccess(s: SuccessEntity) {
+    fun addSuccess(success: SuccessModel) {
 
-        if (sharedPreferencesService.isFirstSuccessAdded == true) {
-            successesService.clearDatabase()
+        if (sharedPreferencesService.isFirstSuccessAdded) {
+            successesService.removeAllSuccesses()
             sharedPreferencesService.setFirstSuccessAdded()
         }
-        successesService.addSuccess(s)
+        val argument = SuccessesServiceArgument.Successes(listOf(success.toSuccessesServiceModel()))
+        successesService.saveSuccesses(argument)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
@@ -311,37 +377,57 @@ class SuccessesPresenter @Inject() constructor(
     fun checkPreferences() {
         if (sharedPreferencesService.isFirstRun) {
             //TODO add to database
-            val defaultSuccesses = successesService.getDefaultSuccesses()
-            successesService.saveSuccesses(defaultSuccesses)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe {
-                        sharedPreferencesService.setNotFirstRun()
-                        ifViewAttached { view ->
-                            view.displaySuccesses(defaultSuccesses)
-                        }
+            val successesServiceResult = successesService.getDefaultSuccesses()
+            when (successesServiceResult) {
+                is SuccessesServiceResult.Successes -> {
+
+                    val argument = SuccessesServiceArgument.Successes(successesServiceResult.successes)
+                    successesService.saveSuccesses(argument)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe {
+                                sharedPreferencesService.setNotFirstRun()
+                                ifViewAttached { view ->
+                                    view.displaySuccesses(successesServiceResult.successes.map {
+                                        it.toModel()
+                                    })
+                                }
+                            }
+                }
+                is SuccessesServiceResult.Error -> {
+                    ifViewAttached { view ->
+                        view.alerts?.displayUnexpectedError()
                     }
+                }
+            }
         } else {
             loadSuccesses(SearchFilter())
         }
+
     }
 
-    fun startSlider(successEntities: MutableList<SuccessEntity>, success: SuccessEntity, position: Int, titleTv: TextView, categoryTv: TextView,
-                    dateStartedTv: TextView, dateEndedTv: TextView, categoryIv: ImageView,
-                    importanceIv: ImageView, constraintLayout: ConstraintLayout, cardView: CardView) {
+    fun startSlider(successes: MutableList<SuccessModel>, success: SuccessModel, position: Int,
+                    titleTv: TextView, categoryTv: TextView, dateStartedTv: TextView,
+                    dateEndedTv: TextView, categoryIv: ImageView, importanceIv: ImageView,
+                    constraintLayout: ConstraintLayout, cardView: CardView) {
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+        //TODO Fix this animation
+/*        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 
             ifViewAttached { view ->
-                view.displaySliderAnimation(successEntities, success, position, titleTv,
+                view.displaySliderAnimation(successes, success, position, titleTv,
                         categoryTv, dateStartedTv, dateEndedTv, categoryIv, importanceIv,
                         constraintLayout, cardView)
             }
         } else {
             ifViewAttached { view ->
-                view.displaySlider(successEntities)
+                view.displaySlider(successes)
             }
 
+        }*/
+
+        ifViewAttached { view ->
+            view.displaySlider(successes)
         }
 
     }

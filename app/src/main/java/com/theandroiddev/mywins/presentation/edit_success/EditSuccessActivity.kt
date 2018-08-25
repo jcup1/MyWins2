@@ -23,25 +23,32 @@ import com.esafirm.imagepicker.features.camera.CameraModule
 import com.esafirm.imagepicker.features.camera.ImmediateCameraModule
 import com.esafirm.imagepicker.model.Image
 import com.theandroiddev.mywins.R
-import com.theandroiddev.mywins.data.entity.SuccessEntity
-import com.theandroiddev.mywins.data.entity.SuccessImageEntity
-import com.theandroiddev.mywins.mvp.MvpDaggerAppCompatActivity
+import com.theandroiddev.mywins.core.mvp.MvpDaggerAppCompatActivity
+import com.theandroiddev.mywins.core.mvp.startActivity
 import com.theandroiddev.mywins.presentation.image.CustomImagePickerAdapter
 import com.theandroiddev.mywins.presentation.image.SuccessImageAdapter
 import com.theandroiddev.mywins.presentation.importance_popup.ImportancePopupActivity
+import com.theandroiddev.mywins.presentation.importance_popup.ImportancePopupBundle
+import com.theandroiddev.mywins.presentation.successes.SuccessImageModel
+import com.theandroiddev.mywins.presentation.successes.SuccessModel
+import com.theandroiddev.mywins.utils.Constants.Companion.Category
+import com.theandroiddev.mywins.utils.Constants.Companion.Importance
 import com.theandroiddev.mywins.utils.Constants.Companion.REQUEST_CODE_IMPORTANCE
-import com.theandroiddev.mywins.utils.Constants.Companion.dummyImportanceDefault
 import com.theandroiddev.mywins.utils.DateHelper
 import com.theandroiddev.mywins.utils.DrawableSelector
 import kotlinx.android.synthetic.main.activity_edit_success.*
 import kotlinx.android.synthetic.main.content_edit_success.*
 import java.util.*
 
-class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSuccessPresenter>(), SuccessImageAdapter.OnSuccessImageClickListener, View.OnLongClickListener, EditSuccessView {
+class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView,
+        EditSuccessBundle, EditSuccessPresenter>(), SuccessImageAdapter.OnSuccessImageClickListener, View.OnLongClickListener, EditSuccessView {
 
     private var drawableSelector: DrawableSelector? = null
     private var dateHelper: DateHelper? = null
     private var imagePicker: ImagePicker? = null
+
+    private var currentImportance = Importance.NONE
+    private var currentCategory = Category.NONE
 
     private var animShow: Animation? = null
     private var animHide: Animation? = null
@@ -69,7 +76,7 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
         animHide = AnimationUtils.loadAnimation(this, R.anim.view_hide)
     }
 
-    private fun undoToRemove(position: Int, successImage: SuccessImageEntity) {
+    private fun undoToRemove(position: Int, successImage: SuccessImageModel) {
 
         presenter.onUndoToRemove(position, successImage)
 
@@ -87,10 +94,6 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
         initRecycler()
         initObjects()
         initListeners()
-
-        val id = intent.getLongExtra("id", 0)
-        presenter.onActivityCreate(id)
-
     }
 
 
@@ -115,7 +118,7 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
 
         edit_date_ended.setOnClickListener { dateHelper?.setDate(getString(R.string.date_ended_empty), edit_date_started, edit_date_ended) }
 
-        edit_importance_iv.setOnClickListener { setImportance() }
+        edit_importance_iv.setOnClickListener { startSetImportanceActivity() }
 
         edit_date_started.setOnLongClickListener(this)
 
@@ -154,15 +157,16 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
         }
     }
 
-    override fun displaySuccessData(success: SuccessEntity, successImages: MutableList<SuccessImageEntity>) {
-        edit_title.tag = success.id
+    override fun displaySuccessData(success: SuccessModel, successImages: MutableList<SuccessImageModel>) {
+
         edit_title.setText(success.title)
-        edit_category.text = success.category
+        edit_category.text = getString(success.category.res)
         edit_description.setText(success.description)
         edit_date_started.text = success.dateStarted
         checkDate(success.dateStarted, success.dateEnded)
 
-        edit_importance_iv.tag = success.importance
+        currentImportance = success.importance
+        currentCategory = success.category
 
         drawableSelector?.selectCategoryImage(edit_category_iv, success.category, edit_category)
         drawableSelector?.selectImportanceImage(edit_importance_iv, success.importance)
@@ -172,7 +176,7 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
 
     }
 
-    override fun displaySuccessImageRemovedSnackbar(position: Int, successImage: SuccessImageEntity) {
+    override fun displaySuccessImageRemovedSnackbar(position: Int, successImage: SuccessImageModel) {
 
         successImageAdapter?.successImages?.remove(successImage)
         successImageAdapter?.notifyItemRemoved(position)
@@ -184,7 +188,7 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
         snackbar.show()
     }
 
-    override fun displayUndoRemovingSuccessImage(position: Int, successImage: SuccessImageEntity) {
+    override fun displayUndoRemovingSuccessImage(position: Int, successImage: SuccessImageModel) {
         successImageAdapter?.successImages?.add(position, successImage)
         successImageAdapter?.notifyItemInserted(position)
         edit_image_recycler_view.scrollToPosition(position)
@@ -201,13 +205,14 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
             dateStarted = dateHelper?.checkBlankDate(edit_date_started.text.toString()).orEmpty()
             dateEnded = dateHelper?.checkBlankDate(edit_date_ended.text.toString()).orEmpty()
 
-            val success = SuccessEntity(null,
+            val success = SuccessModel(
+                    null,
                     title = edit_title.text.toString(),
-                    category = edit_category.text.toString(),
+                    category = currentCategory,
                     description = edit_description.text.toString(),
                     dateStarted = dateStarted,
                     dateEnded = dateEnded,
-                    importance = edit_importance_iv.tag as Int)
+                    importance = currentImportance)
 
             presenter.onSaveChanges(success, successImageAdapter?.successImages)
 
@@ -215,7 +220,7 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
 
     }
 
-    override fun addSuccessImages(successImages: ArrayList<SuccessImageEntity>) {
+    override fun addSuccessImages(successImages: ArrayList<SuccessImageModel>) {
 
         for (successImage in successImages) {
             successImageAdapter?.successImages?.add(successImage)
@@ -263,13 +268,8 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
 
     }
 
-    private fun setImportance() {
-
-        val importanceIntent = Intent(this@EditSuccessActivity, ImportancePopupActivity::class.java)
-
-        importanceIntent.putExtra("importance", edit_importance_iv.tag as Int)
-        startActivityForResult(importanceIntent, REQUEST_CODE_IMPORTANCE)
-
+    private fun startSetImportanceActivity() {
+        startActivity<ImportancePopupActivity>(ImportancePopupBundle(currentImportance), REQUEST_CODE_IMPORTANCE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -277,12 +277,18 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
 
         if (requestCode == REQUEST_CODE_IMPORTANCE) {
             if (resultCode == Activity.RESULT_OK) {
+                //TODO move bundles to presenters
+                if (data != null) {
+                    val bundle = data.getSerializableExtra("bundle")
 
-                val importance = data?.getIntExtra("importance", dummyImportanceDefault)
-                edit_importance_iv.tag = importance
-                drawableSelector?.selectImportanceImage(
-                        edit_importance_iv,
-                        importance ?: dummyImportanceDefault)
+                    if (bundle is ImportancePopupBundle) {
+                        currentImportance = bundle.importance
+                    }
+
+                    drawableSelector?.selectImportanceImage(edit_importance_iv, currentImportance)
+                } else {
+                    alerts.displayUnexpectedError()
+                }
             }
         }
 
@@ -314,7 +320,7 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
         return cameraModule as ImmediateCameraModule
     }
 
-    override fun updateImagePath(selectedImagePosition: Int, successImage: SuccessImageEntity) {
+    override fun updateImagePath(selectedImagePosition: Int, successImage: SuccessImageModel) {
         successImageAdapter?.updateSuccessImage(selectedImagePosition, successImage)
         successImageAdapter?.notifyItemChanged(selectedImagePosition)
         val imagePickerAdapter = CustomImagePickerAdapter(this)
@@ -346,13 +352,13 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
         }
     }
 
-    override fun onSuccessImageClick(successImage: SuccessImageEntity, successImageIv: ImageView, position: Int, constraintLayout: ConstraintLayout, cardView: CardView) {
+    override fun onSuccessImageClick(successImage: SuccessImageModel, successImageIv: ImageView, position: Int, constraintLayout: ConstraintLayout, cardView: CardView) {
 
         presenter.onSuccessImageClick(position)
 
     }
 
-    override fun onSuccessImageLongClick(successImage: SuccessImageEntity, successImageIv: ImageView, position: Int, constraintLayout: ConstraintLayout, cardView: CardView) {
+    override fun onSuccessImageLongClick(successImage: SuccessImageModel, successImageIv: ImageView, position: Int, constraintLayout: ConstraintLayout, cardView: CardView) {
 
         presenter.onSuccessImageLongClick(position, cardView)
 
@@ -440,7 +446,7 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView, EditSucc
         finish()
     }
 
-    override fun displaySuccessImages(successImages: ArrayList<SuccessImageEntity>) {
+    override fun displaySuccessImages(successImages: ArrayList<SuccessImageModel>) {
 
         successImageAdapter?.successImages = successImages
         successImageAdapter?.notifyDataSetChanged()

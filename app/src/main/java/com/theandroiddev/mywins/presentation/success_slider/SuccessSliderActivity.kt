@@ -12,20 +12,18 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.content.res.ResourcesCompat
 import android.widget.Toast
 import com.theandroiddev.mywins.R
-import com.theandroiddev.mywins.data.entity.SuccessEntity
-import com.theandroiddev.mywins.mvp.MvpDaggerAppCompatActivity
+import com.theandroiddev.mywins.core.mvp.MvpDaggerAppCompatActivity
+import com.theandroiddev.mywins.core.mvp.startActivity
 import com.theandroiddev.mywins.presentation.edit_success.EditSuccessActivity
-import com.theandroiddev.mywins.presentation.successes.SuccessesBundle
+import com.theandroiddev.mywins.presentation.edit_success.EditSuccessBundle
+import com.theandroiddev.mywins.presentation.successes.SuccessModel
 import com.theandroiddev.mywins.utils.Constants.Companion.REQUEST_CODE_INSERT
 import kotlinx.android.synthetic.main.activity_slider.*
 
-/**
- * Created by jakub on 27.10.17.
- */
+class SuccessSliderActivity : MvpDaggerAppCompatActivity<SuccessSliderView,
+        SuccessSliderBundle, SuccessSliderPresenter>(), SuccessSliderView, ActionHandler {
 
-class SuccessSliderActivity : MvpDaggerAppCompatActivity<SuccessSliderView, SuccessSliderPresenter>(), SuccessSliderView, ActionHandler {
-
-    lateinit var adapter: ScreenSlidePagerAdapter
+    private lateinit var adapter: ScreenSlidePagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,15 +34,7 @@ class SuccessSliderActivity : MvpDaggerAppCompatActivity<SuccessSliderView, Succ
 
         initFab(slider_fab)
         slider_pager.adapter = adapter
-
-        val extras = intent.extras
-        if (extras != null) {
-            val bundle = extras.getSerializable("bundle")
-
-            if (bundle != null && bundle is SuccessesBundle) {
-                presenter.onExtrasLoaded(bundle.successes, bundle.position)
-            }
-        }
+        presenter.onAfterCreate()
 
     }
 
@@ -91,7 +81,7 @@ class SuccessSliderActivity : MvpDaggerAppCompatActivity<SuccessSliderView, Succ
 
     }
 
-    override fun displaySuccesses(successes: MutableList<SuccessEntity>, position: Int) {
+    override fun displaySuccesses(successes: MutableList<SuccessModel>, position: Int) {
 
         adapter.successes = successes
         slider_pager.currentItem = position
@@ -100,12 +90,7 @@ class SuccessSliderActivity : MvpDaggerAppCompatActivity<SuccessSliderView, Succ
     }
 
     override fun displayEditSuccessActivity(id: Long) {
-        val editSuccessIntent = Intent(this@SuccessSliderActivity, EditSuccessActivity::class.java)
-
-        editSuccessIntent.putExtra("id", id)
-
-        startActivityForResult(editSuccessIntent, REQUEST_CODE_INSERT)
-
+        startActivity<EditSuccessActivity>(EditSuccessBundle(id), REQUEST_CODE_INSERT)
     }
 
     override fun onAddImage() {
@@ -114,7 +99,7 @@ class SuccessSliderActivity : MvpDaggerAppCompatActivity<SuccessSliderView, Succ
 
     class ScreenSlidePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
 
-        var successes = mutableListOf<SuccessEntity>()
+        var successes = mutableListOf<SuccessModel>()
 
         override fun getItem(position: Int): Fragment {
             val bundle = Bundle()
