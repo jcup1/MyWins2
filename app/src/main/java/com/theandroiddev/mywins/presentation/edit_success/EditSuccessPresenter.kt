@@ -74,7 +74,7 @@ constructor(
                         }
                     }
 
-                }
+                }.addToDisposables()
     }
 
     private fun loadSuccessImages(successesServiceModel: SuccessesServiceModel, id: Long) {
@@ -106,7 +106,7 @@ constructor(
                         }
                     }
 
-                }
+                }.addToDisposables()
     }
 
     fun onImagePickerResultOk(successImages: MutableList<SuccessImageModel>?, data: Intent,
@@ -179,7 +179,7 @@ constructor(
                                 view.alerts?.displayUnexpectedError()
                             }
                         }
-                    }
+                    }.addToDisposables()
 
         }
 
