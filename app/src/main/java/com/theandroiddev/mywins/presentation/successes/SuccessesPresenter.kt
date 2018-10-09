@@ -22,6 +22,7 @@ import com.theandroiddev.mywins.utils.Constants.Companion.NOT_ACTIVE
 import com.theandroiddev.mywins.utils.Constants.Companion.SortType
 import com.theandroiddev.mywins.utils.SearchFilter
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
@@ -76,7 +77,7 @@ class SuccessesPresenter @Inject() constructor(
                         }
                     }
 
-                }
+                }.addToDisposables()
 
     }
 
@@ -168,7 +169,7 @@ class SuccessesPresenter @Inject() constructor(
                         }
                     }
 
-                }
+                }.addToDisposables()
     }
 
 
@@ -272,7 +273,7 @@ class SuccessesPresenter @Inject() constructor(
                             }
                         }
 
-                    }
+                    }.addToDisposables()
 
         } else {
             ifViewAttached { view ->
@@ -369,7 +370,7 @@ class SuccessesPresenter @Inject() constructor(
                     ifViewAttached { view ->
                         view.displayUpdatedSuccesses()
                     }
-                }
+                }.addToDisposables()
 
     }
 
