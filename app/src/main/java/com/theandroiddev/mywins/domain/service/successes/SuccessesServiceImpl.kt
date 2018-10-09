@@ -1,8 +1,10 @@
 package com.theandroiddev.mywins.domain.service.successes
 
-import com.theandroiddev.mywins.data.data_source.SuccessesDataSourceImpl
-import com.theandroiddev.mywins.data.entity.SuccessEntity
-import com.theandroiddev.mywins.data.entity.SuccessImageEntity
+import com.theandroiddev.mywins.data.repository.SuccessesLocalDataSource
+import com.theandroiddev.mywins.data.model.toServiceModel
+import com.theandroiddev.mywins.domain.service.common.InvalidArgumentException
+import com.theandroiddev.mywins.presentation.edit_success.hasOne
+import com.theandroiddev.mywins.utils.Constants.Companion.SortType.TITLE
 import com.theandroiddev.mywins.utils.SearchFilter
 import io.reactivex.Completable
 import io.reactivex.Flowable
@@ -10,59 +12,73 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-/**
- * Created by jakub on 04.11.17.
- */
-
 class SuccessesServiceImpl @Inject constructor(
-        private var successesDataSourceImpl: SuccessesDataSourceImpl) : SuccessesService {
+        private var successesLocalDataSource: SuccessesLocalDataSource)
+    : SuccessesService {
 
-    override fun addSuccess(s: SuccessEntity): Completable {
-        return successesDataSourceImpl.addSuccesses(mutableListOf(s))
+    override fun saveSuccesses(argument: SuccessesServiceArgument): Completable =
+
+            when (argument) {
+                is SuccessesServiceArgument.Successes -> {
+                    val successEntities = argument.successes.map { it.toEntity() }
+                    successesLocalDataSource.addSuccesses(successEntities)
+                }
+            }
+
+
+    override fun fetchSuccess(id: Long): Single<SuccessesServiceResult> {
+        return successesLocalDataSource.fetchSuccess(id).map { successEntity ->
+            SuccessesServiceResult.Successes(mutableListOf(successEntity.toServiceModel()))
+        }
     }
 
-    override fun saveSuccesses(defaultSuccesses: MutableList<SuccessEntity>): Completable {
-        return successesDataSourceImpl.addSuccesses(defaultSuccesses)
-    }
-
-    override fun fetchSuccess(id: Long): Single<SuccessEntity> {
-        return successesDataSourceImpl.fetchSuccess(id)
-    }
-
-    override fun getSuccesses(searchFilter: SearchFilter): Flowable<MutableList<SuccessEntity>> {
-        return successesDataSourceImpl.getSuccesses(searchFilter.searchTerm.orEmpty(),
-                searchFilter.sortType ?: "title", searchFilter.isSortingAscending)
+    override fun getSuccesses(searchFilter: SearchFilter): Flowable<SuccessesServiceResult> {
+        return successesLocalDataSource.getSuccesses(searchFilter.searchTerm.orEmpty(),
+                searchFilter.sortType?.name?.toLowerCase() ?: TITLE.name.toLowerCase(),
+                searchFilter.isSortingAscending)
                 .subscribeOn(Schedulers.io())
+                .map { successEntities ->
+                    SuccessesServiceResult.Successes(successEntities.map { it.toServiceModel() })
+                }
     }
 
-    override fun getSuccessImages(id: Long): Flowable<MutableList<SuccessImageEntity>> {
-        return successesDataSourceImpl.getSuccessImages(id)
+
+    override fun getDefaultSuccesses(): SuccessesServiceResult {
+        return SuccessesServiceResult.Successes(
+                successesLocalDataSource.getDefaultSuccesses().map { successEntity ->
+                    successEntity.toServiceModel()
+                }
+        )
     }
 
-    override fun getDefaultSuccesses(): MutableList<SuccessEntity> {
-        return successesDataSourceImpl.getDefaultSuccesses()
+    override fun editSuccess(argument: SuccessesServiceArgument): Completable {
+//TODO implement better error handling
+        return when (argument) {
+            is SuccessesServiceArgument.Successes -> {
+                if (argument.successes.hasOne()) {
+                    successesLocalDataSource.editSuccess(argument.successes.first().toEntity())
+                } else {
+                    Completable.error(InvalidArgumentException())
+                }
+            }
+        }
     }
 
-    override fun updateForDeleteSuccess(
-            successToRemoveList: MutableList<SuccessEntity>): Completable {
-        return successesDataSourceImpl.removeSuccess(successToRemoveList)
+    override fun removeSuccesses(argument: SuccessesServiceArgument): Completable {
+
+        return Completable.fromAction {
+            when (argument) {
+                is SuccessesServiceArgument.Successes -> {
+                    argument.successes.map { it.toEntity() }.forEach {
+                        successesLocalDataSource.removeSuccess(it)
+                    }
+                }
+            }
+        }
     }
 
-    override fun editSuccess(editSuccess: SuccessEntity): Completable {
-        return successesDataSourceImpl.editSuccess(editSuccess)
-    }
-
-    override fun editSuccessImages(successImageList: MutableList<SuccessImageEntity>,
-                                   successId: Long): Completable {
-        return successesDataSourceImpl.editSuccessImages(successImageList, successId)
-    }
-
-    override fun removeSuccesses(successToRemoveList: MutableList<SuccessEntity>): Completable {
-        return successesDataSourceImpl.removeSuccess(successToRemoveList)
-    }
-
-    override fun clearDatabase(): Completable {
-        return successesDataSourceImpl.clearDatabase()
+    override fun removeAllSuccesses(): Completable {
+        return successesLocalDataSource.removeAllSuccesses()
     }
 
 }

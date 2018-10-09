@@ -1,12 +1,15 @@
 package com.theandroiddev.mywins.presentation.success_slider
 
-import com.theandroiddev.mywins.data.entity.SuccessEntity
-import com.theandroiddev.mywins.data.entity.SuccessImageEntity
-import com.theandroiddev.mywins.mvp.MvpView
+import com.theandroiddev.mywins.core.mvp.MvpView
+import com.theandroiddev.mywins.presentation.successes.SuccessImageModel
+import com.theandroiddev.mywins.presentation.successes.SuccessModel
 
 interface SuccessSliderFragmentView : MvpView {
 
-    fun displaySuccessData(success: SuccessEntity, successImages: MutableList<SuccessImageEntity>)
+    fun displaySuccessData(
+            success: SuccessModel,
+            successImages: List<SuccessImageModel>
+    )
 
     fun startImageActivity(position: Int, imagePaths: ArrayList<String>)
 

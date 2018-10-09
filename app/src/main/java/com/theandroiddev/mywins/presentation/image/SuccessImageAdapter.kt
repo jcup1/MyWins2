@@ -10,8 +10,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import com.squareup.picasso.Picasso
 import com.theandroiddev.mywins.R
-import com.theandroiddev.mywins.data.entity.SuccessImageEntity
 import com.theandroiddev.mywins.presentation.image.SuccessImageAdapter.ViewHolder
+import com.theandroiddev.mywins.presentation.successes.SuccessImageModel
 import java.io.File
 
 class SuccessImageAdapter(
@@ -19,7 +19,7 @@ class SuccessImageAdapter(
         private val successImageLayout: Int,
         private val context: Context?) : RecyclerView.Adapter<ViewHolder>() {
 
-    var successImages: MutableList<SuccessImageEntity> = mutableListOf()
+    var successImages: MutableList<SuccessImageModel> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(successImageLayout, parent, false)
@@ -49,10 +49,10 @@ class SuccessImageAdapter(
     }
 
     interface OnSuccessImageClickListener {
-        fun onSuccessImageClick(successImage: SuccessImageEntity, successImageIv: ImageView, position: Int, constraintLayout: ConstraintLayout,
+        fun onSuccessImageClick(successImage: SuccessImageModel, successImageIv: ImageView, position: Int, constraintLayout: ConstraintLayout,
                                 cardView: CardView)
 
-        fun onSuccessImageLongClick(successImage: SuccessImageEntity, successImageIv: ImageView, position: Int, constraintLayout: ConstraintLayout,
+        fun onSuccessImageLongClick(successImage: SuccessImageModel, successImageIv: ImageView, position: Int, constraintLayout: ConstraintLayout,
                                     cardView: CardView)
     }
 
@@ -71,7 +71,7 @@ class SuccessImageAdapter(
 
         }
 
-        fun bind(successImage: SuccessImageEntity, position: Int) {
+        fun bind(successImage: SuccessImageModel, position: Int) {
 
             itemView.setOnClickListener { listener.onSuccessImageClick(successImage, successImageIv, position, constraintLayout, cardView) }
             itemView.setOnLongClickListener {
@@ -81,15 +81,15 @@ class SuccessImageAdapter(
         }
     }
 
-    fun addSuccessImage(position: Int, successImage: SuccessImageEntity) {
+    fun addSuccessImage(position: Int, successImage: SuccessImageModel) {
         this.successImages.add(position, successImage)
     }
 
-    fun updateSuccessImage(position: Int, successImage: SuccessImageEntity) {
+    fun updateSuccessImage(position: Int, successImage: SuccessImageModel) {
         this.successImages[position] = successImage
     }
 
-    fun addSuccessImage(successImage: SuccessImageEntity) {
+    fun addSuccessImage(successImage: SuccessImageModel) {
         this.successImages.add(successImage)
     }
 }

@@ -25,19 +25,24 @@
     <string name="remove_date_menu">Remove date</string>
     <string name="remove_item_menu">Remove success</string>
     <string name="remove_image_menu">Remove image</string>
+
     <string name="importance_huge">Huge</string>
     <string name="importance_big">Big</string>
     <string name="importance_medium">Medium</string>
     <string name="importance_small">Small</string>
+    <string name="importance_none">NONE</string>
+
     <string name="date_started_empty">Start Date</string>
     <string name="date_ended_empty">End Date</string>
     <string name="edit_success_pick_both">Take or pick photo</string>
 
-    <string name="category_video">video</string>
-    <string name="category_sport">sport</string>
-    <string name="category_money">money</string>
-    <string name="category_journey">journey</string>
-    <string name="category_learn">learn</string>
+    <string name="category_video">Video</string>
+    <string name="category_sport">Sport</string>
+    <string name="category_money">Money</string>
+    <string name="category_journey">Journey</string>
+    <string name="category_learn">Learn</string>
+    <string name="category_other">Other</string>
+    <string name="category_none">Other</string>
 
     <string name="error_title">What\'s the name of your success?</string>
     <string name="error_date_ended">You ended before started!</string>
@@ -61,6 +66,8 @@
     <string name="transition_date_started">dateStarted</string>
     <string name="transition_date_ended">dateEnded</string>
     <string name="transition_importance_iv">importance_iv</string>
+
+    <string name="unexpected_error">Unexpected error</string>
 
 
 </resources>

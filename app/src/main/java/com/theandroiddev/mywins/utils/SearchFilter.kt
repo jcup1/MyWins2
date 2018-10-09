@@ -1,6 +1,7 @@
 package com.theandroiddev.mywins.utils
 
 import android.os.Parcelable
+import com.theandroiddev.mywins.utils.Constants.Companion.SortType
 import kotlinx.android.parcel.Parcelize
 
 /**
@@ -9,6 +10,6 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class SearchFilter(
         var searchTerm: String? = "",
-        var sortType: String? = "title",
+        var sortType: SortType? = SortType.DATE_ADDED,
         var isSortingAscending: Boolean = false
 ) : Parcelable

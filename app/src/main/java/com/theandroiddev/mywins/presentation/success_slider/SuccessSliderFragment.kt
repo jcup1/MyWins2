@@ -18,20 +18,17 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType
 import com.theandroiddev.mywins.R
-import com.theandroiddev.mywins.data.entity.SuccessEntity
-import com.theandroiddev.mywins.data.entity.SuccessImageEntity
-import com.theandroiddev.mywins.mvp.MvpDaggerFragment
+import com.theandroiddev.mywins.core.mvp.MvpDaggerFragment
 import com.theandroiddev.mywins.presentation.image.ImageActivity
 import com.theandroiddev.mywins.presentation.image.SuccessImageAdapter
+import com.theandroiddev.mywins.presentation.successes.SuccessImageModel
+import com.theandroiddev.mywins.presentation.successes.SuccessModel
 import com.theandroiddev.mywins.utils.DrawableSelector
 import kotlinx.android.synthetic.main.content_show_success.*
 import kotlinx.android.synthetic.main.success_layout.*
 
-/**
- * Created by jakub on 27.10.17.
- */
-
-class SuccessSliderFragment : MvpDaggerFragment<SuccessSliderFragmentView, SuccessSliderFragmentPresenter>(),
+class SuccessSliderFragment : MvpDaggerFragment<SuccessSliderFragmentView,
+        SuccessSliderBundle, SuccessSliderFragmentPresenter>(),
         SuccessImageAdapter.OnSuccessImageClickListener, SuccessSliderFragmentView {
 
     private var successImageAdapter: SuccessImageAdapter? = null
@@ -44,7 +41,7 @@ class SuccessSliderFragment : MvpDaggerFragment<SuccessSliderFragmentView, Succe
         super.onAttach(context)
 
         actionHandler = context as ActionHandler
-        drawableSelector = DrawableSelector(activity?.applicationContext)
+        drawableSelector = DrawableSelector(context)
 
     }
 
@@ -86,15 +83,13 @@ class SuccessSliderFragment : MvpDaggerFragment<SuccessSliderFragmentView, Succe
 
     }
 
-    override fun displaySuccessData(success: SuccessEntity, successImages: MutableList<SuccessImageEntity>) {
+    override fun displaySuccessData(success: SuccessModel, successImages: List<SuccessImageModel>) {
 
-        item_title.tag = success.id
         item_title.text = success.title
-        item_category.text = success.category
+        item_category.text = getString(success.category.res)
         show_description.text = success.description
         item_date_started.text = success.dateStarted
         item_date_ended.text = success.dateEnded
-        item_importance_iv.tag = success.importance
 
         drawableSelector?.selectCategoryImage(item_category_iv, success.category, item_category)
         drawableSelector?.selectImportanceImage(item_importance_iv, success.importance)
@@ -105,7 +100,7 @@ class SuccessSliderFragment : MvpDaggerFragment<SuccessSliderFragmentView, Succe
             no_images_tv.visibility = INVISIBLE
         }
 
-        successImageAdapter?.successImages = successImages
+        successImageAdapter?.successImages = successImages.toMutableList()
         successImageAdapter?.notifyDataSetChanged()
 
     }
@@ -134,13 +129,13 @@ class SuccessSliderFragment : MvpDaggerFragment<SuccessSliderFragmentView, Succe
 
     }
 
-    override fun onSuccessImageClick(successImage: SuccessImageEntity, successImageIv: ImageView, position: Int, constraintLayout: ConstraintLayout, cardView: CardView) {
+    override fun onSuccessImageClick(successImage: SuccessImageModel, successImageIv: ImageView, position: Int, constraintLayout: ConstraintLayout, cardView: CardView) {
 
         presenter.onSuccessImageClick(position, successImageAdapter?.successImages)
 
     }
 
-    override fun onSuccessImageLongClick(successImage: SuccessImageEntity, successImageIv: ImageView, position: Int, constraintLayout: ConstraintLayout, cardView: CardView) {
+    override fun onSuccessImageLongClick(successImage: SuccessImageModel, successImageIv: ImageView, position: Int, constraintLayout: ConstraintLayout, cardView: CardView) {
         //TODO add functionality
     }
 
