@@ -11,6 +11,7 @@ data class SuccessesServiceModel(
         val title: String = "N/A",
         val category: Category = Category.NONE,
         val description: String = "N/A",
+        val dateAdded: String = "N/A",
         val dateStarted: String = "N/A",
         val dateEnded: String = "N/A",
         val importance: Importance = Importance.NONE) : Serializable
@@ -21,6 +22,7 @@ fun SuccessesServiceModel.toModel(): SuccessModel {
             this.title,
             this.category,
             this.description,
+            this.dateAdded,
             this.dateStarted,
             this.dateEnded,
             this.importance
@@ -33,6 +35,7 @@ fun SuccessesServiceModel.toEntity(): SuccessEntity {
             this.title,
             this.category,
             this.description,
+            this.dateAdded,
             this.dateStarted,
             this.dateEnded,
             this.importance

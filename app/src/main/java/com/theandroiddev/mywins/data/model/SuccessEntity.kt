@@ -18,6 +18,7 @@ data class SuccessEntity(
         val title: String = "N/A",
         val category: Category = Category.NONE,
         val description: String = "N/A",
+        val dateAdded: String = "N/A",
         val dateStarted: String = "N/A",
         val dateEnded: String = "N/A",
         val importance: Importance = Importance.NONE) : Serializable
@@ -27,6 +28,7 @@ fun SuccessEntity.toLocal() = LocalSuccess(
         this.title,
         this.category.name,
         this.description,
+        this.dateAdded,
         this.dateStarted,
         this.dateEnded,
         this.importance.value
@@ -37,6 +39,7 @@ fun SuccessEntity.toServiceModel() = SuccessesServiceModel(
         this.title,
         this.category,
         this.description,
+        this.dateAdded,
         this.dateStarted,
         this.dateEnded,
         this.importance

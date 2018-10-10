@@ -9,6 +9,7 @@ class SuccessRemoteModel(
         val title: String,
         val category: String,
         val description: String,
+        val dateAdded: String,
         val dateStarted: String,
         val dateEnded: String,
         val importance: Int)
@@ -19,6 +20,7 @@ fun SuccessRemoteModel.toEntity(): SuccessEntity {
             this.title,
             Constants.Companion.Category.valueOf(this.category),
             this.description,
+            this.dateAdded,
             this.dateStarted,
             this.dateEnded,
             Constants.Companion.Importance.values()[this.importance]
