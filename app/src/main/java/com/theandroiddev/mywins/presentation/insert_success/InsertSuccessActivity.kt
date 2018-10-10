@@ -18,6 +18,13 @@ import com.theandroiddev.mywins.utils.Constants.Companion.Importance
 import com.theandroiddev.mywins.utils.DateHelper
 import com.theandroiddev.mywins.utils.DrawableSelector
 import kotlinx.android.synthetic.main.activity_insert_success.*
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
+import org.joda.time.format.DateTimeFormatter
+import org.joda.time.format.DateTimeParser
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.util.*
 
 class InsertSuccessActivity : MvpDaggerAppCompatActivity<InsertSuccessView,
         InsertSuccessBundle, InsertSuccessPresenter>(), InsertSuccessView, View.OnClickListener {
@@ -154,14 +161,18 @@ class InsertSuccessActivity : MvpDaggerAppCompatActivity<InsertSuccessView,
 
         if (dateHelper.validateData(instert_title_et, insert_date_started_tv, insert_date_ended_tv)) {
 
+            val formatter = DateTimeFormat.forPattern(Constants.DATE_FORMAT)
+            val dateNow = DateTime.now()
+
+            val dateAdded = formatter.print(dateNow)
             val dateStarted = dateHelper.checkBlankDate(insert_date_started_tv.text.toString())
             val dateEnded = dateHelper.checkBlankDate(insert_date_ended_tv.text.toString())
 
-            sendData(dateStarted, dateEnded)
+            sendData(dateAdded, dateStarted, dateEnded)
         }
     }
 
-    private fun sendData(dateStarted: String, dateEnded: String) {
+    private fun sendData(dateAdded: String, dateStarted: String, dateEnded: String) {
 
         val returnIntent = Intent()
 
@@ -170,7 +181,7 @@ class InsertSuccessActivity : MvpDaggerAppCompatActivity<InsertSuccessView,
                 instert_title_et.text.toString(),
                 currentCategory,
                 insert_description_et.text.toString(),
-                dateStarted, dateEnded,
+                dateAdded, dateStarted, dateEnded,
                 currentImportance)
         //s.setId(UUID.randomUUID().toString());
         //Log.e(TAG, "sendData: uuid" + s.getId() );

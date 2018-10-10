@@ -1,5 +1,7 @@
 package com.theandroiddev.mywins.data.source
 
+import android.arch.persistence.db.SimpleSQLiteQuery
+import android.arch.persistence.db.SupportSQLiteQuery
 import com.theandroiddev.mywins.local.dao.SuccessDao
 import com.theandroiddev.mywins.data.model.SuccessEntity
 import com.theandroiddev.mywins.data.model.toLocal
@@ -28,7 +30,7 @@ class SuccessesLocalDataSourceImpl @Inject constructor(
         val defaultSuccesses = mutableListOf<SuccessEntity>()
         while (i < 5) {
             defaultSuccesses.add(SuccessEntity(null, dummyTitles[i], dummyCategories[i], dummyDescriptions[i],
-                    dummyStartDates[i], dummyEndDates[i], Constants.Companion.Importance.values()[dummyImportances[i]]))
+                    dummyStartDates[i], dummyStartDates[i], dummyEndDates[i], Constants.Companion.Importance.values()[dummyImportances[i]]))
             i++
         }
         return defaultSuccesses
@@ -50,19 +52,18 @@ class SuccessesLocalDataSourceImpl @Inject constructor(
     override fun getSuccesses(searchTerm: String, sortType: String,
                               isSortingAscending: Boolean): Flowable<List<SuccessEntity>> {
 
-        return if (isSortingAscending) {
-            Flowable.fromCallable {
-                successDao.getAllASC("%$searchTerm%", sortType).map { localSuccess ->
-                    localSuccess.toEntity()
-                }
-            }.subscribeOn(Schedulers.io())
-        } else {
-            Flowable.fromCallable {
-                successDao.getAllDESC("%$searchTerm%", sortType).map { localSuccess ->
-                    localSuccess.toEntity()
-                }
-            }.subscribeOn(Schedulers.io())
-        }
+        val order = if (isSortingAscending) { "ASC" } else { "DESC" }
+
+        var queryString = "SELECT * FROM success WHERE title LIKE '%$searchTerm'"
+        queryString += " ORDER BY $sortType $order"
+
+        val query = SimpleSQLiteQuery(queryString)
+
+        return Flowable.fromCallable {
+            successDao.getAll(query).map { localSuccess ->
+                localSuccess.toEntity()
+            }
+        }.subscribeOn(Schedulers.io())
     }
 
     override fun editSuccess(successEntity: SuccessEntity): Completable {

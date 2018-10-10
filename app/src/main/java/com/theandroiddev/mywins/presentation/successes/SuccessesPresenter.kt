@@ -56,18 +56,15 @@ class SuccessesPresenter @Inject() constructor(
                     when (successesServiceResult) {
                         is SuccessesServiceResult.Successes -> {
                             if (successesServiceResult.successes.isEmpty()) {
-
                                 ifViewAttached { view ->
                                     view.displayNoSuccesses()
                                 }
                             } else {
-
                                 ifViewAttached { view ->
                                     view.displaySuccesses(successesServiceResult.successes.map {
                                         it.toModel()
                                     })
                                 }
-
                             }
                         }
                         is SuccessesServiceResult.Error -> {
@@ -102,7 +99,6 @@ class SuccessesPresenter @Inject() constructor(
         }
 
     }
-
 
     fun sendToRemoveQueue(position: Int, backupSuccess: SuccessModel?) {
 

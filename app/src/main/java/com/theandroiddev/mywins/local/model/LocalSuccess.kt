@@ -14,8 +14,9 @@ data class LocalSuccess(
         @ColumnInfo(name = "title") var title: String,
         @ColumnInfo(name = "category") var category: String,
         @ColumnInfo(name = "description") var description: String,
-        @ColumnInfo(name = "dateStarted") var dateStarted: String,
-        @ColumnInfo(name = "dateEnded") var dateEnded: String,
+        @ColumnInfo(name = "date_added") var dateAdded: String,
+        @ColumnInfo(name = "date_started") var dateStarted: String,
+        @ColumnInfo(name = "date_ended") var dateEnded: String,
         @ColumnInfo(name = "importance") var importance: Int
 ) : Serializable
 
@@ -26,6 +27,7 @@ fun LocalSuccess.toEntity(): SuccessEntity {
             this.title,
             Constants.Companion.Category.valueOf(this.category),
             this.description,
+            this.dateAdded,
             this.dateStarted,
             this.dateEnded,
             Constants.Companion.Importance.values()[this.importance]

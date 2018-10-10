@@ -1,17 +1,16 @@
 package com.theandroiddev.mywins.local.dao
 
+import android.arch.persistence.db.SupportSQLiteQuery
 import android.arch.persistence.room.*
 import com.theandroiddev.mywins.local.model.LocalSuccess
+import org.intellij.lang.annotations.Language
 
 @Dao
 interface SuccessDao {
 
     //TODO replace ASC DESC
-    @Query("SELECT * FROM success WHERE title LIKE :searchTerm ORDER BY :sortType ASC")
-    fun getAllASC(searchTerm: String, sortType: String): MutableList<LocalSuccess>
-
-    @Query("SELECT * FROM success WHERE title LIKE :searchTerm ORDER BY :sortType DESC")
-    fun getAllDESC(searchTerm: String, sortType: String): MutableList<LocalSuccess>
+    @RawQuery
+    fun getAll(query: SupportSQLiteQuery): MutableList<LocalSuccess>
 
     @Query("SELECT * FROM success WHERE title LIKE :title LIMIT 1")
     fun findByName(title: String): LocalSuccess
