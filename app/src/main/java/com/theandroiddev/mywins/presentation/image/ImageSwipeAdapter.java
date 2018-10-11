@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
@@ -32,19 +33,13 @@ import butterknife.ButterKnife;
 
 public class ImageSwipeAdapter extends PagerAdapter {
 
-    ConstraintLayout pagerLayout;
-    private Context context;
     private LayoutInflater inflater;
     private DisplayImageOptions options;
     private ArrayList<String> imagePaths;
 
-
     public ImageSwipeAdapter(Context context, ArrayList<String> imagePaths) {
-        this.context = context;
         this.imagePaths = imagePaths;
         inflater = LayoutInflater.from(context);
-
-        ButterKnife.bind((Activity) context);
 
         options = new DisplayImageOptions.Builder()
                 .showImageForEmptyUri(R.drawable.ic_empty)
@@ -59,7 +54,7 @@ public class ImageSwipeAdapter extends PagerAdapter {
     }
 
     @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
+    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         container.removeView((View) object);
     }
 
@@ -68,21 +63,18 @@ public class ImageSwipeAdapter extends PagerAdapter {
         return imagePaths.size();
     }
 
+    @NonNull
     @Override
-    public Object instantiateItem(ViewGroup view, final int position) {
+    public Object instantiateItem(@NonNull ViewGroup view, final int position) {
         View imageLayout = inflater.inflate(R.layout.item_pager_image, view, false);
 
         final TouchImageView touchImageView = imageLayout.findViewById(R.id.image);
         final ProgressBar spinner = imageLayout.findViewById(R.id.loading);
 
-        pagerLayout = imageLayout.findViewById(R.id.pager_image_layout);
-
-
         ImageLoader.getInstance().displayImage(ImageDownloader.Scheme.FILE.wrap(imagePaths.get(position)), touchImageView, options, new SimpleImageLoadingListener() {
             @Override
             public void onLoadingStarted(String imageUri, View view) {
                 spinner.setVisibility(View.VISIBLE);
-
             }
 
             @Override
@@ -114,7 +106,7 @@ public class ImageSwipeAdapter extends PagerAdapter {
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                 spinner.setVisibility(View.GONE);
-                //JCUP- strange bug (I have to set touchImageView visibility to GONE and change it to VISIBLE
+                //strange bug (I have to set touchImageView visibility to GONE and change it to VISIBLE
                 //after ProgressBar is set to GONE. Otherwise it won't work
                 touchImageView.setVisibility(View.VISIBLE);
 
@@ -126,12 +118,13 @@ public class ImageSwipeAdapter extends PagerAdapter {
     }
 
     @Override
-    public boolean isViewFromObject(View view, Object object) {
+    public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
         return view.equals(object);
     }
 
     @Override
     public void restoreState(Parcelable state, ClassLoader loader) {
+
     }
 
     @Override
