@@ -113,12 +113,10 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
 
     }
 
-
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         searchAction = menu.findItem(R.id.action_search)
         return super.onPrepareOptionsMenu(menu)
     }
-
 
     override fun onBackPressed() {
 
@@ -221,7 +219,6 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
 
             animator.start()
         }
-
 
     }
 

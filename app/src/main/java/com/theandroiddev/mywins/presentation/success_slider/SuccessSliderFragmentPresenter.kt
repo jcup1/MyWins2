@@ -56,7 +56,7 @@ class SuccessSliderFragmentPresenter @Inject constructor(
                         }
                     }
 
-                }.addToDisposables()
+                }.addToDisposables(disposables)
     }
 
     private fun getSuccessImages(id: Long, successesServiceModel: SuccessesServiceModel) {
@@ -82,7 +82,7 @@ class SuccessSliderFragmentPresenter @Inject constructor(
                         }
                     }
 
-                }.addToDisposables()
+                }.addToDisposables(disposables)
     }
 
     fun onSuccessImageClick(position: Int, successImages: MutableList<SuccessImageModel>?) {
