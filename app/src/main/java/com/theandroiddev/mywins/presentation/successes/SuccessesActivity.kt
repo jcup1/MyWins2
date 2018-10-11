@@ -268,20 +268,22 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
 
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == REQUEST_CODE_INSERT) {
+        if (data != null) {
+            if (resultCode == Activity.RESULT_OK) {
+                if (requestCode == REQUEST_CODE_INSERT) {
 
-                onSuccessAdded(data)
+                    onSuccessAdded(data)
 
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                onSuccessNotAdded()
-            }
-        } else if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == REQUEST_CODE_SLIDER) {
-                onSliderResultSuccess(data)
+                }
+                if (resultCode == Activity.RESULT_CANCELED) {
+                    onSuccessNotAdded()
+                }
+            } else if (resultCode == Activity.RESULT_OK) {
+                if (requestCode == REQUEST_CODE_SLIDER) {
+                    onSliderResultSuccess(data)
+                }
             }
         }
 

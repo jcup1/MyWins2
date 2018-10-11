@@ -67,6 +67,11 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView,
             presenter.onSwiped(position, successImageAdapter?.successImages?.get(position))
 
         }
+
+        override fun getSwipeDirs(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
+            if(viewHolder?.adapterPosition == 0) return 0
+            return super.getSwipeDirs(recyclerView, viewHolder)
+        }
     }
 
     private var mImageUri: Uri? = null
@@ -409,7 +414,6 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView,
 
     private fun openDatePopupMenu(s: String) {
 
-
         var popupMenu: PopupMenu? = null
         if (s == getString(R.string.date_started_empty)) {
             popupMenu = PopupMenu(this@EditSuccessActivity, edit_date_started)
@@ -437,7 +441,6 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView,
             }
         }
 
-
     }
 
     override fun displaySlider() {
@@ -450,6 +453,7 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView,
 
         successImageAdapter?.successImages = successImages
         successImageAdapter?.notifyDataSetChanged()
+        successImageAdapter?.successImages?.firstOrNull()
     }
 
     companion object {
