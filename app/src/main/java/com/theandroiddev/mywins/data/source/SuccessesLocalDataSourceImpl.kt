@@ -54,7 +54,7 @@ class SuccessesLocalDataSourceImpl @Inject constructor(
 
         val order = if (isSortingAscending) { "ASC" } else { "DESC" }
 
-        var queryString = "SELECT * FROM success WHERE title LIKE '%$searchTerm'"
+        var queryString = "SELECT * FROM success WHERE title LIKE '%$searchTerm%'"
         queryString += " ORDER BY $sortType $order"
 
         val query = SimpleSQLiteQuery(queryString)
