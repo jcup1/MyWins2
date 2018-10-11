@@ -43,7 +43,6 @@ class SuccessesPresenter @Inject() constructor(
     private var isSortingAscending: Boolean = true
     private var searchTerm: String? = ""
 
-
     val searchFilter: SearchFilter
         get() = SearchFilter(searchTerm, sortType, isSortingAscending)
 
@@ -74,7 +73,7 @@ class SuccessesPresenter @Inject() constructor(
                         }
                     }
 
-                }.addToDisposables()
+                }.addToDisposables(disposables)
 
     }
 
@@ -165,7 +164,7 @@ class SuccessesPresenter @Inject() constructor(
                         }
                     }
 
-                }.addToDisposables()
+                }.addToDisposables(disposables)
     }
 
 
@@ -269,7 +268,7 @@ class SuccessesPresenter @Inject() constructor(
                             }
                         }
 
-                    }.addToDisposables()
+                    }.addToDisposables(disposables)
 
         } else {
             ifViewAttached { view ->
@@ -366,7 +365,7 @@ class SuccessesPresenter @Inject() constructor(
                     ifViewAttached { view ->
                         view.displayUpdatedSuccesses()
                     }
-                }.addToDisposables()
+                }.addToDisposables(disposables)
 
     }
 

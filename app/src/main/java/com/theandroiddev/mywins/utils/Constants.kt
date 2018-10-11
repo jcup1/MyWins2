@@ -50,7 +50,6 @@ class Constants {
         dummyEndDates.add("15-05-01")
         dummyEndDates.add("16-02-21")
 
-
     }
 
     companion object {
@@ -89,7 +88,7 @@ class Constants {
 
         val NOT_ACTIVE = -1
         var PACKAGE_NAME = "com.theandroiddev.mywins"
-        var DATE_FORMAT = "yy-MM-dd"
+        var DATE_FORMAT = "dd-MM-yy"
         val DATE = "Date"
 
         enum class Category(val res: Int) {
@@ -119,7 +118,6 @@ class Constants {
             DATE_ENDED,
             DATE_ADDED
         }
-
 
     }
 }
