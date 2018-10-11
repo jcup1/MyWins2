@@ -335,7 +335,7 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView,
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
 
         if (requestCode == RC_CAMERA) {
-            if (grantResults.size != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 captureImage()
             }
         }
@@ -414,11 +414,13 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView,
 
     private fun openDatePopupMenu(s: String) {
 
-        var popupMenu: PopupMenu? = null
+        val popupMenu: PopupMenu? =
         if (s == getString(R.string.date_started_empty)) {
-            popupMenu = PopupMenu(this@EditSuccessActivity, edit_date_started)
+            PopupMenu(this@EditSuccessActivity, edit_date_started)
         } else if (s == getString(R.string.date_ended_empty)) {
-            popupMenu = PopupMenu(this@EditSuccessActivity, edit_date_ended)
+            PopupMenu(this@EditSuccessActivity, edit_date_ended)
+        } else {
+            null
         }
 
         if (popupMenu != null) {
