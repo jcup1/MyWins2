@@ -143,6 +143,9 @@ dependencies {
 
     // Image zoom
     implementation 'it.sephiroth.android.library.imagezoom:imagezoom:2.3.0'
+
+    // FAB
+    implementation 'com.getbase:floatingactionbutton:1.10.1'
 }
 repositories {
     mavenCentral()
