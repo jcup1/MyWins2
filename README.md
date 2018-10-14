@@ -1,7 +1,12 @@
+
 # MyWins2
+[<img src="https://gitlab.com/juanitobananas/wave-up/raw/master/google-play-store/google-play-badge.png"
+      alt="Get it on Google Play"
+      height="80">](https://play.google.com/store/apps/details?id=com.theandroiddev.mywins)
+
 This is the refactored version of MyWins app
 ## About MyWins
-MyWins allows you to keep the list of your life achievements in one eye-friendly place. All of them are editable and contain title, description, date, importance, category, and photos. 
+MyWins allows you to keep the list of your life achievements in one eye-friendly place. Achievements are editable and can contain title, description, date, importance, category, and photos. 
 
 It's a simple way to stay motivated. In case you are a very successful person, you can sort successes in many ways. Although I don't recommend adding too much of them because of the risk of being critically overwhelmed.
 
