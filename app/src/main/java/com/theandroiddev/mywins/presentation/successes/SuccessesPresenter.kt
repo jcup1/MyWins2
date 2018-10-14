@@ -429,7 +429,7 @@ class SuccessesPresenter @Inject() constructor(
     }
 
 
-    fun clearSearch() {
+    private fun clearSearch() {
         searchTerm = ""
         //onExtrasLoaded();
 

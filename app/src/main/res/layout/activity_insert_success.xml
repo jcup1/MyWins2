@@ -20,8 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Android"
-            android:textSize="14sp"
-            android:visibility="gone"
+            android:textSize="16sp"
             app:layout_constraintHorizontal_bias="0.501"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -45,10 +44,9 @@
             android:id="@+id/instert_title_et"
             android:layout_width="0dp"
             android:layout_height="43dp"
-            android:layout_marginEnd="24dp"
             android:layout_marginLeft="24dp"
+            android:layout_marginTop="16dp"
             android:layout_marginRight="24dp"
-            android:layout_marginStart="24dp"
             android:ems="10"
             android:hint="Name"
             android:inputType="textPersonName"
@@ -58,7 +56,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/insert_category_tv"/>
+            app:layout_constraintTop_toBottomOf="@+id/insert_category_tv" />
 
         <EditText
             android:id="@+id/insert_description_et"
@@ -120,81 +118,73 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
             android:text="Medium"
             android:textAlignment="center"
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/insert_date_ended_tv"/>
+            app:layout_constraintTop_toBottomOf="@+id/insert_date_ended_tv" />
 
         <ImageView
             android:id="@+id/insert_importance_iv_1"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginEnd="8dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginRight="8dp"
             app:layout_constraintBottom_toBottomOf="@+id/insert_importance_iv_2"
             app:layout_constraintRight_toLeftOf="@+id/insert_importance_iv_2"
             app:layout_constraintTop_toTopOf="@+id/insert_importance_iv_2"
-            app:srcCompat="@drawable/circle"
-            />
+            app:srcCompat="@drawable/circle" />
 
         <ImageView
             android:id="@+id/insert_importance_iv_2"
 
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginEnd="4dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginRight="4dp"
             app:layout_constraintBottom_toBottomOf="@+id/insert_importance_iv_3"
             app:layout_constraintRight_toLeftOf="@+id/guideline2"
             app:layout_constraintTop_toTopOf="@+id/insert_importance_iv_3"
             app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/circle"/>
+            app:srcCompat="@drawable/circle" />
 
         <ImageView
             android:id="@+id/insert_importance_iv_4"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
             app:layout_constraintBottom_toBottomOf="@+id/insert_importance_iv_3"
             app:layout_constraintLeft_toRightOf="@+id/insert_importance_iv_3"
             app:layout_constraintTop_toTopOf="@+id/insert_importance_iv_3"
-            app:srcCompat="@drawable/circle"
-            />
+            app:srcCompat="@drawable/circle" />
 
         <ImageView
             android:id="@+id/insert_importance_iv_3"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
             android:layout_marginTop="9dp"
             app:layout_constraintLeft_toLeftOf="@+id/guideline2"
             app:layout_constraintTop_toBottomOf="@+id/insert_importance_tv"
-            app:srcCompat="@drawable/circle"/>
+            app:srcCompat="@drawable/circle" />
 
         <Button
             android:id="@+id/insert_add_btn"
             android:layout_width="136dp"
             android:layout_height="48dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"
+            android:layout_marginTop="24dp"
             android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
             android:text="ADD"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/insert_importance_iv_3"
-            app:layout_constraintVertical_bias="0.0"/>
+            app:layout_constraintVertical_bias="0.0" />
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline2"
