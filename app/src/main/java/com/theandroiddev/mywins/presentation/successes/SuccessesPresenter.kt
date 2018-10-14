@@ -179,69 +179,61 @@ class SuccessesPresenter @Inject() constructor(
 
         if (id == R.id.action_search) {
             toggleSearchBar(isSearchOpened)
-        }//TODO it's so dumb
-        if (id == R.id.action_date_started) {
-
-            if (sortType != SortType.DATE_STARTED) {
-                sortType = SortType.DATE_STARTED
-            } else {
-                isSortingAscending = !isSortingAscending
-            }
-            loadSuccesses(searchFilter)
-
         }
-        if (id == R.id.action_date_ended) {
+        when (id) {
+            R.id.action_date_started -> {
 
-            if (sortType != SortType.DATE_ENDED) {
-                sortType = SortType.DATE_ENDED
-            } else {
-                isSortingAscending = !isSortingAscending
+                if (sortType != SortType.DATE_STARTED) {
+                    sortType = SortType.DATE_STARTED
+                } else {
+                    isSortingAscending = !isSortingAscending
+                }
+                loadSuccesses(searchFilter)
+
             }
-            loadSuccesses(searchFilter)
-
-        }
-        if (id == R.id.action_title) {
-
-            if (sortType != SortType.TITLE) {
-                sortType = SortType.TITLE
-            } else {
-                isSortingAscending = !isSortingAscending
+            R.id.action_date_ended -> {
+                if (sortType != SortType.DATE_ENDED) {
+                    sortType = SortType.DATE_ENDED
+                } else {
+                    isSortingAscending = !isSortingAscending
+                }
+                loadSuccesses(searchFilter)
             }
-            loadSuccesses(searchFilter)
-
-        }
-        if (id == R.id.action_date_added) {
-
-            if (sortType != SortType.DATE_ADDED) {
-                sortType = SortType.DATE_ADDED
-            } else {
-                isSortingAscending = !isSortingAscending
+            R.id.action_title -> {
+                if (sortType != SortType.TITLE) {
+                    sortType = SortType.TITLE
+                } else {
+                    isSortingAscending = !isSortingAscending
+                }
+                loadSuccesses(searchFilter)
             }
-            loadSuccesses(searchFilter)
-
-        }
-        if (id == R.id.action_importance) {
-
-            if (sortType != SortType.IMPORTANCE) {
-                sortType = SortType.IMPORTANCE
-            } else {
-                isSortingAscending = !isSortingAscending
+            R.id.action_date_added -> {
+                if (sortType != SortType.DATE_ADDED) {
+                    sortType = SortType.DATE_ADDED
+                } else {
+                    isSortingAscending = !isSortingAscending
+                }
+                loadSuccesses(searchFilter)
             }
-            loadSuccesses(searchFilter)
-
-        }
-        if (id == R.id.action_description) {
-
-            if (sortType != SortType.DESCRIPTION) {
-                sortType = SortType.DESCRIPTION
-            } else {
-                isSortingAscending = !isSortingAscending
+            R.id.action_importance -> {
+                if (sortType != SortType.IMPORTANCE) {
+                    sortType = SortType.IMPORTANCE
+                } else {
+                    isSortingAscending = !isSortingAscending
+                }
+                loadSuccesses(searchFilter)
             }
-            loadSuccesses(searchFilter)
-
+            R.id.action_description -> {
+                if (sortType != SortType.DESCRIPTION) {
+                    sortType = SortType.DESCRIPTION
+                } else {
+                    isSortingAscending = !isSortingAscending
+                }
+                loadSuccesses(searchFilter)
+            }
         }
+
     }
-
 
     fun toggleSearchBar(isSearchOpened: Boolean) {
         if (isSearchOpened) {
@@ -408,7 +400,7 @@ class SuccessesPresenter @Inject() constructor(
                     constraintLayout: ConstraintLayout, cardView: CardView) {
 
         //TODO Fix this animation
-/*        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 
             ifViewAttached { view ->
                 view.displaySliderAnimation(successes, success, position, titleTv,
@@ -420,7 +412,7 @@ class SuccessesPresenter @Inject() constructor(
                 view.displaySlider(successes)
             }
 
-        }*/
+        }
 
         ifViewAttached { view ->
             view.displaySlider(successes)

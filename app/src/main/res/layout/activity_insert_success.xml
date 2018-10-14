@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true">
 
-    <android.support.constraint.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -24,21 +23,19 @@
             app:layout_constraintHorizontal_bias="0.501"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/insert_category_iv"/>
+            app:layout_constraintTop_toBottomOf="@+id/insert_category_iv" />
 
         <ImageView
             android:id="@+id/insert_category_iv"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@mipmap/ic_launcher"/>
+            tools:srcCompat="@mipmap/ic_launcher" />
 
         <EditText
             android:id="@+id/instert_title_et"
@@ -62,11 +59,11 @@
             android:id="@+id/insert_description_et"
             android:layout_width="0dp"
             android:layout_height="43dp"
-            android:layout_marginEnd="56dp"
-            android:layout_marginLeft="24dp"
-            android:layout_marginRight="56dp"
             android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="56dp"
+            android:layout_marginRight="56dp"
             android:ems="10"
             android:hint="Description"
             android:inputType="textPersonName"
@@ -74,7 +71,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/instert_title_et"/>
+            app:layout_constraintTop_toBottomOf="@+id/instert_title_et" />
 
         <ImageView
             android:id="@+id/insert_date_ended_iv"
@@ -86,7 +83,7 @@
             app:layout_constraintLeft_toRightOf="@+id/insert_date_started_iv"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/insert_description_et"
-            app:srcCompat="@drawable/ic_date_range_black_24dp"/>
+            app:srcCompat="@drawable/ic_date_range_black_24dp" />
 
         <ImageView
             android:id="@+id/insert_date_started_iv"
@@ -98,7 +95,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/insert_date_ended_iv"
             app:layout_constraintTop_toBottomOf="@+id/insert_description_et"
-            app:srcCompat="@drawable/ic_date_range_black_24dp"/>
+            app:srcCompat="@drawable/ic_date_range_black_24dp" />
 
         <ImageView
             android:id="@+id/insert_description_iv"
@@ -111,7 +108,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@+id/insert_description_et"
             app:layout_constraintVertical_bias="1.0"
-            app:srcCompat="@drawable/ic_create_black_24dp"/>
+            app:srcCompat="@drawable/ic_create_black_24dp" />
 
         <TextView
             android:id="@+id/insert_importance_tv"
@@ -193,7 +190,7 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.5"
             tools:layout_editor_absoluteX="192dp"
-            tools:layout_editor_absoluteY="81dp"/>
+            tools:layout_editor_absoluteY="81dp" />
 
         <TextView
             android:id="@+id/insert_date_started_tv"
@@ -206,8 +203,7 @@
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="@+id/insert_date_started_iv"
             app:layout_constraintRight_toRightOf="@+id/insert_date_started_iv"
-            app:layout_constraintTop_toBottomOf="@+id/insert_date_started_iv"
-            />
+            app:layout_constraintTop_toBottomOf="@+id/insert_date_started_iv" />
 
         <TextView
             android:id="@+id/insert_date_ended_tv"
@@ -219,7 +215,7 @@
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="@+id/insert_date_ended_iv"
             app:layout_constraintRight_toRightOf="@+id/insert_date_ended_iv"
-            app:layout_constraintTop_toBottomOf="@+id/insert_date_ended_iv"/>
+            app:layout_constraintTop_toBottomOf="@+id/insert_date_ended_iv" />
 
     </android.support.constraint.ConstraintLayout>
 
