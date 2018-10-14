@@ -399,20 +399,20 @@ class SuccessesPresenter @Inject() constructor(
                     dateEndedTv: TextView, categoryIv: ImageView, importanceIv: ImageView,
                     constraintLayout: ConstraintLayout, cardView: CardView) {
 
-        //TODO Fix this animation
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-
-            ifViewAttached { view ->
-                view.displaySliderAnimation(successes, success, position, titleTv,
-                        categoryTv, dateStartedTv, dateEndedTv, categoryIv, importanceIv,
-                        constraintLayout, cardView)
-            }
-        } else {
-            ifViewAttached { view ->
-                view.displaySlider(successes)
-            }
-
-        }
+//        //TODO Fix this animation
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+//
+//            ifViewAttached { view ->
+//                view.displaySliderAnimation(successes, success, position, titleTv,
+//                        categoryTv, dateStartedTv, dateEndedTv, categoryIv, importanceIv,
+//                        constraintLayout, cardView)
+//            }
+//        } else {
+//            ifViewAttached { view ->
+//                view.displaySlider(successes)
+//            }
+//
+//        }
 
         ifViewAttached { view ->
             view.displaySlider(successes)
