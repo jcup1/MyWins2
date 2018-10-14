@@ -21,8 +21,7 @@
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="@dimen/cardview_default_radius"
         app:cardElevation="@dimen/cardview_default_elevation"
-        app:cardUseCompatPadding="true"
-        >
+        app:cardUseCompatPadding="true">
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/item_constraint_layout"
@@ -57,7 +56,7 @@
                 android:transitionName="@string/transition_category_iv"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@mipmap/ic_launcher"/>
+                tools:srcCompat="@mipmap/ic_launcher" />
 
             <TextView
                 android:id="@+id/item_category"
@@ -66,7 +65,6 @@
                 android:layout_marginBottom="16dp"
                 android:gravity="center"
                 android:maxLines="1"
-                android:text="@string/dummy_category"
                 android:textAlignment="center"
                 android:textColor="@color/secondary_text"
                 android:transitionName="@string/transition_category"
@@ -75,55 +73,54 @@
                 app:layout_constraintLeft_toLeftOf="@+id/item_category_iv"
                 app:layout_constraintRight_toRightOf="@+id/item_category_iv"
                 app:layout_constraintTop_toBottomOf="@+id/item_category_iv"
-                app:layout_constraintVertical_bias="0.0"/>
+                app:layout_constraintVertical_bias="0.0"
+                tools:text="@string/dummy_category" />
 
             <TextView
                 android:id="@+id/item_date_started"
                 android:layout_width="@dimen/item_date_width"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/items_default_margin"
+                android:layout_height="27dp"
                 android:layout_marginTop="@dimen/items_default_margin"
+                android:layout_marginRight="@dimen/items_default_margin"
                 android:gravity="right"
                 android:maxLines="1"
                 android:padding="@dimen/item_date_default_padding"
-                android:text="@string/dummy_date"
                 android:textColor="@color/secondary_text"
                 android:textSize="14sp"
                 android:transitionName="@string/transition_date_started"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="@string/dummy_date" />
 
             <TextView
                 android:id="@+id/item_date_ended"
                 android:layout_width="@dimen/item_date_width"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/items_default_margin"
+                android:layout_height="27dp"
                 android:layout_marginRight="@dimen/items_default_margin"
+                android:layout_marginBottom="@dimen/items_default_margin"
                 android:gravity="right"
                 android:maxLines="1"
                 android:padding="@dimen/item_date_default_padding"
-                android:text="@string/dummy_date"
                 android:textColor="@color/secondary_text"
                 android:textSize="14sp"
                 android:transitionName="@string/transition_date_ended"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/item_importance_iv"
-                app:layout_constraintVertical_bias="0.0"/>
+                app:layout_constraintVertical_bias="0.0"
+                tools:text="@string/dummy_date" />
 
             <ImageView
                 android:id="@+id/item_importance_iv"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="24dp"
                 android:layout_marginRight="@dimen/items_default_margin"
-                android:layout_marginTop="0dp"
                 android:contentDescription="@string/importance_description"
                 android:padding="@dimen/items_default_margin"
                 android:transitionName="@string/transition_importance_iv"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/item_date_started"
-                app:srcCompat="@drawable/importance_huge"
-                />
+                tools:srcCompat="@drawable/importance_huge" />
 
         </android.support.constraint.ConstraintLayout>
 

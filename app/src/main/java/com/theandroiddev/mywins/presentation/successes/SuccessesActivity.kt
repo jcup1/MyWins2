@@ -51,6 +51,7 @@ import com.theandroiddev.mywins.utils.Constants.Companion.NOT_ACTIVE
 import com.theandroiddev.mywins.utils.Constants.Companion.REQUEST_CODE_INSERT
 import com.theandroiddev.mywins.utils.Constants.Companion.REQUEST_CODE_SLIDER
 import com.theandroiddev.mywins.utils.DrawableSelector
+import com.theandroiddev.mywins.utils.KEY_MVP_BUNDLE
 import com.theandroiddev.mywins.utils.SuccessesConfig
 import io.codetail.animation.ViewAnimationUtils
 import kotlinx.android.synthetic.main.activity_main.*
@@ -479,7 +480,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
 
         val intent = Intent(this@SuccessesActivity, SuccessSliderActivity::class.java)
 
-        intent.putExtra("bundle", SuccessesBundle(position, successes))
+        intent.putExtra(KEY_MVP_BUNDLE, SuccessSliderBundle(clickedPosition, successes))
 
         val p1 = android.support.v4.util.Pair(titleTv as View, EXTRA_SUCCESS_TITLE)
         val p2 = android.support.v4.util.Pair(categoryTv as View, EXTRA_SUCCESS_CATEGORY)
