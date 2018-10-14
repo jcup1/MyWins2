@@ -1,7 +1,9 @@
 # MyWins2
 This is the refactored version of MyWins app
 ## About MyWins
-MyWins allows you to keep the list of your life achievements in one eye-friendly place. All of them are are editable and contain title, description, date, importance, category and photos. It's a simple way to stay motivated. In case you are a very successful person, you can sort successes in many ways. Although I don't recommend adding too much of them because of risk of being critically overwhelmed. 
+MyWins allows you to keep the list of your life achievements in one eye-friendly place. All of them are editable and contain title, description, date, importance, category, and photos. 
+
+It's a simple way to stay motivated. In case you are a very successful person, you can sort successes in many ways. Although I don't recommend adding too much of them because of the risk of being critically overwhelmed.
 
 ![App overview](https://media.giphy.com/media/Nm1I1ufzp3sFxe5IHu/giphy.gif)
 
