@@ -18,7 +18,7 @@ PS: I don't take responsibility for your potential suffering from success.
 ## History
 This was my first "bigger" app and for sure it's not a gold standard. Alternatively, I find time to improve something once a week. I do not intend to grow it crazily. But it remains as a example of not being afraid of new arenas as I started it with almost no knowledge at all.
 
-Now I'm in process of refactoring it. Special thanks to [MrOnyszko](https://github.com/mronyszko) for great Android mentoring as he is the inventor of many concepts that I implemented durning the refactor. 
+Now I'm in process of refactoring it. Special thanks to [MrOnyszko](https://github.com/mronyszko) for great Android mentoring as he is the author of some profound concepts that I implemented durning the code refactoring. 
 
 ## For nerds
 This app includes things like:
