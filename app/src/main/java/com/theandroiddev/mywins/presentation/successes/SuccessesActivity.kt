@@ -102,9 +102,8 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
         } else ""
 
     override fun onPause() {
-        super.onPause()
         presenter.onPause(successAdapter.successesToRemove)
-
+        super.onPause()
     }
 
     override fun onResume() {
@@ -402,6 +401,10 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
 
     override fun successRemoved(position: Int) {
         successAdapter.notifyItemRemoved(position)
+    }
+
+    override fun clearSuccessesToRemove() {
+        successAdapter.successesToRemove.clear()
     }
 
     override fun displaySuccessChanged(position: Int, updatedSuccess: SuccessModel) {

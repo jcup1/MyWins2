@@ -46,5 +46,7 @@ interface SuccessesView : MvpView {
     fun restoreSuccess(position: Int, backupSuccess: SuccessModel)
 
     fun displaySuccessRemoved(position: Int, backupSuccess: SuccessModel)
+
+    fun clearSuccessesToRemove()
 }
 

@@ -20,10 +20,10 @@ class Constants {
         dummyTitles.add("Learned Java")
         dummyTitles.add("20 km marathon")
 
-        dummyCategories.add(Category.VIDEO)
-        dummyCategories.add(Category.MONEY)
+        dummyCategories.add(Category.MEDIA)
+        dummyCategories.add(Category.BUSINESS)
         dummyCategories.add(Category.JOURNEY)
-        dummyCategories.add(Category.LEARN)
+        dummyCategories.add(Category.KNOWLEDGE)
         dummyCategories.add(Category.SPORT)
 
         dummyImportances.add(3)
@@ -92,11 +92,11 @@ class Constants {
         val DATE = "Date"
 
         enum class Category(val res: Int) {
-            VIDEO(R.string.category_media),
+            MEDIA(R.string.category_media),
             SPORT(R.string.category_sport),
-            MONEY(R.string.category_business),
+            BUSINESS(R.string.category_business),
             JOURNEY(R.string.category_journey),
-            LEARN(R.string.category_learn),
+            KNOWLEDGE(R.string.category_learn),
             OTHER(R.string.category_other),
             NONE(R.string.category_none)
         }

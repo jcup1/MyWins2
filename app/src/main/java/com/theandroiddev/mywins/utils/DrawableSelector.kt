@@ -17,7 +17,7 @@ class DrawableSelector(private val context: Context) {
         val color: Int
 
         when(category) {
-            Category.VIDEO -> {
+            Category.MEDIA -> {
                 id = R.drawable.ic_video
                 color = R.color.video
             }
@@ -25,7 +25,7 @@ class DrawableSelector(private val context: Context) {
                 id = R.drawable.ic_sport
                 color = R.color.sport
             }
-            Category.MONEY -> {
+            Category.BUSINESS -> {
                 id = R.drawable.ic_money
                 color = R.color.money
             }
@@ -33,7 +33,7 @@ class DrawableSelector(private val context: Context) {
                 id = R.drawable.ic_journey
                 color = R.color.journey
             }
-            Category.LEARN -> {
+            Category.KNOWLEDGE -> {
                 id = R.drawable.ic_learn
                 color = R.color.learn
             }

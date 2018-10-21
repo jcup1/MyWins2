@@ -76,10 +76,10 @@ class SuccessesLocalDataSourceImpl @Inject constructor(
         }.subscribeOn(Schedulers.io())
     }
 
-    override fun removeSuccess(successEntity: SuccessEntity): Completable {
+    override fun removeSuccess(successEntities: List<SuccessEntity>): Completable {
         return Completable.fromAction {
-            successDao.delete(successEntity.toLocal())
-        }
+            successDao.delete(successEntities.map { it.toLocal() })
+        }.subscribeOn(Schedulers.io())
 
     }
 
