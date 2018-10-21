@@ -92,9 +92,9 @@ class Constants {
         val DATE = "Date"
 
         enum class Category(val res: Int) {
-            VIDEO(R.string.category_video),
+            VIDEO(R.string.category_media),
             SPORT(R.string.category_sport),
-            MONEY(R.string.category_money),
+            MONEY(R.string.category_business),
             JOURNEY(R.string.category_journey),
             LEARN(R.string.category_learn),
             OTHER(R.string.category_other),

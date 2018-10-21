@@ -41,6 +41,8 @@
         </activity>
         <activity
             android:name=".presentation.importance_popup.ImportancePopupActivity"
+            android:label="@string/title_activity_importance_popup"
+
             android:theme="@style/AppTheme.Dialog">
         </activity>
         <activity
@@ -49,7 +51,8 @@
         </activity>
         <activity android:name="com.theandroiddev.mywins.presentation.edit_success.EditDescriptionActivity">
         </activity>
-        <activity android:name="com.theandroiddev.mywins.presentation.success_slider.SuccessSliderActivity">
+        <activity android:name="com.theandroiddev.mywins.presentation.success_slider.SuccessSliderActivity"
+            android:label="@string/title_activity_success_slider">
 
         </activity>
 
