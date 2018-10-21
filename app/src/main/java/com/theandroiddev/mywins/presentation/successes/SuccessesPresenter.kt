@@ -24,6 +24,7 @@ import com.theandroiddev.mywins.utils.SearchFilter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -344,9 +345,13 @@ class SuccessesPresenter @Inject() constructor(
 
     fun addSuccess(success: SuccessModel) {
 
-        if (sharedPreferencesService.isFirstSuccessAdded) {
+        if (sharedPreferencesService.isFirstSuccessAdded == false) {
             successesService.removeAllSuccesses()
-            sharedPreferencesService.setFirstSuccessAdded()
+                .subscribeOn(Schedulers.io())
+                .subscribe {
+                sharedPreferencesService.setFirstSuccessAdded()
+
+            }.addToDisposables(disposables)
         }
         val argument = SuccessesServiceArgument.Successes(listOf(success.toSuccessesServiceModel()))
         successesService.saveSuccesses(argument)
@@ -354,9 +359,9 @@ class SuccessesPresenter @Inject() constructor(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     loadSuccesses(searchFilter)
-                    ifViewAttached { view ->
-                        view.displayUpdatedSuccesses()
-                    }
+//                    ifViewAttached { view ->
+//                        view.displayUpdatedSuccesses()
+//                    }
                 }.addToDisposables(disposables)
 
     }
@@ -376,9 +381,7 @@ class SuccessesPresenter @Inject() constructor(
                             .subscribe {
                                 sharedPreferencesService.setNotFirstRun()
                                 ifViewAttached { view ->
-                                    view.displaySuccesses(successesServiceResult.successes.map {
-                                        it.toModel()
-                                    })
+                                    loadSuccesses(searchFilter)
                                 }
                             }
                 }

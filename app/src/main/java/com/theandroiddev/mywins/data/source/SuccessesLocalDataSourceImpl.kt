@@ -2,6 +2,7 @@ package com.theandroiddev.mywins.data.source
 
 import android.arch.persistence.db.SimpleSQLiteQuery
 import android.arch.persistence.db.SupportSQLiteQuery
+import com.github.ajalt.timberkt.e
 import com.theandroiddev.mywins.local.dao.SuccessDao
 import com.theandroiddev.mywins.data.model.SuccessEntity
 import com.theandroiddev.mywins.data.model.toLocal
@@ -47,6 +48,9 @@ class SuccessesLocalDataSourceImpl @Inject constructor(
         return Single.fromCallable {
             successDao.fetchSuccessById(id).toEntity()
         }.subscribeOn(Schedulers.io())
+            .onErrorReturn {
+                SuccessEntity()
+            }
     }
 
     override fun getSuccesses(searchTerm: String, sortType: String,
