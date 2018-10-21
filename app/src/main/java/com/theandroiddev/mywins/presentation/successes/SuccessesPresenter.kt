@@ -400,7 +400,7 @@ class SuccessesPresenter @Inject() constructor(
                     constraintLayout: ConstraintLayout, cardView: CardView) {
 
         //TODO Fix this animation
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+        /*if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 
             ifViewAttached { view ->
                 view.displaySliderAnimation(successes, success, position, titleTv,
@@ -412,7 +412,7 @@ class SuccessesPresenter @Inject() constructor(
                 view.displaySlider(successes)
             }
 
-        }
+        }*/
 
         ifViewAttached { view ->
             view.displaySlider(successes)
