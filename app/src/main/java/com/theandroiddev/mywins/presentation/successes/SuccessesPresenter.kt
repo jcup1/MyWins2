@@ -100,7 +100,6 @@ class SuccessesPresenter @Inject() constructor(
             }).addToDisposables(disposables)
     }
 
-
     fun onUndoToRemove(position: Int, backupSuccess: SuccessModel?) {
 
         if (backupSuccess != null) {
