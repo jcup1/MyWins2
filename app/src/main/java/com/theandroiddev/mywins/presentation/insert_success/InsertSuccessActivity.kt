@@ -36,7 +36,7 @@ class InsertSuccessActivity : MvpDaggerAppCompatActivity<InsertSuccessView,
     private var accentColor: Int = 0
 
     private var currentCategory: Category = Category.NONE
-    private var currentImportance: Importance = Importance.NONE
+    private var currentImportance: Importance = Importance.SMALL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,7 +106,7 @@ class InsertSuccessActivity : MvpDaggerAppCompatActivity<InsertSuccessView,
         currentCategory = category
         drawableSelector.selectCategoryImage(insert_category_iv, category, insert_category_tv)
         drawableSelector.setImportance(
-                Constants.dummyImportanceDefault,
+                currentImportance.value,
                 insert_importance_tv,
                 insert_importance_iv_1,
                 insert_importance_iv_2,

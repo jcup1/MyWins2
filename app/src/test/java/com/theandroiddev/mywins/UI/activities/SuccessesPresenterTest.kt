@@ -3,15 +3,19 @@ package com.theandroiddev.mywins.UI.activities
 import android.view.MenuItem
 import com.nhaarman.mockito_kotlin.whenever
 import com.theandroiddev.mywins.R
-import com.theandroiddev.mywins.data.model.SuccessEntity
 import com.theandroiddev.mywins.domain.service.shared_preferences.SharedPreferencesService
-import com.theandroiddev.mywins.domain.service.successes.SuccessesService
+import com.theandroiddev.mywins.domain.service.successes.*
+import com.theandroiddev.mywins.presentation.successes.SuccessModel
 import com.theandroiddev.mywins.presentation.successes.SuccessesPresenter
 import com.theandroiddev.mywins.presentation.successes.SuccessesView
+import com.theandroiddev.mywins.presentation.successes.toSuccessesServiceModel
 import com.theandroiddev.mywins.utils.Constants
 import com.theandroiddev.mywins.utils.SearchFilter
 import io.reactivex.Flowable
 import io.reactivex.Single
+import io.reactivex.android.plugins.RxAndroidPlugins
+import io.reactivex.plugins.RxJavaPlugins
+import io.reactivex.schedulers.Schedulers
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
@@ -26,9 +30,18 @@ class SuccessesPresenterTest : Spek({
 
     val successesRepository = Mockito.mock(SuccessesService::class.java)
     val preferencesHelper = mock(SharedPreferencesService::class.java)
-    val presenter = SuccessesPresenter(successesRepository, preferencesHelper)
+    val presenter = Mockito.mock(SuccessesPresenter::class.java)
     val presenterSpy = spy(presenter)
     val view = Mockito.mock(SuccessesView::class.java)
+
+    beforeEachTest {
+
+        RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
+        RxJavaPlugins.setComputationSchedulerHandler { Schedulers.trampoline() }
+        RxJavaPlugins.setNewThreadSchedulerHandler { Schedulers.trampoline() }
+        RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
+
+    }
 
     afterEachTest {
         reset(successesRepository)
@@ -37,35 +50,34 @@ class SuccessesPresenterTest : Spek({
         presenter.attachView(view)
     }
 
-
     presenter.attachView(view)
 
     given("loading Successes") {
 
         on("Successes available") {
-            val successList = mutableListOf<SuccessEntity>()
-
-            successList.add(SuccessEntity())
-            successList.add(SuccessEntity())
+            val successList = listOf(
+                SuccessesServiceModel(),
+                SuccessesServiceModel()
+            )
 
             it("should display 2 Successes") {
-                val searchFilter = SearchFilter(null, Constants.SORT_DATE_ADDED, true)
+                val searchFilter = SearchFilter(null, Constants.Companion.SortType.DATE_ADDED, true)
                 `when`(successesRepository.getSuccesses(searchFilter))
-                        .thenReturn(successList.asFlowable())
+                    .thenReturn(SuccessesServiceResult.Successes(successList).asFlowable())
 
                 presenter.loadSuccesses(searchFilter)
 
-                verify(view, times(1)).displaySuccesses(successList)
+                verify(view, times(1)).displaySuccesses(successList.map { it.toModel() })
             }
         }
 
         on("no Successes") {
-            val successList = mutableListOf<SuccessEntity>()
+            val successList = listOf<SuccessesServiceModel>()
 
             it("should display no Successes") {
-                val searchFilter = SearchFilter(null, Constants.SORT_DATE_ADDED, true)
+                val searchFilter = SearchFilter(null, Constants.Companion.SortType.DATE_ADDED, true)
                 `when`(successesRepository.getSuccesses(searchFilter))
-                        .thenReturn(successList.asFlowable())
+                    .thenReturn(SuccessesServiceResult.Successes(successList).asFlowable())
 
                 presenter.loadSuccesses(searchFilter)
 
@@ -79,18 +91,24 @@ class SuccessesPresenterTest : Spek({
 
         on("success was backed up") {
             it("should remove Successes") {
-                val successes = mutableListOf(SuccessEntity(), SuccessEntity())
+                val successes = mutableListOf(SuccessModel(), SuccessModel())
                 presenter.onPause(successes)
-                verify(successesRepository, times(1)).removeSuccesses(successes)
+                verify(
+                    successesRepository,
+                    times(1)
+                ).removeSuccesses(SuccessesServiceArgument.Successes(successes.map { it.toSuccessesServiceModel() }))
             }
         }
 
         on("success wasn't backed up") {
             it("should not remove Successes") {
-                val successes: MutableList<SuccessEntity>? = null
+                val successes = mutableListOf<SuccessModel>()
 
                 presenter.onPause(successes)
-                verify(successesRepository, never()).removeSuccesses(mutableListOf())
+                verify(
+                    successesRepository,
+                    never()
+                ).removeSuccesses(SuccessesServiceArgument.Successes(successes.map { it.toSuccessesServiceModel() }))
             }
         }
     }
@@ -102,7 +120,7 @@ class SuccessesPresenterTest : Spek({
 
                 val backupSuccess = null
                 presenter.onUndoToRemove(0, backupSuccess)
-                verify(view, never()).restoreSuccess(0, SuccessEntity())
+                verify(view, never()).restoreSuccess(0, SuccessModel())
 
             }
         }
@@ -110,7 +128,7 @@ class SuccessesPresenterTest : Spek({
         on("backup success is not null") {
             it("should undo removing success") {
 
-                val backupSuccess = SuccessEntity()
+                val backupSuccess = SuccessModel()
                 presenter.onUndoToRemove(0, backupSuccess)
                 verify(view, times(1)).restoreSuccess(0, backupSuccess)
             }
@@ -125,16 +143,16 @@ class SuccessesPresenterTest : Spek({
                 val position = 0
                 val success = null
                 presenter.sendToRemoveQueue(position, success)
-                verify(view, never()).displaySuccessRemoved(position, SuccessEntity())
+                verify(view, never()).removeSuccess(position, SuccessModel())
             }
         }
 
         on("valid Successes sent to remove queue") {
             it("should not display success removed") {
                 val position = 0
-                val success = SuccessEntity()
+                val success = SuccessModel()
                 presenter.sendToRemoveQueue(position, success)
-                verify(view, times(1)).displaySuccessRemoved(position, success)
+                verify(view, times(1)).removeSuccess(position, success)
             }
         }
 
@@ -145,18 +163,18 @@ class SuccessesPresenterTest : Spek({
         on("Successes not available") {
             it("should no update success") {
                 val position = 0
-                val successes = mutableListOf<SuccessEntity>()
+                val successes = mutableListOf<SuccessModel>()
                 presenter.updateSuccess(position, successes)
-                verify(view, never()).displaySuccessChanged(position, SuccessEntity())
+                verify(view, never()).displaySuccessChanged(position, SuccessModel())
             }
         }
 
         on("invalid clicked position") {
             it("should not update success") {
                 val position = -10
-                val successes = mutableListOf(SuccessEntity())
+                val successes = mutableListOf(SuccessModel())
                 presenter.updateSuccess(position, successes)
-                verify(view, never()).displaySuccessRemoved(position, SuccessEntity())
+                verify(view, never()).removeSuccess(position, SuccessModel())
             }
         }
 //TODO fix tests
@@ -192,7 +210,7 @@ class SuccessesPresenterTest : Spek({
     given("category picked") {
 
         it("should display category") {
-            val category = "business"
+            val category = Constants.Companion.Category.BUSINESS
             presenter.categoryPicked(category)
             verify(view, times(1)).displayCategory(category)
         }
@@ -203,16 +221,16 @@ class SuccessesPresenterTest : Spek({
         on("search is opened") {
 
             it("hide search bar and display Successes") {
-                val successesToDisplay = mutableListOf(SuccessEntity(), SuccessEntity())
+                val successesToDisplay = mutableListOf(SuccessesServiceModel(), SuccessesServiceModel())
 
                 `when`(successesRepository.getSuccesses(presenter.searchFilter))
-                        .thenReturn(successesToDisplay.asFlowable())
+                    .thenReturn(SuccessesServiceResult.Successes(successesToDisplay).asFlowable())
 
                 presenter.toggleSearchBar(true)
 
                 verify(view, times(1)).hideSearchBar()
 
-                verify(view, times(1)).displaySuccesses(successesToDisplay)
+                verify(view, times(1)).displaySuccesses(successesToDisplay.map { it.toModel() })
 
             }
 

@@ -15,23 +15,23 @@ import com.theandroiddev.mywins.R
 class SuccessesConfig {
 
     fun configFABs(context: Context,
-                   actionLearn: FloatingActionButton,
+                   actionEducation: FloatingActionButton,
                    actionSport: FloatingActionButton,
                    actionJourney: FloatingActionButton,
                    actionBusiness: FloatingActionButton,
-                   actionVideo: FloatingActionButton) {
+                   actionMedia: FloatingActionButton) {
 
-        actionLearn.size = FloatingActionButton.SIZE_MINI
+        actionEducation.size = FloatingActionButton.SIZE_MINI
         actionSport.size = FloatingActionButton.SIZE_MINI
         actionJourney.size = FloatingActionButton.SIZE_MINI
         actionBusiness.size = FloatingActionButton.SIZE_MINI
-        actionVideo.size = FloatingActionButton.SIZE_MINI
+        actionMedia.size = FloatingActionButton.SIZE_MINI
 
-        val colorVideo = ResourcesCompat.getColor(context.resources, R.color.video, null)
-        val colorMoney = ResourcesCompat.getColor(context.resources, R.color.money, null)
+        val colorMedia = ResourcesCompat.getColor(context.resources, R.color.video, null)
+        val colorBusiness = ResourcesCompat.getColor(context.resources, R.color.money, null)
         val colorJourney = ResourcesCompat.getColor(context.resources, R.color.journey, null)
         val colorSport = ResourcesCompat.getColor(context.resources, R.color.sport, null)
-        val colorLearn = ResourcesCompat.getColor(context.resources, R.color.learn, null)
+        val colorEducation = ResourcesCompat.getColor(context.resources, R.color.learn, null)
         val colorWhite = ResourcesCompat.getColor(context.resources, R.color.white, null)
 
         val videoDrawable = ResourcesCompat.getDrawable(context.resources, R.drawable.ic_video, null)
@@ -43,7 +43,7 @@ class SuccessesConfig {
 
         if (videoDrawable != null) {
             videoDrawable.colorFilter = PorterDuffColorFilter(colorWhite, PorterDuff.Mode.SRC_IN)
-            actionVideo.setIconDrawable(videoDrawable)
+            actionMedia.setIconDrawable(videoDrawable)
         }
         if (moneyDrawable != null) {
             moneyDrawable.colorFilter = PorterDuffColorFilter(colorWhite, PorterDuff.Mode.SRC_IN)
@@ -59,14 +59,14 @@ class SuccessesConfig {
         }
         if (learnDrawable != null) {
             learnDrawable.colorFilter = PorterDuffColorFilter(colorWhite, PorterDuff.Mode.SRC_IN)
-            actionLearn.setIconDrawable(learnDrawable)
+            actionEducation.setIconDrawable(learnDrawable)
         }
 
-        actionVideo.colorNormal = colorVideo
-        actionBusiness.colorNormal = colorMoney
+        actionMedia.colorNormal = colorMedia
+        actionBusiness.colorNormal = colorBusiness
         actionJourney.colorNormal = colorJourney
         actionSport.colorNormal = colorSport
-        actionLearn.colorNormal = colorLearn
+        actionEducation.colorNormal = colorEducation
 
 
     }

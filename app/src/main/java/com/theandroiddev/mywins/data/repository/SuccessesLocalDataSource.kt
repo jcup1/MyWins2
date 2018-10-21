@@ -18,7 +18,7 @@ interface SuccessesLocalDataSource {
 
     fun editSuccess(successEntity: SuccessEntity): Completable
 
-    fun removeSuccess(successEntity: SuccessEntity): Completable
+    fun removeSuccess(successEntities: List<SuccessEntity>): Completable
 
     fun removeAllSuccesses(): Completable
 }

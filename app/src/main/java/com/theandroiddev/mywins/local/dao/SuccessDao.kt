@@ -25,7 +25,7 @@ interface SuccessDao {
     fun update(success: LocalSuccess)
 
     @Delete
-    fun delete(success: LocalSuccess)
+    fun delete(successes: List<LocalSuccess>)
 
     @Query("delete from success")
     fun removeAll()

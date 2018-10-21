@@ -9,7 +9,6 @@
     android:layout_height="match_parent"
     tools:context=".presentation.successes.SuccessesActivity">
 
-
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="0dp"
@@ -102,7 +101,7 @@
                 android:layout_height="wrap_content"
                 fab:fab_colorNormal="@color/white"
                 fab:fab_colorPressed="@color/white_pressed"
-                fab:fab_title="Learn" />
+                fab:fab_title="Education" />
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/action_sport"
@@ -126,7 +125,7 @@
                 android:layout_height="wrap_content"
                 fab:fab_colorNormal="@color/white"
                 fab:fab_colorPressed="@color/white_pressed"
-                fab:fab_title="Money" />
+                fab:fab_title="Business" />
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/action_video"
@@ -134,7 +133,7 @@
                 android:layout_height="wrap_content"
                 fab:fab_colorNormal="@color/white"
                 fab:fab_colorPressed="@color/white_pressed"
-                fab:fab_title="Video" />
+                fab:fab_title="Media" />
 
 
         </com.getbase.floatingactionbutton.FloatingActionsMenu>
