@@ -10,9 +10,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.github.ajalt.timberkt.Timber.d
 import com.theandroiddev.mywins.R
+import com.theandroiddev.mywins.core.mvp.MvpPresenter
 import com.theandroiddev.mywins.domain.service.shared_preferences.SharedPreferencesService
 import com.theandroiddev.mywins.domain.service.successes.SuccessesService
-import com.theandroiddev.mywins.core.mvp.MvpPresenter
 import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceArgument
 import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceResult
 import com.theandroiddev.mywins.domain.service.successes.toModel
@@ -119,7 +119,7 @@ class SuccessesPresenter @Inject() constructor(
 
         if (backupSuccess != null) {
             ifViewAttached { view ->
-                view.displaySuccessRemoved(position, backupSuccess)
+                view.removeSuccess(position, backupSuccess)
             }
         } else {
             ifViewAttached { view ->

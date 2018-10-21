@@ -9,7 +9,6 @@
     android:layout_height="match_parent"
     tools:context=".presentation.successes.SuccessesActivity">
 
-
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="0dp"

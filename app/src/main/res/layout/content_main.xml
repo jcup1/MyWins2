@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -17,7 +16,7 @@
         android:layout_height="@dimen/cardview_default_margin"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -34,13 +33,14 @@
         android:id="@+id/empty_list_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="EMPTY :("
+        android:text="@string/success_list_empty"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/main_view_down"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/main_up_view"
-        app:layout_constraintVertical_bias="0.14999998">
-    </TextView>
+        app:layout_constraintVertical_bias="0.14999998"
+        tools:visibility="visible"/>
 
     <View
         android:id="@+id/main_view_down"
@@ -48,6 +48,6 @@
         android:layout_height="@dimen/cardview_default_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

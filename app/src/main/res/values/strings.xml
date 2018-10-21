@@ -69,6 +69,7 @@
     <string name="transition_importance_iv">importance_iv</string>
 
     <string name="unexpected_error">Unexpected error</string>
+    <string name="success_list_empty">EMPTY :(</string>
 
 
 </resources>

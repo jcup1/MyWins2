@@ -23,6 +23,8 @@ interface SuccessesView : MvpView {
 
     fun successRemoved(position: Int)
 
+    fun clearSuccessesToRemove()
+
     fun displaySuccessChanged(position: Int, updatedSuccess: SuccessModel)
 
     fun displayCategory(category: Category)
@@ -45,8 +47,7 @@ interface SuccessesView : MvpView {
 
     fun restoreSuccess(position: Int, backupSuccess: SuccessModel)
 
-    fun displaySuccessRemoved(position: Int, backupSuccess: SuccessModel)
+    fun removeSuccess(position: Int, backupSuccess: SuccessModel)
 
-    fun clearSuccessesToRemove()
 }
 

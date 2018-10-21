@@ -125,7 +125,7 @@ class SuccessesPresenterTest : Spek({
                 val position = 0
                 val success = null
                 presenter.sendToRemoveQueue(position, success)
-                verify(view, never()).displaySuccessRemoved(position, SuccessEntity())
+                verify(view, never()).removeSuccess(position, SuccessEntity())
             }
         }
 
@@ -134,7 +134,7 @@ class SuccessesPresenterTest : Spek({
                 val position = 0
                 val success = SuccessEntity()
                 presenter.sendToRemoveQueue(position, success)
-                verify(view, times(1)).displaySuccessRemoved(position, success)
+                verify(view, times(1)).removeSuccess(position, success)
             }
         }
 
@@ -156,7 +156,7 @@ class SuccessesPresenterTest : Spek({
                 val position = -10
                 val successes = mutableListOf(SuccessEntity())
                 presenter.updateSuccess(position, successes)
-                verify(view, never()).displaySuccessRemoved(position, SuccessEntity())
+                verify(view, never()).removeSuccess(position, SuccessEntity())
             }
         }
 //TODO fix tests

@@ -32,8 +32,6 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu
 import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.core.mvp.MvpDaggerAppCompatActivity
 import com.theandroiddev.mywins.core.mvp.startActivity
-import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceModel
-import com.theandroiddev.mywins.domain.service.successes.toModel
 import com.theandroiddev.mywins.presentation.insert_success.InsertSuccessActivity
 import com.theandroiddev.mywins.presentation.insert_success.InsertSuccessBundle
 import com.theandroiddev.mywins.presentation.success_slider.SuccessSliderActivity
@@ -60,15 +58,6 @@ import kotlinx.android.synthetic.main.content_main.*
 class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBundle, SuccessesPresenter>(),
     android.view.View.OnClickListener, SuccessAdapter.OnItemClickListener, SuccessesView {
 
-    override fun displaySuccessRemoved(position: Int, backupSuccess: SuccessModel) {
-        successAdapter.successes.removeAt(position)
-        successRemoved(position)
-        successAdapter.successesToRemove.add(backupSuccess)
-        if (successAdapter.successes.isEmpty()) {
-            //onExtrasLoaded();
-            displayNoSuccesses()
-        }
-    }
 
     private lateinit var successAdapter: SuccessAdapter
 
@@ -293,11 +282,26 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
 
     }
 
+
+    override fun removeSuccess(position: Int, backupSuccess: SuccessModel) {
+        successAdapter.successes.removeAt(position)
+        successRemoved(position)
+        successAdapter.successesToRemove.add(backupSuccess)
+        if (successAdapter.successes.isEmpty()) {
+            //onExtrasLoaded();
+            displayNoSuccesses()
+        }
+    }
+
     override fun restoreSuccess(position: Int, backupSuccess: SuccessModel) {
         successAdapter.successes.add(position, backupSuccess)
         successAdapter.successesToRemove.remove(backupSuccess)
         recycler_view?.scrollToPosition(position)
         successAdapter.notifyItemInserted(position)
+
+        if (successAdapter.successes.size == 1) {
+            presenter?.setSuccessListVisible(recycler_view, empty_list_text)
+        }
 
     }
 
@@ -329,7 +333,8 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
     }
 
     private fun showUndoSnackbar(position: Int) {
-        successAdapter.backupSuccess = successAdapter.successes[position]
+        val successToRemove = successAdapter.successes[position]
+        successAdapter.backupSuccess = successToRemove
 
         val snackbar = Snackbar
             .make(
