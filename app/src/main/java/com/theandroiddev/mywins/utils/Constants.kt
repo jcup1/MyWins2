@@ -55,7 +55,7 @@ class Constants {
     companion object {
 
         //DUMMY VALUES
-        val dummyImportanceDefault = 3
+        val dummyImportanceDefault = 1
         val dummyTitles: MutableList<String> = ArrayList()
         val dummyCategories: MutableList<Category> = ArrayList()
         val dummyImportances: MutableList<Int> = ArrayList()

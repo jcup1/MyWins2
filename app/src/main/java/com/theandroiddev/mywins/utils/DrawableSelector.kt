@@ -62,8 +62,7 @@ class DrawableSelector(private val context: Context) {
             Importance.BIG -> R.drawable.importance_big
             Importance.MEDIUM -> R.drawable.importance_medium
             Importance.SMALL -> R.drawable.importance_small
-            //TODO edit importance none drawable
-            Importance.NONE -> R.drawable.importance_single
+            Importance.NONE -> R.drawable.importance_none
         }
 
         val myDrawable = ResourcesCompat.getDrawable(context.resources, id, null)
