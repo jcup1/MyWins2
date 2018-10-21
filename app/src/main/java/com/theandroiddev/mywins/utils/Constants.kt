@@ -38,17 +38,17 @@ class Constants {
         dummyDescriptions.add("This language is easier than I thought and now I'm multilingual! :O")
         dummyDescriptions.add("I burned a lot of calories. Fridge is empty tonight...")
 
-        dummyStartDates.add("17-05-20")
-        dummyStartDates.add("17-05-22")
-        dummyStartDates.add("16-04-15")
-        dummyStartDates.add("15-03-12")
-        dummyStartDates.add("16-02-21")
+        dummyStartDates.add("20-05-17")
+        dummyStartDates.add("22-05-17")
+        dummyStartDates.add("15-04-16")
+        dummyStartDates.add("12-03-15")
+        dummyStartDates.add("21-02-16")
 
-        dummyEndDates.add("17-05-25")
-        dummyEndDates.add("17-05-30")
-        dummyEndDates.add("16-04-20")
-        dummyEndDates.add("15-05-01")
-        dummyEndDates.add("16-02-21")
+        dummyEndDates.add("25-05-17")
+        dummyEndDates.add("30-05-17")
+        dummyEndDates.add("20-04-16")
+        dummyEndDates.add("01-05-15")
+        dummyEndDates.add("21-02-16")
 
     }
 
