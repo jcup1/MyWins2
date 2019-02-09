@@ -13,10 +13,10 @@ import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceResult
 import com.theandroiddev.mywins.domain.service.successes.toModel
 import com.theandroiddev.mywins.presentation.edit_success.hasOne
 import com.theandroiddev.mywins.utils.Constants.Companion.Category
-import com.theandroiddev.mywins.utils.Constants.Companion.Category.*
 import com.theandroiddev.mywins.utils.Constants.Companion.NOT_ACTIVE
 import com.theandroiddev.mywins.utils.Constants.Companion.SortType
 import com.theandroiddev.mywins.utils.SearchFilter
+import com.theandroiddev.mywins.utils.getCategoryById
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -49,7 +49,7 @@ class SuccessesPresenter @Inject constructor(
             }
         }
 
-    fun loadSuccesses(searchFilter: SearchFilter) {
+    private fun loadSuccesses(searchFilter: SearchFilter) {
 
         successesService.getSuccesses(searchFilter)
             .subscribeOn(Schedulers.io())
@@ -57,9 +57,9 @@ class SuccessesPresenter @Inject constructor(
             .subscribe({ successesServiceResult ->
                 when (successesServiceResult) {
                     is SuccessesServiceResult.Successes -> {
-                            successes = successesServiceResult.successes.map {
-                                it.toModel()
-                            }
+                        successes = successesServiceResult.successes.map {
+                            it.toModel()
+                        }
                     }
                     is SuccessesServiceResult.Error -> {
                         ifViewAttached { view ->
@@ -76,6 +76,11 @@ class SuccessesPresenter @Inject constructor(
     }
 
     fun onPause(successesToRemove: MutableList<SuccessModel>) {
+
+        if (successesToRemove.isEmpty()) {
+            return
+        }
+
         val argument = SuccessesServiceArgument.Successes(
             successesToRemove.map { it.toSuccessesServiceModel() }
         )
@@ -107,7 +112,7 @@ class SuccessesPresenter @Inject constructor(
         }
     }
 
-    fun sendToRemoveQueue(position: Int, backupSuccess: SuccessModel?) {
+    fun onSuccessAddedToRemoveQueue(position: Int, backupSuccess: SuccessModel?) {
 
         if (backupSuccess != null) {
             ifViewAttached { view ->
@@ -174,7 +179,7 @@ class SuccessesPresenter @Inject constructor(
             }).addToDisposables(disposables)
     }
 
-    fun categoryPicked(category: Category) {
+    private fun categoryPicked(category: Category) {
         ifViewAttached { view ->
             view.displayCategory(category)
         }
@@ -244,27 +249,7 @@ class SuccessesPresenter @Inject constructor(
             ifViewAttached { view ->
                 view.hideSearchBar()
             }
-            successesService.getSuccesses(searchFilter)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ successesServiceResult ->
-
-                    when (successesServiceResult) {
-                        is SuccessesServiceResult.Successes -> {
-                            successes = successesServiceResult.successes.map { it.toModel() }
-                        }
-                        is SuccessesServiceResult.Error -> {
-                            ifViewAttached { view ->
-                                view.alerts?.displayUnexpectedError()
-                            }
-                        }
-                    }
-
-                }, {
-                    ifViewAttached { view ->
-                        view.alerts?.displayUnexpectedError()
-                    }
-                }).addToDisposables(disposables)
+            loadSuccesses(searchFilter)
         } else {
             ifViewAttached { view ->
                 view.displaySearchBar()
@@ -309,20 +294,9 @@ class SuccessesPresenter @Inject constructor(
         clearSearch()
     }
 
-    fun selectCategory(id: Int) {
-
-        when (id) {
-
-            R.id.action_learn -> categoryPicked(KNOWLEDGE)
-            R.id.action_sport -> categoryPicked(SPORT)
-            R.id.action_journey -> categoryPicked(JOURNEY)
-            R.id.action_money -> categoryPicked(BUSINESS)
-            R.id.action_video -> categoryPicked(MEDIA)
-
-            else -> {
-                //TODO error
-            }
-        }
+    fun onFabCategorySelected(categoryId: Int?) {
+        val category = categoryId?.getCategoryById() ?: Category.OTHER
+        categoryPicked(category)
     }
 
     fun onSearchTextChanged(searchTerm: String) {

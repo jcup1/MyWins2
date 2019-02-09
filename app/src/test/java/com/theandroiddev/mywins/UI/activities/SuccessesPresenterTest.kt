@@ -4,13 +4,18 @@ import android.view.MenuItem
 import com.nhaarman.mockito_kotlin.whenever
 import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.domain.service.shared_preferences.SharedPreferencesService
-import com.theandroiddev.mywins.domain.service.successes.*
+import com.theandroiddev.mywins.domain.service.successes.SuccessesService
+import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceArgument
+import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceModel
+import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceResult
+import com.theandroiddev.mywins.domain.service.successes.toModel
 import com.theandroiddev.mywins.presentation.successes.SuccessModel
 import com.theandroiddev.mywins.presentation.successes.SuccessesPresenter
 import com.theandroiddev.mywins.presentation.successes.SuccessesView
 import com.theandroiddev.mywins.presentation.successes.toSuccessesServiceModel
 import com.theandroiddev.mywins.utils.Constants
 import com.theandroiddev.mywins.utils.SearchFilter
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.android.plugins.RxAndroidPlugins
@@ -28,10 +33,10 @@ import org.mockito.Mockito.*
  */
 class SuccessesPresenterTest : Spek({
 
-    val successesRepository = Mockito.mock(SuccessesService::class.java)
+    lateinit var SUT: SuccessesPresenter
+
+    val successesService = Mockito.mock(SuccessesService::class.java)
     val preferencesHelper = mock(SharedPreferencesService::class.java)
-    val presenter = Mockito.mock(SuccessesPresenter::class.java)
-    val presenterSpy = spy(presenter)
     val view = Mockito.mock(SuccessesView::class.java)
 
     beforeEachTest {
@@ -43,14 +48,31 @@ class SuccessesPresenterTest : Spek({
 
     }
 
-    afterEachTest {
-        reset(successesRepository)
+    beforeEachTest {
+
+        reset(successesService)
         reset(preferencesHelper)
         reset(view)
-        presenter.attachView(view)
+        SUT = SuccessesPresenter(successesService, preferencesHelper)
+        SUT.attachView(view)
     }
 
-    presenter.attachView(view)
+    given("adding a new success") {
+        on("proper category id passed") {
+            it("should display category") {
+                val category = Constants.Companion.Category.BUSINESS
+                SUT.onFabCategorySelected(category.id)
+                verify(view, times(1)).displayCategory(category)
+            }
+        }
+
+        on("wrong category id passed") {
+            it("should display 'other' category") {
+                SUT.onFabCategorySelected(-2000)
+                verify(view, times(1)).displayCategory(Constants.Companion.Category.OTHER)
+            }
+        }
+    }
 
     given("loading Successes") {
 
@@ -61,11 +83,11 @@ class SuccessesPresenterTest : Spek({
             )
 
             it("should display 2 Successes") {
-                val searchFilter = SearchFilter(null, Constants.Companion.SortType.DATE_ADDED, true)
-                `when`(successesRepository.getSuccesses(searchFilter))
-                    .thenReturn(SuccessesServiceResult.Successes(successList).asFlowable())
+                val searchFilter = SearchFilter("", Constants.Companion.SortType.DATE_ADDED, true)
+                `when`(successesService.getSuccesses(searchFilter))
+                    .thenReturn(SuccessesServiceResult.Successes(successList).asSingle())
 
-                presenter.loadSuccesses(searchFilter)
+                SUT.onSearchTextChanged("")
 
                 verify(view, times(1)).displaySuccesses(successList.map { it.toModel() })
             }
@@ -75,13 +97,13 @@ class SuccessesPresenterTest : Spek({
             val successList = listOf<SuccessesServiceModel>()
 
             it("should display no Successes") {
-                val searchFilter = SearchFilter(null, Constants.Companion.SortType.DATE_ADDED, true)
-                `when`(successesRepository.getSuccesses(searchFilter))
-                    .thenReturn(SuccessesServiceResult.Successes(successList).asFlowable())
+                val searchFilter = SearchFilter()
+                `when`(successesService.getSuccesses(searchFilter))
+                    .thenReturn(SuccessesServiceResult.Successes(successList).asSingle())
 
-                presenter.loadSuccesses(searchFilter)
+                SUT.onSearchTextChanged("")
 
-                verify(view, times(1)).displayNoSuccesses()
+                verify(view, times(1)).displaySuccesses(listOf())
             }
         }
 
@@ -89,26 +111,51 @@ class SuccessesPresenterTest : Spek({
 
     given("pause") {
 
+        on("passed successes") {
+            it("should remove Successes") {
+                val successToRemove = SuccessModel()
+
+                val argument = SuccessesServiceArgument.Successes(
+                    listOf(successToRemove.toSuccessesServiceModel())
+                )
+
+                whenever(successesService.removeSuccesses(argument)).thenReturn(Completable.complete())
+
+                SUT.onPause(mutableListOf(successToRemove))
+
+                verify(
+                    successesService,
+                    times(1)
+                ).removeSuccesses(argument)
+            }
+        }
+
+        on("passed empty list") {
+            it("should not remove Successes") {
+                val successesToRemove = mutableListOf<SuccessModel>()
+
+                SUT.onPause(successesToRemove)
+
+                val serviceModel = SuccessesServiceArgument.Successes(successesToRemove.map { it.toSuccessesServiceModel() })
+                verify(
+                    successesService,
+                    never()
+                ).removeSuccesses(serviceModel)
+            }
+        }
+    }
+
+    given("add success to remove queue") {
+
         on("success was backed up") {
             it("should remove Successes") {
-                val successes = mutableListOf(SuccessModel(), SuccessModel())
-                presenter.onPause(successes)
-                verify(
-                    successesRepository,
-                    times(1)
-                ).removeSuccesses(SuccessesServiceArgument.Successes(successes.map { it.toSuccessesServiceModel() }))
+
             }
         }
 
         on("success wasn't backed up") {
             it("should not remove Successes") {
-                val successes = mutableListOf<SuccessModel>()
 
-                presenter.onPause(successes)
-                verify(
-                    successesRepository,
-                    never()
-                ).removeSuccesses(SuccessesServiceArgument.Successes(successes.map { it.toSuccessesServiceModel() }))
             }
         }
     }
@@ -119,7 +166,7 @@ class SuccessesPresenterTest : Spek({
             it("should not undo removing success") {
 
                 val backupSuccess = null
-                presenter.onUndoToRemove(0, backupSuccess)
+                SUT.onUndoToRemove(0, backupSuccess)
                 verify(view, never()).restoreSuccess(0, SuccessModel())
 
             }
@@ -129,7 +176,7 @@ class SuccessesPresenterTest : Spek({
             it("should undo removing success") {
 
                 val backupSuccess = SuccessModel()
-                presenter.onUndoToRemove(0, backupSuccess)
+                SUT.onUndoToRemove(0, backupSuccess)
                 verify(view, times(1)).restoreSuccess(0, backupSuccess)
             }
         }
@@ -142,7 +189,7 @@ class SuccessesPresenterTest : Spek({
             it("should display success removed") {
                 val position = 0
                 val success = null
-                presenter.sendToRemoveQueue(position, success)
+                SUT.onSuccessAddedToRemoveQueue(position, success)
                 verify(view, never()).removeSuccess(position, SuccessModel())
             }
         }
@@ -151,7 +198,7 @@ class SuccessesPresenterTest : Spek({
             it("should not display success removed") {
                 val position = 0
                 val success = SuccessModel()
-                presenter.sendToRemoveQueue(position, success)
+                SUT.onSuccessAddedToRemoveQueue(position, success)
                 verify(view, times(1)).removeSuccess(position, success)
             }
         }
@@ -164,7 +211,7 @@ class SuccessesPresenterTest : Spek({
             it("should no update success") {
                 val position = 0
                 val successes = mutableListOf<SuccessModel>()
-                presenter.updateSuccess(position, successes)
+                SUT.updateSuccess(position, successes)
                 verify(view, never()).displaySuccessChanged(position, SuccessModel())
             }
         }
@@ -173,7 +220,7 @@ class SuccessesPresenterTest : Spek({
             it("should not update success") {
                 val position = -10
                 val successes = mutableListOf(SuccessModel())
-                presenter.updateSuccess(position, successes)
+                SUT.updateSuccess(position, successes)
                 verify(view, never()).removeSuccess(position, SuccessModel())
             }
         }
@@ -199,7 +246,7 @@ class SuccessesPresenterTest : Spek({
 //                } else {
 //                    `when`(successesRepository.fetchSuccess(id))
 //                            .thenReturn(updatedSuccess.asSingle())
-//                    presenter.updateSuccess(position, Successes)
+//                    SUT.updateSuccess(position, Successes)
 //                    verify(view, times(1)).displaySuccessChanged(position, updatedSuccess)
 //                }
 //
@@ -207,26 +254,19 @@ class SuccessesPresenterTest : Spek({
 //        }
 
     }
-    given("category picked") {
-
-        it("should display category") {
-            val category = Constants.Companion.Category.BUSINESS
-            presenter.categoryPicked(category)
-            verify(view, times(1)).displayCategory(category)
-        }
-    }
 
     given("on back pressed") {
 
         on("search is opened") {
 
             it("hide search bar and display Successes") {
-                val successesToDisplay = mutableListOf(SuccessesServiceModel(), SuccessesServiceModel())
+                val successesToDisplay =
+                    mutableListOf(SuccessesServiceModel(), SuccessesServiceModel())
 
-                `when`(successesRepository.getSuccesses(presenter.searchFilter))
-                    .thenReturn(SuccessesServiceResult.Successes(successesToDisplay).asFlowable())
+                `when`(successesService.getSuccesses(SUT.searchFilter))
+                    .thenReturn(SuccessesServiceResult.Successes(successesToDisplay).asSingle())
 
-                presenter.toggleSearchBar(true)
+                SUT.toggleSearchBar(true)
 
                 verify(view, times(1)).hideSearchBar()
 
@@ -239,7 +279,7 @@ class SuccessesPresenterTest : Spek({
         on("search is closed") {
 
             it("display search bar") {
-                presenter.toggleSearchBar(false)
+                SUT.toggleSearchBar(false)
                 verify(view, times(1)).displaySearchBar()
             }
 
@@ -249,29 +289,34 @@ class SuccessesPresenterTest : Spek({
     given("action search") {
 
         on("search is opened") {
-            it("on back pressed") {
+            it("hide search bar") {
+
+                whenever(successesService.getSuccesses(SearchFilter())).thenReturn(SuccessesServiceResult.Successes(
+                    listOf()).asSingle())
 
                 val isSearchOpened = true
                 val mockedMenuItem = mock(MenuItem::class.java)
                 whenever(mockedMenuItem.itemId).thenReturn(R.id.action_search)
 
-                presenterSpy.handleOptionsItemSelected(mockedMenuItem, isSearchOpened)
-                verify(presenterSpy, times(1)).toggleSearchBar(isSearchOpened)
+                SUT.handleOptionsItemSelected(mockedMenuItem, isSearchOpened)
+                verify(view, times(1)).hideSearchBar()
             }
         }
 
         on("search is closed") {
             it("on back pressed") {
 
+                whenever(successesService.getSuccesses(SearchFilter())).thenReturn(SuccessesServiceResult.Successes(
+                    listOf()).asSingle())
+
                 val isSearchOpened = false
                 val mockedMenuItem = mock(MenuItem::class.java)
                 whenever(mockedMenuItem.itemId).thenReturn(R.id.action_search)
 
-                presenterSpy.handleOptionsItemSelected(mockedMenuItem, isSearchOpened)
-                verify(presenterSpy, times(1)).toggleSearchBar(isSearchOpened)
+                SUT.handleOptionsItemSelected(mockedMenuItem, isSearchOpened)
+                verify(view, times(1)).displaySearchBar()
             }
         }
-
 
     }
 
@@ -279,7 +324,7 @@ class SuccessesPresenterTest : Spek({
 
         it("display search") {
 
-            presenter.showSearch()
+            SUT.showSearch()
             verify(view, times(1)).displaySearch()
         }
     }

@@ -65,11 +65,11 @@ class SuccessesActivity :
     var searchBox: EditText? = null
 
     override var isSuccessListVisible: Boolean = false
-    set(value) {
-        field = value
-        recycler_view.visibleOrInvisible(value)
-        empty_list_text.visibleOrInvisible(!value)
-    }
+        set(value) {
+            field = value
+            recycler_view.visibleOrInvisible(value)
+            empty_list_text.visibleOrInvisible(!value)
+        }
 
     private var simpleCallback: ItemTouchHelper.SimpleCallback =
         object : ItemTouchHelper.SimpleCallback(
@@ -258,7 +258,7 @@ class SuccessesActivity :
     override fun onClick(shadowView: android.view.View) {
         val fab = shadowView as FloatingActionButton
 
-        presenter?.selectCategory(fab.id)
+        presenter?.onFabCategorySelected(fab.id)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -271,7 +271,6 @@ class SuccessesActivity :
                 if (resultCode == Activity.RESULT_CANCELED) {
                     onSuccessNotAdded()
                 }
-
             }
             if (requestCode == REQUEST_CODE_SLIDER) {
                 if (resultCode == Activity.RESULT_OK) {
@@ -300,7 +299,6 @@ class SuccessesActivity :
         if (successAdapter.successes.size == 1) {
             isSuccessListVisible = true
         }
-
     }
 
     private fun onSliderResultSuccess(data: Intent) {
@@ -324,27 +322,22 @@ class SuccessesActivity :
     }
 
     private fun toRemove(position: Int) {
+        val successToRemove = successAdapter.successes[position]
+        successAdapter.backupSuccess = successToRemove
         showUndoSnackbar(position)
+        presenter?.onSuccessAddedToRemoveQueue(position, successAdapter.backupSuccess)
     }
 
     private fun showUndoSnackbar(position: Int) {
-        val successToRemove = successAdapter.successes[position]
-        successAdapter.backupSuccess = successToRemove
-
-        val snackbar = Snackbar
+        Snackbar
             .make(
                 main_constraint, getString(R.string.snack_success_removed),
                 Snackbar.LENGTH_LONG
             )
             .setAction(getString(R.string.snack_undo)) {
-
                 val backupSuccessModel = successAdapter.backupSuccess
                 presenter?.onUndoToRemove(position, backupSuccessModel)
-
-            }
-        snackbar.show()
-
-        presenter?.sendToRemoveQueue(position, successAdapter.backupSuccess)
+            }.show()
     }
 
     override fun onItemClick(
@@ -377,7 +370,6 @@ class SuccessesActivity :
 
     override fun displayDefaultSuccesses(successList: MutableList<SuccessModel>) {
         successAdapter.updateSuccessList(successList)
-
     }
 
     override fun updateAdapterList(successList: MutableList<SuccessModel>) {
