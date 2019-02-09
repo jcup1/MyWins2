@@ -1,7 +1,7 @@
 package com.theandroiddev.mywins.presentation.importance_popup
 
 import android.os.Build
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.core.mvp.MvpPresenter
 import kotlinx.android.synthetic.main.activity_popup_importance.*

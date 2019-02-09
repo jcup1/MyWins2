@@ -1,13 +1,12 @@
 package com.theandroiddev.mywins.presentation.successes
 
-import android.support.constraint.ConstraintLayout
-import android.support.v7.widget.CardView
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.theandroiddev.mywins.utils.DrawableSelector
 import kotlinx.android.synthetic.main.success_layout.view.*
 import javax.inject.Inject
@@ -17,9 +16,10 @@ import javax.inject.Inject
  */
 
 class SuccessAdapter @Inject constructor(
-        private val itemLayout: Int,
-        private val listener: OnItemClickListener,
-        private val drawableSelector: DrawableSelector) : RecyclerView.Adapter<SuccessAdapter.ViewHolder>() {
+    private val itemLayout: Int,
+    private val listener: OnItemClickListener,
+    private val drawableSelector: DrawableSelector
+) : androidx.recyclerview.widget.RecyclerView.Adapter<SuccessAdapter.ViewHolder>() {
 
     var successes = mutableListOf<SuccessModel>()
     var successesToRemove = mutableListOf<SuccessModel>()
@@ -28,25 +28,26 @@ class SuccessAdapter @Inject constructor(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(itemLayout, parent, false)
         return ViewHolder(v)
-
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         holder.titleTv.text = successes[position].title
-        holder.categoryTv.text = holder.categoryTv.context.getString(successes[position].category.res)
+        holder.categoryTv.text =
+            holder.categoryTv.context.getString(successes[position].category.res)
         holder.dateStartedTv.text = successes[position].dateStarted
         holder.dateEndedTv.text = successes[position].dateEnded
         drawableSelector.selectCategoryImage(
-                holder.categoryIv,
-                successes[position].category,
-                holder.categoryTv)
+            holder.categoryIv,
+            successes[position].category,
+            holder.categoryTv
+        )
         drawableSelector.selectImportanceImage(
-                holder.importanceIv,
-                successes[position].importance)
+            holder.importanceIv,
+            successes[position].importance
+        )
 
         holder.bind(successes[position], listener, position)
-
     }
 
     override fun getItemCount(): Int {
@@ -58,23 +59,25 @@ class SuccessAdapter @Inject constructor(
         notifyDataSetChanged()
     }
 
-
     interface OnItemClickListener {
-        fun onItemClick(success: SuccessModel,
-                        position: Int,
-                        titleTv: TextView,
-                        categoryTv: TextView,
-                        dateStartedTv: TextView,
-                        dateEndedTv: TextView,
-                        categoryIv: ImageView,
-                        importanceIv: ImageView,
-                        constraintLayout: ConstraintLayout,
-                        cardView: CardView)
+        fun onItemClick(
+            success: SuccessModel,
+            position: Int,
+            titleTv: TextView,
+            categoryTv: TextView,
+            dateStartedTv: TextView,
+            dateEndedTv: TextView,
+            categoryIv: ImageView,
+            importanceIv: ImageView,
+            constraintLayout: ConstraintLayout,
+            cardView: CardView
+        )
 
         fun onLongItemClick(position: Int, cardView: CardView)
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View) :
+        androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
 
         var titleTv = itemView.item_title
         var categoryTv = itemView.item_category
@@ -88,8 +91,10 @@ class SuccessAdapter @Inject constructor(
         fun bind(success: SuccessModel, listener: OnItemClickListener, position: Int) {
 
             itemView.setOnClickListener {
-                listener.onItemClick(success, position, titleTv, categoryTv, dateStartedTv, dateEndedTv,
-                        categoryIv, importanceIv, constraintLayout, cardView)
+                listener.onItemClick(
+                    success, position, titleTv, categoryTv, dateStartedTv, dateEndedTv,
+                    categoryIv, importanceIv, constraintLayout, cardView
+                )
             }
 
             itemView.setOnLongClickListener {
@@ -97,8 +102,5 @@ class SuccessAdapter @Inject constructor(
                 true
             }
         }
-
     }
-
-
 }

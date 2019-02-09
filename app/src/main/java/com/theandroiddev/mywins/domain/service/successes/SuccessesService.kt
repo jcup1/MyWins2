@@ -2,14 +2,13 @@ package com.theandroiddev.mywins.domain.service.successes
 
 import com.theandroiddev.mywins.utils.SearchFilter
 import io.reactivex.Completable
-import io.reactivex.Flowable
 import io.reactivex.Single
 
 interface SuccessesService {
 
     fun getDefaultSuccesses(): SuccessesServiceResult
 
-    fun getSuccesses(searchFilter: SearchFilter): Flowable<SuccessesServiceResult>
+    fun getSuccesses(searchFilter: SearchFilter): Single<SuccessesServiceResult>
 
     fun removeSuccesses(argument: SuccessesServiceArgument): Completable
 

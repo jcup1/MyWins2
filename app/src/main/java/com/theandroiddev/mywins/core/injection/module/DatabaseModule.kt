@@ -1,7 +1,7 @@
 package com.theandroiddev.mywins.core.injection.module
 
 import android.app.Application
-import android.arch.persistence.room.Room
+import androidx.room.Room
 import com.theandroiddev.mywins.local.dao.SuccessDao
 import com.theandroiddev.mywins.local.dao.SuccessImageDao
 import com.theandroiddev.mywins.local.database.AppDatabase

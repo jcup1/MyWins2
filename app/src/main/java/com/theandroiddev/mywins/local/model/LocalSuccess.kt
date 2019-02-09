@@ -1,8 +1,8 @@
 package com.theandroiddev.mywins.local.model
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.PrimaryKey
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.theandroiddev.mywins.data.model.SuccessEntity
 import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceModel
 import com.theandroiddev.mywins.utils.Constants

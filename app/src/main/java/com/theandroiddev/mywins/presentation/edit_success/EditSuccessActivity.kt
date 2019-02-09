@@ -7,24 +7,27 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.support.constraint.ConstraintLayout
-import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.widget.*
-import android.support.v7.widget.helper.ItemTouchHelper
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.appcompat.widget.*
+import androidx.recyclerview.widget.ItemTouchHelper
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.features.camera.CameraModule
 import com.esafirm.imagepicker.features.camera.ImmediateCameraModule
 import com.esafirm.imagepicker.model.Image
+import com.google.android.material.snackbar.Snackbar
 import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.core.mvp.MvpDaggerAppCompatActivity
-import com.theandroiddev.mywins.core.mvp.startActivity
+import com.theandroiddev.mywins.core.extensions.startActivity
 import com.theandroiddev.mywins.presentation.image.CustomImagePickerAdapter
 import com.theandroiddev.mywins.presentation.image.SuccessImageAdapter
 import com.theandroiddev.mywins.presentation.importance_popup.ImportancePopupActivity
@@ -68,8 +71,8 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView,
 
         }
 
-        override fun getSwipeDirs(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
-            if(viewHolder?.adapterPosition == 0) return 0
+        override fun getSwipeDirs(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+            if(viewHolder.adapterPosition == 0) return 0
             return super.getSwipeDirs(recyclerView, viewHolder)
         }
     }
@@ -244,14 +247,18 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView,
 
     private fun initRecycler() {
 
-        val linearLayoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        val linearLayoutManager = LinearLayoutManager(
+            this,
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
         edit_image_recycler_view.layoutManager = linearLayoutManager
         edit_image_recycler_view.setHasFixedSize(true)
 
         val itemTouchHelper = ItemTouchHelper(simpleCallback)
         itemTouchHelper.attachToRecyclerView(edit_image_recycler_view)
 
-        successImageAdapter = SuccessImageAdapter(this, R.layout.success_image_layout, this)
+        successImageAdapter = SuccessImageAdapter(this, R.layout.success_image_layout)
         edit_image_recycler_view.adapter = successImageAdapter
 
     }

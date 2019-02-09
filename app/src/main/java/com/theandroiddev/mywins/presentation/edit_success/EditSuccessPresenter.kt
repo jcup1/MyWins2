@@ -1,7 +1,7 @@
 package com.theandroiddev.mywins.presentation.edit_success
 
 import android.content.Intent
-import android.support.v7.widget.CardView
+import androidx.cardview.widget.CardView
 import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.model.Image
 import com.theandroiddev.mywins.core.mvp.MvpPresenter
@@ -9,7 +9,11 @@ import com.theandroiddev.mywins.domain.service.success_images.SuccessImagesServi
 import com.theandroiddev.mywins.domain.service.success_images.SuccessImagesServiceArgument
 import com.theandroiddev.mywins.domain.service.success_images.SuccessImagesServiceResult
 import com.theandroiddev.mywins.domain.service.success_images.toModel
-import com.theandroiddev.mywins.domain.service.successes.*
+import com.theandroiddev.mywins.domain.service.successes.SuccessesService
+import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceArgument
+import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceModel
+import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceResult
+import com.theandroiddev.mywins.domain.service.successes.toModel
 import com.theandroiddev.mywins.presentation.successes.SuccessImageModel
 import com.theandroiddev.mywins.presentation.successes.SuccessModel
 import com.theandroiddev.mywins.presentation.successes.toSuccessImagesServiceModel
@@ -48,14 +52,12 @@ constructor(
         ifViewAttached { view ->
             view.displayUndoRemovingSuccessImage(position, successImage)
         }
-
     }
-
 
     private fun loadSuccess(id: Long) {
         successesService.fetchSuccess(id)
             .subscribeOn(Schedulers.io())
-            .subscribe { successesServiceResult ->
+            .subscribe ({ successesServiceResult ->
 
                 when (successesServiceResult) {
                     is SuccessesServiceResult.Successes -> {
@@ -65,7 +67,6 @@ constructor(
                                 successesServiceResult.successes.first()
                             loadSuccessImages(successesServiceModel, id)
                         }
-
                     }
                     is SuccessesServiceResult.Error -> {
                         ifViewAttached { view ->
@@ -74,14 +75,19 @@ constructor(
                     }
                 }
 
-            }.addToDisposables(disposables)
+            }, {
+                ifViewAttached { view ->
+                    view.alerts?.displayUnexpectedError()
+                }
+
+            }).addToDisposables(disposables)
     }
 
     private fun loadSuccessImages(successesServiceModel: SuccessesServiceModel, id: Long) {
 
         successImagesService.getSuccessImages(id)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { successImagesServiceResult ->
+            .subscribe({ successImagesServiceResult ->
 
                 when (successImagesServiceResult) {
                     is SuccessImagesServiceResult.SuccessImages -> {
@@ -106,7 +112,11 @@ constructor(
                     }
                 }
 
-            }.addToDisposables(disposables)
+            }, {
+                ifViewAttached { view ->
+                    view.alerts?.displayUnexpectedError()
+                }
+            }).addToDisposables(disposables)
     }
 
     fun onImagePickerResultOk(
@@ -132,7 +142,6 @@ constructor(
                 successImage.imagePath = images[0].path
                 view.updateImagePath(selectedImagePosition, successImage)
             }
-
         } else {//selected = 0
             if (isImagePickerNull == false) {
                 val successId = bundle.successId
@@ -140,14 +149,12 @@ constructor(
                 val sImages = ArrayList<SuccessImageModel>()
                 for (i in images) {
                     sImages.add(SuccessImageModel(null, successId, i.path))
-
                 }
                 ifViewAttached { view ->
                     view.addSuccessImages(sImages)
                 }
             }
         }
-
     }
 
     fun onSaveChanges(success: SuccessModel, successImages: MutableList<SuccessImageModel>?) {
@@ -160,11 +167,12 @@ constructor(
             for (image in successImages) {
                 image.successId = bundle.successId
             }
-            val argument = SuccessesServiceArgument.Successes(mutableListOf(success.toSuccessesServiceModel()))
+            val argument =
+                SuccessesServiceArgument.Successes(mutableListOf(success.toSuccessesServiceModel()))
             successesService.editSuccess(argument)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
+                .subscribe({
                     val id = success.id
                     if (id != null) {
                         successImagesService.editSuccessImages(
@@ -175,20 +183,27 @@ constructor(
                         )
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe {
+                            .subscribe ({
                                 ifViewAttached { view ->
                                     view.displaySlider()
                                 }
-                            }
+                            }, {
+                                ifViewAttached { view ->
+                                    view.alerts?.displayUnexpectedError()
+                                }
+
+                            }).addToDisposables(disposables)
                     } else {
                         ifViewAttached { view ->
                             view.alerts?.displayUnexpectedError()
                         }
                     }
-                }.addToDisposables(disposables)
-
+                }, {
+                    ifViewAttached { view ->
+                        view.alerts?.displayUnexpectedError()
+                    }
+                }).addToDisposables(disposables)
         }
-
     }
 
     fun onCameraResultOk(
@@ -228,7 +243,6 @@ constructor(
             }
         }
     }
-
 }
 
 //TODO clean up exs

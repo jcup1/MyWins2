@@ -1,7 +1,7 @@
 package com.theandroiddev.mywins.presentation.image
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.theandroiddev.mywins.R
 import kotlinx.android.synthetic.main.activity_image.*
 

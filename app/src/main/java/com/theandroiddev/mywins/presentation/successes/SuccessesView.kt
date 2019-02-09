@@ -1,9 +1,9 @@
 package com.theandroiddev.mywins.presentation.successes
 
-import android.support.constraint.ConstraintLayout
-import android.support.v7.widget.CardView
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.theandroiddev.mywins.core.mvp.MvpView
 import com.theandroiddev.mywins.utils.Constants.Companion.Category
 
@@ -13,9 +13,9 @@ import com.theandroiddev.mywins.utils.Constants.Companion.Category
 
 interface SuccessesView : MvpView {
 
-    fun displayDefaultSuccesses(successList: MutableList<SuccessModel>)
+    var isSuccessListVisible: Boolean
 
-    fun displayNoSuccesses()
+    fun displayDefaultSuccesses(successList: MutableList<SuccessModel>)
 
     fun displaySuccesses(successes: List<SuccessModel>)
 
@@ -35,13 +35,13 @@ interface SuccessesView : MvpView {
 
     fun displayUpdatedSuccesses()
 
-    fun displaySlider(successes: MutableList<SuccessModel>)
-
-    fun displaySliderAnimation(successes: MutableList<SuccessModel>, success: SuccessModel,
-                               position: Int, titleTv: TextView, categoryTv: TextView,
-                               dateStartedTv: TextView, dateEndedTv: TextView,
-                               categoryIv: ImageView, importanceIv: ImageView,
-                               constraintLayout: ConstraintLayout, cardView: CardView)
+    fun displaySliderAnimation(
+        successes: MutableList<SuccessModel>, success: SuccessModel,
+        position: Int, titleTv: TextView, categoryTv: TextView,
+        dateStartedTv: TextView, dateEndedTv: TextView,
+        categoryIv: ImageView, importanceIv: ImageView,
+        constraintLayout: ConstraintLayout, cardView: CardView
+    )
 
     fun displaySearch()
 

@@ -1,8 +1,8 @@
 package com.theandroiddev.mywins.data.model
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.PrimaryKey
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.theandroiddev.mywins.domain.service.success_images.SuccessImagesServiceModel
 import com.theandroiddev.mywins.local.model.LocalSuccessImage
 

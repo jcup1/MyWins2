@@ -3,9 +3,9 @@ package com.theandroiddev.mywins.presentation.edit_success
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.utils.Constants.Companion.EXTRA_DESCRIPTION
 import kotlinx.android.synthetic.main.activity_edit_description.*

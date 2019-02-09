@@ -10,11 +10,8 @@
     android:orientation="vertical"
     >
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
 
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/item_card_view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/cardview_basic_height"
@@ -24,10 +21,9 @@
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="@dimen/cardview_default_radius"
         app:cardElevation="@dimen/cardview_default_elevation"
-        app:cardUseCompatPadding="true"
-        tools:layout_editor_absoluteY="0dp">
+        app:cardUseCompatPadding="true">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/item_constraint_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -41,15 +37,13 @@
                 android:layout_marginTop="@dimen/items_default_margin"
                 android:gravity="left|center"
                 android:maxLines="3"
-                android:textAlignment="textStart"
                 android:textColor="@color/primary_text"
                 android:textSize="18sp"
+                android:transitionName="@string/transition_title"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toRightOf="@+id/item_category_iv"
                 app:layout_constraintRight_toLeftOf="@+id/item_date_started"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"
                 tools:text="@string/dummy_title"/>
 
             <ImageView
@@ -59,6 +53,7 @@
                 android:layout_marginLeft="@dimen/item_category_iv_left_margin"
                 android:layout_marginTop="@dimen/item_category_iv_top"
                 android:contentDescription="@string/category_description"
+                android:transitionName="@string/transition_category_iv"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:srcCompat="@mipmap/ic_launcher" />
@@ -72,6 +67,7 @@
                 android:maxLines="1"
                 android:textAlignment="center"
                 android:textColor="@color/secondary_text"
+                android:transitionName="@string/transition_category"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintLeft_toLeftOf="@+id/item_category_iv"
@@ -79,23 +75,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/item_category_iv"
                 app:layout_constraintVertical_bias="0.0"
                 tools:text="@string/dummy_category" />
-
-            <TextView
-                android:id="@+id/item_date_ended"
-                android:layout_width="@dimen/item_date_width"
-                android:layout_height="27dp"
-                android:layout_marginRight="@dimen/items_default_margin"
-                android:layout_marginBottom="@dimen/items_default_margin"
-                android:gravity="right"
-                android:maxLines="1"
-                android:padding="@dimen/item_date_default_padding"
-                android:text=""
-                android:textColor="@color/secondary_text"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/item_importance_iv"
-                tools:text="@string/dummy_date" />
 
             <TextView
                 android:id="@+id/item_date_started"
@@ -108,8 +87,27 @@
                 android:padding="@dimen/item_date_default_padding"
                 android:textColor="@color/secondary_text"
                 android:textSize="14sp"
+                android:transitionName="@string/transition_date_started"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                tools:text="@string/dummy_date" />
+
+            <TextView
+                android:id="@+id/item_date_ended"
+                android:layout_width="@dimen/item_date_width"
+                android:layout_height="27dp"
+                android:layout_marginRight="@dimen/items_default_margin"
+                android:layout_marginBottom="@dimen/items_default_margin"
+                android:gravity="right"
+                android:maxLines="1"
+                android:padding="@dimen/item_date_default_padding"
+                android:textColor="@color/secondary_text"
+                android:textSize="14sp"
+                android:transitionName="@string/transition_date_ended"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/item_importance_iv"
+                app:layout_constraintVertical_bias="0.0"
                 tools:text="@string/dummy_date" />
 
             <ImageView
@@ -119,12 +117,13 @@
                 android:layout_marginRight="@dimen/items_default_margin"
                 android:contentDescription="@string/importance_description"
                 android:padding="@dimen/items_default_margin"
+                android:transitionName="@string/transition_importance_iv"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/item_date_started"
                 tools:srcCompat="@drawable/importance_huge" />
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
 </LinearLayout>

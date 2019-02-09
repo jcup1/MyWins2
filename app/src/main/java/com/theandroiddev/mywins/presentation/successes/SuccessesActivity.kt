@@ -6,16 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
-import android.support.design.widget.Snackbar
-import android.support.v4.app.ActivityOptionsCompat
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.ActionBar
-import android.support.v7.widget.CardView
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.PopupMenu
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
@@ -27,11 +17,20 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.widget.PopupMenu
+import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.getbase.floatingactionbutton.FloatingActionButton
 import com.getbase.floatingactionbutton.FloatingActionsMenu
+import com.google.android.material.snackbar.Snackbar
 import com.theandroiddev.mywins.R
+import com.theandroiddev.mywins.core.extensions.startActivity
+import com.theandroiddev.mywins.core.extensions.visibleOrInvisible
 import com.theandroiddev.mywins.core.mvp.MvpDaggerAppCompatActivity
-import com.theandroiddev.mywins.core.mvp.startActivity
 import com.theandroiddev.mywins.presentation.insert_success.InsertSuccessActivity
 import com.theandroiddev.mywins.presentation.insert_success.InsertSuccessBundle
 import com.theandroiddev.mywins.presentation.success_slider.SuccessSliderActivity
@@ -55,9 +54,9 @@ import io.codetail.animation.ViewAnimationUtils
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
-class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBundle, SuccessesPresenter>(),
+class SuccessesActivity :
+    MvpDaggerAppCompatActivity<SuccessesView, SuccessesBundle, SuccessesPresenter>(),
     android.view.View.OnClickListener, SuccessAdapter.OnItemClickListener, SuccessesView {
-
 
     private lateinit var successAdapter: SuccessAdapter
 
@@ -65,23 +64,34 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
 
     var searchBox: EditText? = null
 
-    private var simpleCallback: ItemTouchHelper.SimpleCallback = object : ItemTouchHelper.SimpleCallback(
-        0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-    ) {
-
-        override fun onMove(
-            recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
-            target: RecyclerView.ViewHolder
-        ): Boolean {
-            return false
-        }
-
-        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-
-            toRemove(viewHolder.adapterPosition)
-
-        }
+    override var isSuccessListVisible: Boolean = false
+    set(value) {
+        field = value
+        recycler_view.visibleOrInvisible(value)
+        empty_list_text.visibleOrInvisible(!value)
     }
+
+    private var simpleCallback: ItemTouchHelper.SimpleCallback =
+        object : ItemTouchHelper.SimpleCallback(
+            0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
+
+            override fun onMove(
+                recyclerView: androidx.recyclerview.widget.RecyclerView,
+                viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder,
+                target: androidx.recyclerview.widget.RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(
+                viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder,
+                direction: Int
+            ) {
+
+                toRemove(viewHolder.adapterPosition)
+            }
+        }
     private var searchAction: MenuItem? = null
     private var clickedPosition = NOT_ACTIVE
 
@@ -102,7 +112,6 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
         if (searchBox != null) {
             showSoftKeyboard()
         }
-
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
@@ -117,7 +126,6 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
             searchBox != null -> presenter?.toggleSearchBar(true)
             else -> super.onBackPressed()
         }
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -128,7 +136,6 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
         setUpFABs()
         initCircularReveal()
         setUpRecycler()
-
     }
 
     override fun onStart() {
@@ -159,7 +166,6 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
                 multiple_actions.collapse()
             }
         }
-
     }
 
     private fun showCircularReveal(myView: android.view.View) {
@@ -178,7 +184,6 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
 
             animator.start()
         }
-
     }
 
     private fun hideCircularReveal(myView: android.view.View) {
@@ -193,7 +198,6 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
             animator.interpolator = AccelerateDecelerateInterpolator()
             animator.setDuration(375).addListener(object : Animator.AnimatorListener {
                 override fun onAnimationStart(animator: Animator) {
-
                 }
 
                 override fun onAnimationEnd(animator: Animator) {
@@ -201,17 +205,14 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
                 }
 
                 override fun onAnimationCancel(animator: Animator) {
-
                 }
 
                 override fun onAnimationRepeat(animator: Animator) {
-
                 }
             })
 
             animator.start()
         }
-
     }
 
     private fun setUpFABs() {
@@ -228,19 +229,18 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
         action_journey.setOnClickListener(this)
         action_money.setOnClickListener(this)
         action_video.setOnClickListener(this)
-
     }
 
     private fun setUpRecycler() {
 
-        successAdapter = SuccessAdapter(R.layout.success_layout, this, DrawableSelector(applicationContext))
+        successAdapter =
+            SuccessAdapter(R.layout.success_layout, this, DrawableSelector(applicationContext))
         recycler_view.adapter = successAdapter
-        val linearLayoutManager = LinearLayoutManager(this)
+        val linearLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         recycler_view.layoutManager = linearLayoutManager
         recycler_view.setHasFixedSize(true)
         val itemTouchHelper = ItemTouchHelper(simpleCallback)
         itemTouchHelper.attachToRecyclerView(recycler_view)
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -259,7 +259,6 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
         val fab = shadowView as FloatingActionButton
 
         presenter?.selectCategory(fab.id)
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -268,7 +267,8 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
             if (requestCode == REQUEST_CODE_INSERT) {
                 if (resultCode == Activity.RESULT_OK) {
                     onSuccessAdded(data)
-                } else {
+                }
+                if (resultCode == Activity.RESULT_CANCELED) {
                     onSuccessNotAdded()
                 }
 
@@ -279,9 +279,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
                 }
             }
         }
-
     }
-
 
     override fun removeSuccess(position: Int, backupSuccess: SuccessModel) {
         successAdapter.successes.removeAt(position)
@@ -289,7 +287,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
         successAdapter.successesToRemove.add(backupSuccess)
         if (successAdapter.successes.isEmpty()) {
             //onExtrasLoaded();
-            displayNoSuccesses()
+            isSuccessListVisible = false
         }
     }
 
@@ -300,7 +298,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
         successAdapter.notifyItemInserted(position)
 
         if (successAdapter.successes.size == 1) {
-            presenter?.setSuccessListVisible(recycler_view, empty_list_text)
+            isSuccessListVisible = true
         }
 
     }
@@ -309,7 +307,6 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
         val position = data.getIntExtra("position", 0)
 
         recycler_view?.scrollToPosition(position)
-
     }
 
     private fun onSuccessNotAdded() {
@@ -317,19 +314,17 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
             main_constraint, getString(R.string.snack_success_not_added),
             Snackbar.LENGTH_SHORT
         ).show()
-
     }
 
     private fun onSuccessAdded(data: Intent) {
         val success = data.extras?.getSerializable(EXTRA_INSERT_SUCCESS_ITEM)
         if (success != null && success is SuccessModel) {
-            presenter?.addSuccess(success)
+            presenter?.onSuccessAdded(success)
         }
     }
 
     private fun toRemove(position: Int) {
         showUndoSnackbar(position)
-
     }
 
     private fun showUndoSnackbar(position: Int) {
@@ -361,11 +356,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
         this.clickedPosition = position
         hideSoftKeyboard()
         successAdapter.successes
-        presenter?.startSlider(
-            successAdapter.successes, success, position, titleTv, categoryTv, dateStartedTv, dateEndedTv, categoryIv,
-            importanceIv, constraintLayout, cardView
-        )
-
+        startSuccessesSlider()
     }
 
     override fun onLongItemClick(position: Int, cardView: CardView) {
@@ -378,7 +369,6 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
             if (item.itemId == R.id.remove_item_menu) {
 
                 toRemove(position)
-
             }
 
             true
@@ -387,17 +377,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
 
     override fun displayDefaultSuccesses(successList: MutableList<SuccessModel>) {
         successAdapter.updateSuccessList(successList)
-        presenter?.setSuccessListVisible(recycler_view, empty_list_text)
 
-    }
-
-    override fun displayNoSuccesses() {
-        presenter?.setSuccessListInvisible(recycler_view, empty_list_text)
-    }
-
-    override fun displaySuccesses(successes: List<SuccessModel>) {
-        successAdapter.updateSuccessList(successes)
-        presenter?.setSuccessListVisible(recycler_view, empty_list_text)
     }
 
     override fun updateAdapterList(successList: MutableList<SuccessModel>) {
@@ -448,12 +428,10 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
             action?.setDisplayShowTitleEnabled(false)
             searchBox = action?.customView?.findViewById(R.id.edt_search)
             showSoftKeyboard()
-
         }
 
         searchBox?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-
             }
 
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
@@ -461,7 +439,6 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
             }
 
             override fun afterTextChanged(editable: Editable) {
-
             }
         })
         searchBox?.setOnEditorActionListener { v, actionId, event ->
@@ -472,7 +449,6 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
 
         searchBox?.requestFocus()
         searchAction?.icon = ContextCompat.getDrawable(this, R.drawable.ic_close)
-
     }
 
     override fun displayUpdatedSuccesses() {
@@ -483,16 +459,18 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
 
         startActivity<InsertSuccessActivity>(InsertSuccessBundle(category), REQUEST_CODE_INSERT)
         multiple_actions?.collapse()
-
     }
 
-    override fun displaySlider(successes: MutableList<SuccessModel>) {
+    override fun displaySuccesses(successes: List<SuccessModel>) {
+        successAdapter.updateSuccessList(successes)
+    }
 
+    private fun startSuccessesSlider() {
+        val successes = successAdapter.successes
         startActivity<SuccessSliderActivity>(
             SuccessSliderBundle(clickedPosition, successes),
             REQUEST_CODE_SLIDER
         )
-
     }
 
     override fun displaySliderAnimation(
@@ -508,13 +486,13 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
 
         intent.putExtra(KEY_MVP_BUNDLE, SuccessSliderBundle(clickedPosition, successes))
 
-        val p1 = android.support.v4.util.Pair(titleTv as View, EXTRA_SUCCESS_TITLE)
-        val p2 = android.support.v4.util.Pair(categoryTv as View, EXTRA_SUCCESS_CATEGORY)
-        val p3 = android.support.v4.util.Pair(dateStartedTv as View, EXTRA_SUCCESS_DATE_STARTED)
-        val p4 = android.support.v4.util.Pair(dateEndedTv as View, EXTRA_SUCCESS_DATE_ENDED)
-        val p5 = android.support.v4.util.Pair(categoryIv as View, EXTRA_SUCCESS_CATEGORY_IV)
-        val p6 = android.support.v4.util.Pair(importanceIv as View, EXTRA_SUCCESS_IMPORTANCE_IV)
-        val p7 = android.support.v4.util.Pair(cardView as View, EXTRA_SUCCESS_CARD_VIEW)
+        val p1 = androidx.core.util.Pair(titleTv as View, EXTRA_SUCCESS_TITLE)
+        val p2 = androidx.core.util.Pair(categoryTv as View, EXTRA_SUCCESS_CATEGORY)
+        val p3 = androidx.core.util.Pair(dateStartedTv as View, EXTRA_SUCCESS_DATE_STARTED)
+        val p4 = androidx.core.util.Pair(dateEndedTv as View, EXTRA_SUCCESS_DATE_ENDED)
+        val p5 = androidx.core.util.Pair(categoryIv as View, EXTRA_SUCCESS_CATEGORY_IV)
+        val p6 = androidx.core.util.Pair(importanceIv as View, EXTRA_SUCCESS_IMPORTANCE_IV)
+        val p7 = androidx.core.util.Pair(cardView as View, EXTRA_SUCCESS_CARD_VIEW)
 
         val activityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
             this, p1, p2, p3, p4, p5, p6, p7
@@ -533,13 +511,10 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
         if (searchBox != null) {
             presenter?.onHideSoftKeyboard(searchBox, imm)
         }
-
     }
 
     private fun showSoftKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         presenter?.onShowSoftKeyboard(imm, searchBox)
-
     }
-
 }

@@ -1,6 +1,6 @@
 package com.theandroiddev.mywins.presentation.edit_success
 
-import android.support.v7.widget.CardView
+import androidx.cardview.widget.CardView
 import com.esafirm.imagepicker.model.Image
 import com.theandroiddev.mywins.core.mvp.MvpView
 import com.theandroiddev.mywins.presentation.successes.SuccessImageModel

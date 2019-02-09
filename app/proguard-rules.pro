@@ -64,8 +64,11 @@
 -keep class * extends com.google.gson.JsonDeserializer
 -keep class * extends com.google.gson.JsonSerializer
 
+-keep class androidx.core.app.CoreComponentFactory { *; }
+
 -dontwarn com.google.**
 -dontwarn sun.misc.**
 -dontwarn org.objenesis.instantiator.sun.**
 
 -dontwarn org.conscrypt.Conscrypt
+

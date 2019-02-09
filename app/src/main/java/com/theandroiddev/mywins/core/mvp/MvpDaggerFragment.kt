@@ -2,7 +2,6 @@ package com.theandroiddev.mywins.core.mvp
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.View
 import com.hannesdorfmann.mosby3.mvp.MvpFragment
 import com.theandroiddev.mywins.utils.Alerts
@@ -21,14 +20,14 @@ abstract class MvpDaggerFragment<V : MvpView, B: Serializable, P : MvpPresenter<
     override val alerts: Alerts? by lazy { activity?.let { Alerts(it) } }
 
     @Inject
-    lateinit var _childFragmentInjector: DispatchingAndroidInjector<Fragment>
+    lateinit var _childFragmentInjector: DispatchingAndroidInjector<androidx.fragment.app.Fragment>
 
     @Inject
     lateinit var _injectedPresenter: P
 
     override fun createPresenter(): P = _injectedPresenter
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
     }
@@ -39,11 +38,11 @@ abstract class MvpDaggerFragment<V : MvpView, B: Serializable, P : MvpPresenter<
         presenter?.onViewCreated()
     }
 
-    override fun supportFragmentInjector(): AndroidInjector<Fragment>? {
+    override fun supportFragmentInjector(): AndroidInjector<androidx.fragment.app.Fragment>? {
         return _childFragmentInjector
     }
 
-    fun setSerializableArgument(serializable: B): Fragment {
+    fun setSerializableArgument(serializable: B): androidx.fragment.app.Fragment {
         val bundle = Bundle()
         bundle.putSerializable(KEY_MVP_BUNDLE, serializable)
         this.arguments = bundle

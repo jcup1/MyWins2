@@ -1,12 +1,18 @@
 package com.theandroiddev.mywins.core.injection
 
 import android.app.Application
-import com.theandroiddev.mywins.core.injection.module.*
+import com.theandroiddev.mywins.core.injection.module.ActivityBuildersModule
+import com.theandroiddev.mywins.core.injection.module.AppModule
+import com.theandroiddev.mywins.core.injection.module.CommonModule
+import com.theandroiddev.mywins.core.injection.module.DataSourceModule
+import com.theandroiddev.mywins.core.injection.module.DatabaseModule
+import com.theandroiddev.mywins.core.injection.module.FragmentBuildersModule
+import com.theandroiddev.mywins.core.injection.module.ServicesModule
 import dagger.BindsInstance
 import dagger.Component
+import dagger.android.AndroidInjectionModule
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
-import dagger.android.support.AndroidSupportInjectionModule
 import javax.inject.Singleton
 
 /**
@@ -15,7 +21,7 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [
-    AndroidSupportInjectionModule::class,
+    AndroidInjectionModule::class,
     ActivityBuildersModule::class,
     AppModule::class,
     DataSourceModule::class,
