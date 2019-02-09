@@ -6,11 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import androidx.core.app.ActivityOptionsCompat
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.ActionBar
-import androidx.appcompat.widget.PopupMenu
-import androidx.recyclerview.widget.ItemTouchHelper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
@@ -22,14 +17,20 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.widget.PopupMenu
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.getbase.floatingactionbutton.FloatingActionButton
 import com.getbase.floatingactionbutton.FloatingActionsMenu
 import com.google.android.material.snackbar.Snackbar
 import com.theandroiddev.mywins.R
+import com.theandroiddev.mywins.core.extensions.startActivity
+import com.theandroiddev.mywins.core.extensions.visibleOrInvisible
 import com.theandroiddev.mywins.core.mvp.MvpDaggerAppCompatActivity
-import com.theandroiddev.mywins.core.mvp.startActivity
 import com.theandroiddev.mywins.presentation.insert_success.InsertSuccessActivity
 import com.theandroiddev.mywins.presentation.insert_success.InsertSuccessBundle
 import com.theandroiddev.mywins.presentation.success_slider.SuccessSliderActivity
@@ -57,12 +58,18 @@ class SuccessesActivity :
     MvpDaggerAppCompatActivity<SuccessesView, SuccessesBundle, SuccessesPresenter>(),
     android.view.View.OnClickListener, SuccessAdapter.OnItemClickListener, SuccessesView {
 
-
     private lateinit var successAdapter: SuccessAdapter
 
     private var action: ActionBar? = null
 
     var searchBox: EditText? = null
+
+    override var isSuccessListVisible: Boolean = false
+    set(value) {
+        field = value
+        recycler_view.visibleOrInvisible(value)
+        empty_list_text.visibleOrInvisible(!value)
+    }
 
     private var simpleCallback: ItemTouchHelper.SimpleCallback =
         object : ItemTouchHelper.SimpleCallback(
@@ -262,7 +269,6 @@ class SuccessesActivity :
                     onSuccessAdded(data)
                 }
                 if (resultCode == Activity.RESULT_CANCELED) {
-                } else {
                     onSuccessNotAdded()
                 }
 
@@ -275,14 +281,13 @@ class SuccessesActivity :
         }
     }
 
-
     override fun removeSuccess(position: Int, backupSuccess: SuccessModel) {
         successAdapter.successes.removeAt(position)
         successRemoved(position)
         successAdapter.successesToRemove.add(backupSuccess)
         if (successAdapter.successes.isEmpty()) {
             //onExtrasLoaded();
-            displayNoSuccesses()
+            isSuccessListVisible = false
         }
     }
 
@@ -293,7 +298,7 @@ class SuccessesActivity :
         successAdapter.notifyItemInserted(position)
 
         if (successAdapter.successes.size == 1) {
-            presenter?.setSuccessListVisible(recycler_view, empty_list_text)
+            isSuccessListVisible = true
         }
 
     }
@@ -314,7 +319,7 @@ class SuccessesActivity :
     private fun onSuccessAdded(data: Intent) {
         val success = data.extras?.getSerializable(EXTRA_INSERT_SUCCESS_ITEM)
         if (success != null && success is SuccessModel) {
-            presenter?.addSuccess(success)
+            presenter?.onSuccessAdded(success)
         }
     }
 
@@ -351,11 +356,6 @@ class SuccessesActivity :
         this.clickedPosition = position
         hideSoftKeyboard()
         successAdapter.successes
-        presenter?.startSlider(
-            successAdapter.successes, success, position, titleTv, categoryTv, dateStartedTv, dateEndedTv, categoryIv,
-            importanceIv, constraintLayout, cardView
-        )
-
         startSuccessesSlider()
     }
 
@@ -377,16 +377,7 @@ class SuccessesActivity :
 
     override fun displayDefaultSuccesses(successList: MutableList<SuccessModel>) {
         successAdapter.updateSuccessList(successList)
-        presenter?.setSuccessListVisible(recycler_view, empty_list_text)
-    }
 
-    override fun displayNoSuccesses() {
-        presenter?.setSuccessListInvisible(recycler_view, empty_list_text)
-    }
-
-    override fun displaySuccesses(successes: List<SuccessModel>) {
-        successAdapter.updateSuccessList(successes)
-        presenter?.setSuccessListVisible(recycler_view, empty_list_text)
     }
 
     override fun updateAdapterList(successList: MutableList<SuccessModel>) {
@@ -468,6 +459,10 @@ class SuccessesActivity :
 
         startActivity<InsertSuccessActivity>(InsertSuccessBundle(category), REQUEST_CODE_INSERT)
         multiple_actions?.collapse()
+    }
+
+    override fun displaySuccesses(successes: List<SuccessModel>) {
+        successAdapter.updateSuccessList(successes)
     }
 
     private fun startSuccessesSlider() {

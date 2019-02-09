@@ -27,7 +27,7 @@ import com.esafirm.imagepicker.model.Image
 import com.google.android.material.snackbar.Snackbar
 import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.core.mvp.MvpDaggerAppCompatActivity
-import com.theandroiddev.mywins.core.mvp.startActivity
+import com.theandroiddev.mywins.core.extensions.startActivity
 import com.theandroiddev.mywins.presentation.image.CustomImagePickerAdapter
 import com.theandroiddev.mywins.presentation.image.SuccessImageAdapter
 import com.theandroiddev.mywins.presentation.importance_popup.ImportancePopupActivity

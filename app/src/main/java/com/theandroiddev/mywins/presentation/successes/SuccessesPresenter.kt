@@ -3,7 +3,6 @@ package com.theandroiddev.mywins.presentation.successes
 import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.TextView
 import com.github.ajalt.timberkt.Timber.d
 import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.core.mvp.MvpPresenter
@@ -27,12 +26,11 @@ import javax.inject.Inject
  */
 
 class SuccessesPresenter @Inject constructor(
-        private val successesService: SuccessesService,
-        private val sharedPreferencesService: SharedPreferencesService
+    private val successesService: SuccessesService,
+    private val sharedPreferencesService: SharedPreferencesService
 ) : MvpPresenter<SuccessesView, SuccessesBundle>() {
 
     override fun onViewCreated() {
-
     }
 
     private var sortType: SortType = SortType.DATE_ADDED
@@ -42,6 +40,15 @@ class SuccessesPresenter @Inject constructor(
     val searchFilter: SearchFilter
         get() = SearchFilter(searchTerm, sortType, isSortingAscending)
 
+    var successes = listOf<SuccessModel>()
+        set(value) {
+            field = value
+            ifViewAttached { view ->
+                view.isSuccessListVisible = value.isNotEmpty()
+                view.displaySuccesses(value)
+            }
+        }
+
     fun loadSuccesses(searchFilter: SearchFilter) {
 
         successesService.getSuccesses(searchFilter)
@@ -50,17 +57,9 @@ class SuccessesPresenter @Inject constructor(
             .subscribe({ successesServiceResult ->
                 when (successesServiceResult) {
                     is SuccessesServiceResult.Successes -> {
-                        if (successesServiceResult.successes.isEmpty()) {
-                            ifViewAttached { view ->
-                                view.displayNoSuccesses()
+                            successes = successesServiceResult.successes.map {
+                                it.toModel()
                             }
-                        } else {
-                            ifViewAttached { view ->
-                                view.displaySuccesses(successesServiceResult.successes.map {
-                                    it.toModel()
-                                })
-                            }
-                        }
                     }
                     is SuccessesServiceResult.Error -> {
                         ifViewAttached { view ->
@@ -74,7 +73,6 @@ class SuccessesPresenter @Inject constructor(
                     view.alerts?.displayUnexpectedError()
                 }
             }).addToDisposables(disposables)
-
     }
 
     fun onPause(successesToRemove: MutableList<SuccessModel>) {
@@ -107,7 +105,6 @@ class SuccessesPresenter @Inject constructor(
                 view.alerts?.displayUnexpectedError()
             }
         }
-
     }
 
     fun sendToRemoveQueue(position: Int, backupSuccess: SuccessModel?) {
@@ -121,7 +118,6 @@ class SuccessesPresenter @Inject constructor(
                 view.alerts?.displayUnexpectedError()
             }
         }
-
     }
 
     fun updateSuccess(clickedPosition: Int, successes: MutableList<SuccessModel>) {
@@ -132,23 +128,20 @@ class SuccessesPresenter @Inject constructor(
                 val id = successes[clickedPosition].id
                 if (id != null) {
                     fetchSuccess(id, clickedPosition)
-
                 } else {
                     ifViewAttached { view ->
                         view.alerts?.displayUnexpectedError()
                     }
                 }
-
             }
         }
-
     }
 
     private fun fetchSuccess(id: Long, clickedPosition: Int) {
         successesService.fetchSuccess(id)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe ({ successesServiceResult ->
+            .subscribe({ successesServiceResult ->
 
                 when (successesServiceResult) {
                     is SuccessesServiceResult.Successes -> {
@@ -166,7 +159,6 @@ class SuccessesPresenter @Inject constructor(
                                 view.alerts?.displayUnexpectedError()
                             }
                         }
-
                     }
                     is SuccessesServiceResult.Error -> {
                         ifViewAttached { view ->
@@ -181,7 +173,6 @@ class SuccessesPresenter @Inject constructor(
                 }
             }).addToDisposables(disposables)
     }
-
 
     fun categoryPicked(category: Category) {
         ifViewAttached { view ->
@@ -204,7 +195,6 @@ class SuccessesPresenter @Inject constructor(
                     isSortingAscending = !isSortingAscending
                 }
                 loadSuccesses(searchFilter)
-
             }
             R.id.action_date_ended -> {
                 if (sortType != SortType.DATE_ENDED) {
@@ -247,7 +237,6 @@ class SuccessesPresenter @Inject constructor(
                 loadSuccesses(searchFilter)
             }
         }
-
     }
 
     fun toggleSearchBar(isSearchOpened: Boolean) {
@@ -262,11 +251,7 @@ class SuccessesPresenter @Inject constructor(
 
                     when (successesServiceResult) {
                         is SuccessesServiceResult.Successes -> {
-                            ifViewAttached { view ->
-                                view.displaySuccesses(
-                                    successesServiceResult.successes.map { it.toModel() }
-                                )
-                            }
+                            successes = successesServiceResult.successes.map { it.toModel() }
                         }
                         is SuccessesServiceResult.Error -> {
                             ifViewAttached { view ->
@@ -280,15 +265,12 @@ class SuccessesPresenter @Inject constructor(
                         view.alerts?.displayUnexpectedError()
                     }
                 }).addToDisposables(disposables)
-
         } else {
             ifViewAttached { view ->
                 view.displaySearchBar()
             }
         }
-
     }
-
 
     fun showSearch() {
         ifViewAttached { view ->
@@ -304,41 +286,28 @@ class SuccessesPresenter @Inject constructor(
     fun onResumeActivity(successes: MutableList<SuccessModel>, clickedPosition: Int) {
 
         updateSuccess(clickedPosition, successes)
-
     }
-
 
     fun onShowSoftKeyboard(imm: InputMethodManager?, searchBox: EditText?) {
 
         if (searchBox != null) {
-            imm?.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.SHOW_IMPLICIT)
+            imm?.toggleSoftInput(
+                InputMethodManager.SHOW_FORCED,
+                InputMethodManager.SHOW_IMPLICIT
+            )
         }
     }
-
 
     fun onHideSoftKeyboard(searchBox: EditText?, imm: InputMethodManager?) {
 
         if (imm != null && searchBox != null) {
             imm.hideSoftInputFromWindow(searchBox.windowToken, 0)
         }
-
     }
 
     fun onHideSearchBar() {
         clearSearch()
     }
-
-    fun setSuccessListVisible(recyclerView: androidx.recyclerview.widget.RecyclerView, emptyListTv: TextView) {
-        recyclerView.visibility = android.view.View.VISIBLE
-        emptyListTv.visibility = android.view.View.INVISIBLE
-    }
-
-
-    fun setSuccessListInvisible(recyclerView: androidx.recyclerview.widget.RecyclerView, emptyListTv: TextView) {
-        recyclerView.visibility = android.view.View.INVISIBLE
-        emptyListTv.visibility = android.view.View.VISIBLE
-    }
-
 
     fun selectCategory(id: Int) {
 
@@ -361,38 +330,30 @@ class SuccessesPresenter @Inject constructor(
         loadSuccesses(searchFilter)
     }
 
+    fun onSuccessAdded(success: SuccessModel) {
 
-    fun addSuccess(success: SuccessModel) {
-
-        if (sharedPreferencesService.isFirstSuccessAdded == false) {
-            successesService.removeAllSuccesses()
-                .subscribeOn(Schedulers.io())
-                .subscribe({
-                    sharedPreferencesService.setFirstSuccessAdded()
-
-                }, {
-                    ifViewAttached { view ->
-                        view.alerts?.displayUnexpectedError()
-                    }
-                }).addToDisposables(disposables)
-        }
         val argument = SuccessesServiceArgument.Successes(listOf(success.toSuccessesServiceModel()))
-        successesService.saveSuccesses(argument)
+        val isFirstSuccessAdded = sharedPreferencesService.isFirstSuccessAdded
+
+        if (isFirstSuccessAdded == false) {
+            successesService.removeAllSuccesses().andThen(successesService.saveSuccesses(argument))
+        } else {
+            successesService.saveSuccesses(argument)
+        }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
+                if (isFirstSuccessAdded == false) {
+                    sharedPreferencesService.setFirstSuccessAdded()
+                }
                 loadSuccesses(searchFilter)
-//                    ifViewAttached { view ->
-//                        view.displayUpdatedSuccesses()
-//                    }
+
             }, {
                 ifViewAttached { view ->
                     view.alerts?.displayUnexpectedError()
                 }
             }).addToDisposables(disposables)
-
     }
-
 
     fun checkPreferences() {
         if (sharedPreferencesService.isFirstRun) {
@@ -401,7 +362,8 @@ class SuccessesPresenter @Inject constructor(
             when (successesServiceResult) {
                 is SuccessesServiceResult.Successes -> {
 
-                    val argument = SuccessesServiceArgument.Successes(successesServiceResult.successes)
+                    val argument =
+                        SuccessesServiceArgument.Successes(successesServiceResult.successes)
                     successesService.saveSuccesses(argument)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -425,21 +387,16 @@ class SuccessesPresenter @Inject constructor(
         } else {
             loadSuccesses(SearchFilter())
         }
-
     }
 
     private fun clearSearch() {
         searchTerm = ""
         //onExtrasLoaded();
-
     }
 
     override fun detachView() {
-
     }
 
     override fun destroy() {
-
     }
-
 }

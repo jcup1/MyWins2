@@ -5,12 +5,11 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import android.widget.Toast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.core.mvp.MvpDaggerAppCompatActivity
-import com.theandroiddev.mywins.core.mvp.startActivity
+import com.theandroiddev.mywins.core.extensions.startActivity
 import com.theandroiddev.mywins.presentation.edit_success.EditSuccessActivity
 import com.theandroiddev.mywins.presentation.edit_success.EditSuccessBundle
 import com.theandroiddev.mywins.presentation.successes.SuccessModel

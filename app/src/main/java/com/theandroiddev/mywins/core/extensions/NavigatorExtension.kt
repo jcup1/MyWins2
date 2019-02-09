@@ -1,8 +1,7 @@
-package com.theandroiddev.mywins.core.mvp
+package com.theandroiddev.mywins.core.extensions
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.FragmentActivity
 import androidx.appcompat.app.AppCompatActivity
 import com.theandroiddev.mywins.utils.KEY_MVP_BUNDLE
 import com.theandroiddev.mywins.utils.MvpBundle

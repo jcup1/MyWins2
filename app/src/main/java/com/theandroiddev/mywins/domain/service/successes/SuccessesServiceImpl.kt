@@ -11,18 +11,18 @@ import io.reactivex.Single
 import javax.inject.Inject
 
 class SuccessesServiceImpl @Inject constructor(
-        private var successesLocalDataSource: SuccessesLocalDataSource)
-    : SuccessesService {
+    private var successesLocalDataSource: SuccessesLocalDataSource
+) : SuccessesService {
 
-    override fun saveSuccesses(argument: SuccessesServiceArgument): Completable =
+    override fun saveSuccesses(argument: SuccessesServiceArgument): Completable {
 
         when (argument) {
             is SuccessesServiceArgument.Successes -> {
                 val successEntities = argument.successes.map { it.toEntity() }
-                successesLocalDataSource.addSuccesses(successEntities)
+                return successesLocalDataSource.addSuccesses(successEntities)
             }
         }
-
+    }
 
     override fun fetchSuccess(id: Long): Single<SuccessesServiceResult> {
         return successesLocalDataSource.fetchSuccess(id).map { successEntity ->
@@ -36,10 +36,9 @@ class SuccessesServiceImpl @Inject constructor(
             searchFilter.sortType?.name?.toLowerCase() ?: TITLE.name.toLowerCase(),
             searchFilter.isSortingAscending
         ).map { successEntities ->
-                SuccessesServiceResult.Successes(successEntities.map { it.toServiceModel() })
-            }
+            SuccessesServiceResult.Successes(successEntities.map { it.toServiceModel() })
+        }
     }
-
 
     override fun getDefaultSuccesses(): SuccessesServiceResult {
         return SuccessesServiceResult.Successes(
@@ -62,17 +61,17 @@ class SuccessesServiceImpl @Inject constructor(
         }
     }
 
-    override fun removeSuccesses(argument: SuccessesServiceArgument): Completable =
+    override fun removeSuccesses(argument: SuccessesServiceArgument): Completable {
 
-            when (argument) {
-                is SuccessesServiceArgument.Successes -> {
-                    val successes = argument.successes.map { it.toEntity() }
-                    successesLocalDataSource.removeSuccess(successes)
-                }
+        when (argument) {
+            is SuccessesServiceArgument.Successes -> {
+                val successes = argument.successes.map { it.toEntity() }
+                return successesLocalDataSource.removeSuccesses(successes)
             }
+        }
+    }
 
     override fun removeAllSuccesses(): Completable {
         return successesLocalDataSource.removeAllSuccesses()
     }
-
 }

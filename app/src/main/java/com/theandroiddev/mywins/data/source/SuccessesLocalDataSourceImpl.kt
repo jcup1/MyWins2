@@ -80,12 +80,15 @@ class SuccessesLocalDataSourceImpl @Inject constructor(
         return successDao.update(successEntity.toLocal())
     }
 
-    override fun removeSuccess(successEntity: SuccessEntity): Completable {
-        return successDao.delete(successEntity.toLocal())
+    override fun removeSuccesses(successEntities: List<SuccessEntity>): Completable {
+        return successDao.delete(successEntities.map { it.toLocal() })
     }
 
     override fun removeAllSuccesses(): Completable {
-        return successDao.removeAll()
+        //Don't return Completable from DAO because it still doesn't generate proper async function for table nuke
+        return Completable.fromAction {
+            successDao.removeAll()
+        }
     }
 }
 

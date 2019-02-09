@@ -13,9 +13,9 @@ import com.theandroiddev.mywins.utils.Constants.Companion.Category
 
 interface SuccessesView : MvpView {
 
-    fun displayDefaultSuccesses(successList: MutableList<SuccessModel>)
+    var isSuccessListVisible: Boolean
 
-    fun displayNoSuccesses()
+    fun displayDefaultSuccesses(successList: MutableList<SuccessModel>)
 
     fun displaySuccesses(successes: List<SuccessModel>)
 

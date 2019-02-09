@@ -32,9 +32,9 @@ interface SuccessDao {
     fun update(success: LocalSuccess): Completable
 
     @Delete
-    fun delete(success: LocalSuccess): Completable
+    fun delete(successes: List<LocalSuccess>): Completable
 
     @Query("delete from success")
-    fun removeAll(): Completable
+    fun removeAll(): Int
 
 }
