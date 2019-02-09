@@ -1,6 +1,5 @@
 package com.theandroiddev.mywins.UI.activities
 
-import android.view.MenuItem
 import com.nhaarman.mockito_kotlin.whenever
 import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.domain.service.shared_preferences.SharedPreferencesService
@@ -136,7 +135,8 @@ class SuccessesPresenterTest : Spek({
 
                 SUT.onPause(successesToRemove)
 
-                val serviceModel = SuccessesServiceArgument.Successes(successesToRemove.map { it.toSuccessesServiceModel() })
+                val serviceModel =
+                    SuccessesServiceArgument.Successes(successesToRemove.map { it.toSuccessesServiceModel() })
                 verify(
                     successesService,
                     never()
@@ -147,15 +147,57 @@ class SuccessesPresenterTest : Spek({
 
     given("add success to remove queue") {
 
-        on("success was backed up") {
-            it("should remove Successes") {
+        on("proper data") {
+            val backupSuccess = SuccessModel()
+            val position = 0
+            val successesSize = 5
+            SUT.onSuccessAddedToRemoveQueue(position, backupSuccess, successesSize)
 
+            it("should remove Successes") {
+                verify(view).removeSuccess(position, backupSuccess)
+            }
+            it("should not display error") {
+                verify(view, never()).alerts?.displayUnexpectedError()
             }
         }
 
-        on("success wasn't backed up") {
-            it("should not remove Successes") {
+        on("too small position") {
+            val backupSuccess = SuccessModel()
+            val position = -1
+            val successesSize = 5
+            SUT.onSuccessAddedToRemoveQueue(position, backupSuccess, successesSize)
 
+            it("should not remove Successes") {
+                verify(view, never()).removeSuccess(position, backupSuccess)
+            }
+            it("should display error") {
+                verify(view).alerts?.displayUnexpectedError()
+            }
+        }
+
+        on("too big position") {
+            val backupSuccess = SuccessModel()
+            val position = 5
+            val successesSize = 5
+            SUT.onSuccessAddedToRemoveQueue(position, backupSuccess, successesSize)
+
+            it("should not remove Successes") {
+                verify(view, never()).removeSuccess(position, backupSuccess)
+            }
+
+            it("should display error") {
+                verify(view).alerts?.displayUnexpectedError()
+            }
+        }
+
+        on("success is null") {
+            val backupSuccess = null
+            val position = 5
+            val successesSize = 5
+            SUT.onSuccessAddedToRemoveQueue(position, backupSuccess, successesSize)
+
+            it("should display error") {
+                verify(view).alerts?.displayUnexpectedError()
             }
         }
     }
@@ -183,28 +225,6 @@ class SuccessesPresenterTest : Spek({
 
     }
 
-    given("send to remove queue") {
-
-        on("invalid success sent to remove queue") {
-            it("should display success removed") {
-                val position = 0
-                val success = null
-                SUT.onSuccessAddedToRemoveQueue(position, success)
-                verify(view, never()).removeSuccess(position, SuccessModel())
-            }
-        }
-
-        on("valid Successes sent to remove queue") {
-            it("should not display success removed") {
-                val position = 0
-                val success = SuccessModel()
-                SUT.onSuccessAddedToRemoveQueue(position, success)
-                verify(view, times(1)).removeSuccess(position, success)
-            }
-        }
-
-    }
-
     given("update success") {
 
         on("Successes not available") {
@@ -219,39 +239,41 @@ class SuccessesPresenterTest : Spek({
         on("invalid clicked position") {
             it("should not update success") {
                 val position = -10
-                val successes = mutableListOf(SuccessModel())
+                val successes = mutableListOf(SuccessModel(id = 123))
                 SUT.updateSuccess(position, successes)
-                verify(view, never()).removeSuccess(position, SuccessModel())
+                verify(view, never()).removeSuccess(position, SuccessModel(id = 123))
             }
         }
-//TODO fix tests
-//        on("valid clicked position and Successes available") {
-//            it("should display success removed") {
-//                val position = 0
-//                val updatedSuccess = SuccessEntity(
-//                        123,
-//                        "",
-//                        "",
-//                        "",
-//                        "",
-//                        "",
-//                        0
-//                )
-//
-//                val Successes = mutableListOf(updatedSuccess)
-//
-//                val id = Successes[position].id
-//                if(id == null) {
-//                    Assert.fail()
-//                } else {
-//                    `when`(successesRepository.fetchSuccess(id))
-//                            .thenReturn(updatedSuccess.asSingle())
-//                    SUT.updateSuccess(position, Successes)
-//                    verify(view, times(1)).displaySuccessChanged(position, updatedSuccess)
-//                }
-//
-//            }
-//        }
+
+        on("success id is null") {
+            val position = 0
+            val successes = listOf(SuccessModel())
+
+            SUT.updateSuccess(position, successes.toMutableList())
+
+            it("should not update success") {
+                verify(view, never()).displaySuccessChanged(position, successes[position])
+            }
+            it("should display error") {
+                verify(view).alerts?.displayUnexpectedError()
+            }
+
+        }
+        on("passed valid data") {
+            val position = 0
+            val successes = listOf(SuccessModel(id = 1234))
+
+            val id = successes[position].id ?: 0
+
+            `when`(successesService.fetchSuccess(id))
+                .thenReturn(SuccessesServiceResult.Successes(successes.map { it.toSuccessesServiceModel() }).asSingle())
+            SUT.updateSuccess(position, successes.toMutableList())
+
+            it("should update success") {
+                verify(view, times(1)).displaySuccessChanged(position, successes[position])
+            }
+
+        }
 
     }
 
@@ -266,7 +288,7 @@ class SuccessesPresenterTest : Spek({
                 `when`(successesService.getSuccesses(SUT.searchFilter))
                     .thenReturn(SuccessesServiceResult.Successes(successesToDisplay).asSingle())
 
-                SUT.toggleSearchBar(true)
+                SUT.handleBackPress(false, true)
 
                 verify(view, times(1)).hideSearchBar()
 
@@ -279,7 +301,14 @@ class SuccessesPresenterTest : Spek({
         on("search is closed") {
 
             it("display search bar") {
-                SUT.toggleSearchBar(false)
+
+                whenever(successesService.getSuccesses(SearchFilter())).thenReturn(
+                    SuccessesServiceResult.Successes(
+                        listOf(SuccessesServiceModel())
+                    ).asSingle()
+                )
+
+                SUT.handleOptionsItemSelected(R.id.action_search, false)
                 verify(view, times(1)).displaySearchBar()
             }
 
@@ -291,14 +320,14 @@ class SuccessesPresenterTest : Spek({
         on("search is opened") {
             it("hide search bar") {
 
-                whenever(successesService.getSuccesses(SearchFilter())).thenReturn(SuccessesServiceResult.Successes(
-                    listOf()).asSingle())
-
+                whenever(successesService.getSuccesses(SearchFilter())).thenReturn(
+                    SuccessesServiceResult.Successes(
+                        listOf()
+                    ).asSingle()
+                )
                 val isSearchOpened = true
-                val mockedMenuItem = mock(MenuItem::class.java)
-                whenever(mockedMenuItem.itemId).thenReturn(R.id.action_search)
 
-                SUT.handleOptionsItemSelected(mockedMenuItem, isSearchOpened)
+                SUT.handleOptionsItemSelected(R.id.action_search, isSearchOpened)
                 verify(view, times(1)).hideSearchBar()
             }
         }
@@ -306,14 +335,14 @@ class SuccessesPresenterTest : Spek({
         on("search is closed") {
             it("on back pressed") {
 
-                whenever(successesService.getSuccesses(SearchFilter())).thenReturn(SuccessesServiceResult.Successes(
-                    listOf()).asSingle())
-
+                whenever(successesService.getSuccesses(SearchFilter())).thenReturn(
+                    SuccessesServiceResult.Successes(
+                        listOf()
+                    ).asSingle()
+                )
                 val isSearchOpened = false
-                val mockedMenuItem = mock(MenuItem::class.java)
-                whenever(mockedMenuItem.itemId).thenReturn(R.id.action_search)
 
-                SUT.handleOptionsItemSelected(mockedMenuItem, isSearchOpened)
+                SUT.handleOptionsItemSelected(R.id.action_search, isSearchOpened)
                 verify(view, times(1)).displaySearchBar()
             }
         }
@@ -324,7 +353,7 @@ class SuccessesPresenterTest : Spek({
 
         it("display search") {
 
-            SUT.showSearch()
+            SUT.onEditorActionListener("")
             verify(view, times(1)).displaySearch()
         }
     }

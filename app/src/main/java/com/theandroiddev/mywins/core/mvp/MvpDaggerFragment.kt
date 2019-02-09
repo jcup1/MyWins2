@@ -55,5 +55,8 @@ abstract class MvpDaggerFragment<V : MvpView, B: Serializable, P : MvpPresenter<
         presenter?.bundle = serializable as B
     }
 
+    override fun finish() {
+        this.activity?.finish()
+    }
 
 }

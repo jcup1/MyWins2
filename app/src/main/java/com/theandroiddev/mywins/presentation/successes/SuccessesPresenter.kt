@@ -1,6 +1,5 @@
 package com.theandroiddev.mywins.presentation.successes
 
-import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.github.ajalt.timberkt.Timber.d
@@ -112,9 +111,9 @@ class SuccessesPresenter @Inject constructor(
         }
     }
 
-    fun onSuccessAddedToRemoveQueue(position: Int, backupSuccess: SuccessModel?) {
+    fun onSuccessAddedToRemoveQueue(position: Int, backupSuccess: SuccessModel?, successesSize: Int) {
 
-        if (backupSuccess != null) {
+        if (backupSuccess != null && position >= 0 && position < successesSize) {
             ifViewAttached { view ->
                 view.removeSuccess(position, backupSuccess)
             }
@@ -185,13 +184,12 @@ class SuccessesPresenter @Inject constructor(
         }
     }
 
-    fun handleOptionsItemSelected(item: MenuItem, isSearchOpened: Boolean) {
-        val id = item.itemId
+    fun handleOptionsItemSelected(itemId: Int, isSearchOpened: Boolean) {
 
-        if (id == R.id.action_search) {
-            toggleSearchBar(isSearchOpened)
+        if (itemId == R.id.action_search) {
+            toggleSearch(isSearchOpened)
         }
-        when (id) {
+        when (itemId) {
             R.id.action_date_started -> {
 
                 if (sortType != SortType.DATE_STARTED) {
@@ -244,7 +242,29 @@ class SuccessesPresenter @Inject constructor(
         }
     }
 
-    fun toggleSearchBar(isSearchOpened: Boolean) {
+    fun handleBackPress(isFabOpened: Boolean, isSearchOpened: Boolean) {
+
+        if(isFabOpened) {
+            ifViewAttached { view ->
+                view.collapseFab()
+            }
+            return
+        }
+
+        if(isSearchOpened) {
+            toggleSearch(isSearchOpened)
+            return
+        }
+
+        if(isFabOpened == false && isSearchOpened == false) {
+            ifViewAttached { view ->
+                view.finish()
+            }
+        }
+
+    }
+
+    private fun toggleSearch(isSearchOpened: Boolean) {
         if (isSearchOpened) {
             ifViewAttached { view ->
                 view.hideSearchBar()
@@ -257,7 +277,7 @@ class SuccessesPresenter @Inject constructor(
         }
     }
 
-    fun showSearch() {
+    private fun showSearch() {
         ifViewAttached { view ->
             view.displaySearch()
         }
@@ -329,7 +349,11 @@ class SuccessesPresenter @Inject constructor(
             }).addToDisposables(disposables)
     }
 
-    fun checkPreferences() {
+    fun onStart() {
+        checkPreferences()
+    }
+
+    private fun checkPreferences() {
         if (sharedPreferencesService.isFirstRun) {
             //TODO add to database
             val successesServiceResult = successesService.getDefaultSuccesses()

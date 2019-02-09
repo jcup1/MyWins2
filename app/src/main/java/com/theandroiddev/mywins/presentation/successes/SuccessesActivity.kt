@@ -121,11 +121,9 @@ class SuccessesActivity :
 
     override fun onBackPressed() {
 
-        when {
-            multiple_actions?.isExpanded == true -> multiple_actions?.collapse()
-            searchBox != null -> presenter?.toggleSearchBar(true)
-            else -> super.onBackPressed()
-        }
+        val isFabOpened = multiple_actions?.isExpanded
+        val isSearchOpened = searchBox != null
+        presenter.handleBackPress(isFabOpened ?: false, isSearchOpened)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -140,7 +138,7 @@ class SuccessesActivity :
 
     override fun onStart() {
         super.onStart()
-        presenter.checkPreferences()
+        presenter.onStart()
     }
 
     private fun initCircularReveal() {
@@ -250,7 +248,7 @@ class SuccessesActivity :
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        presenter?.handleOptionsItemSelected(item, searchBox != null)
+        presenter?.handleOptionsItemSelected(item.itemId, searchBox != null)
 
         return super.onOptionsItemSelected(item)
     }
@@ -281,12 +279,17 @@ class SuccessesActivity :
     }
 
     override fun removeSuccess(position: Int, backupSuccess: SuccessModel) {
-        successAdapter.successes.removeAt(position)
-        successRemoved(position)
-        successAdapter.successesToRemove.add(backupSuccess)
-        if (successAdapter.successes.isEmpty()) {
-            //onExtrasLoaded();
-            isSuccessListVisible = false
+
+        if(position < successAdapter.successes.size) {
+            successAdapter.successes.removeAt(position)
+            successRemoved(position)
+            successAdapter.successesToRemove.add(backupSuccess)
+            if (successAdapter.successes.isEmpty()) {
+                //onExtrasLoaded();
+                isSuccessListVisible = false
+            }
+        } else {
+
         }
     }
 
@@ -325,7 +328,7 @@ class SuccessesActivity :
         val successToRemove = successAdapter.successes[position]
         successAdapter.backupSuccess = successToRemove
         showUndoSnackbar(position)
-        presenter?.onSuccessAddedToRemoveQueue(position, successAdapter.backupSuccess)
+        presenter?.onSuccessAddedToRemoveQueue(position, successAdapter.backupSuccess, successAdapter.successes.size)
     }
 
     private fun showUndoSnackbar(position: Int) {
@@ -401,6 +404,10 @@ class SuccessesActivity :
         searchAction?.icon = ContextCompat.getDrawable(this, R.drawable.ic_search)
         presenter?.onHideSearchBar()
         searchBox = null
+    }
+
+    override fun collapseFab() {
+        multiple_actions?.collapse()
     }
 
     override fun displaySearchBar() {
