@@ -8,10 +8,11 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import com.github.ajalt.timberkt.Timber.d
 import com.theandroiddev.mywins.R
+import com.theandroiddev.mywins.core.mvp.MvpPresenter
 import com.theandroiddev.mywins.domain.service.shared_preferences.SharedPreferencesService
 import com.theandroiddev.mywins.domain.service.successes.SuccessesService
-import com.theandroiddev.mywins.core.mvp.MvpPresenter
 import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceArgument
 import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceResult
 import com.theandroiddev.mywins.domain.service.successes.toModel
@@ -22,7 +23,6 @@ import com.theandroiddev.mywins.utils.Constants.Companion.NOT_ACTIVE
 import com.theandroiddev.mywins.utils.Constants.Companion.SortType
 import com.theandroiddev.mywins.utils.SearchFilter
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
@@ -31,8 +31,8 @@ import javax.inject.Inject
  */
 
 class SuccessesPresenter @Inject() constructor(
-        private val successesService: SuccessesService,
-        private val sharedPreferencesService: SharedPreferencesService
+    private val successesService: SuccessesService,
+    private val sharedPreferencesService: SharedPreferencesService
 ) : MvpPresenter<SuccessesView, SuccessesBundle>() {
 
     override fun onViewCreated() {
@@ -49,41 +49,56 @@ class SuccessesPresenter @Inject() constructor(
     fun loadSuccesses(searchFilter: SearchFilter) {
 
         successesService.getSuccesses(searchFilter)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { successesServiceResult ->
-                    when (successesServiceResult) {
-                        is SuccessesServiceResult.Successes -> {
-                            if (successesServiceResult.successes.isEmpty()) {
-                                ifViewAttached { view ->
-                                    view.displayNoSuccesses()
-                                }
-                            } else {
-                                ifViewAttached { view ->
-                                    view.displaySuccesses(successesServiceResult.successes.map {
-                                        it.toModel()
-                                    })
-                                }
-                            }
-                        }
-                        is SuccessesServiceResult.Error -> {
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ successesServiceResult ->
+                when (successesServiceResult) {
+                    is SuccessesServiceResult.Successes -> {
+                        if (successesServiceResult.successes.isEmpty()) {
                             ifViewAttached { view ->
-                                view.alerts?.displayUnexpectedError()
+                                view.displayNoSuccesses()
+                            }
+                        } else {
+                            ifViewAttached { view ->
+                                view.displaySuccesses(successesServiceResult.successes.map {
+                                    it.toModel()
+                                })
                             }
                         }
                     }
+                    is SuccessesServiceResult.Error -> {
+                        ifViewAttached { view ->
+                            view.alerts?.displayUnexpectedError()
+                        }
+                    }
+                }
 
-                }.addToDisposables(disposables)
+            }, {
+                ifViewAttached { view ->
+                    view.alerts?.displayUnexpectedError()
+                }
+            }).addToDisposables(disposables)
 
     }
 
     fun onPause(successesToRemove: MutableList<SuccessModel>) {
         val argument = SuccessesServiceArgument.Successes(
-                successesToRemove.map { it.toSuccessesServiceModel() }
+            successesToRemove.map { it.toSuccessesServiceModel() }
         )
         successesService.removeSuccesses(argument)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                ifViewAttached { view ->
+                    d { "Removed successes to remove" }
+                    view.clearSuccessesToRemove()
+                }
+            }, {
+                ifViewAttached { view ->
+                    //TODO more specified errors
+                    view.alerts?.displayUnexpectedError()
+                }
+            }).addToDisposables(disposables)
     }
-
 
     fun onUndoToRemove(position: Int, backupSuccess: SuccessModel?) {
 
@@ -103,7 +118,7 @@ class SuccessesPresenter @Inject() constructor(
 
         if (backupSuccess != null) {
             ifViewAttached { view ->
-                view.displaySuccessRemoved(position, backupSuccess)
+                view.removeSuccess(position, backupSuccess)
             }
         } else {
             ifViewAttached { view ->
@@ -135,36 +150,40 @@ class SuccessesPresenter @Inject() constructor(
 
     private fun fetchSuccess(id: Long, clickedPosition: Int) {
         successesService.fetchSuccess(id)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { successesServiceResult ->
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ successesServiceResult ->
 
-                    when (successesServiceResult) {
-                        is SuccessesServiceResult.Successes -> {
-                            if (successesServiceResult.successes.hasOne()) {
-                                val successesServiceModel =
-                                        successesServiceResult.successes.first()
-                                ifViewAttached { view ->
-                                    view.displaySuccessChanged(
-                                            clickedPosition,
-                                            successesServiceModel.toModel()
-                                    )
-                                }
-                            } else {
-                                ifViewAttached { view ->
-                                    view.alerts?.displayUnexpectedError()
-                                }
+                when (successesServiceResult) {
+                    is SuccessesServiceResult.Successes -> {
+                        if (successesServiceResult.successes.hasOne()) {
+                            val successesServiceModel =
+                                successesServiceResult.successes.first()
+                            ifViewAttached { view ->
+                                view.displaySuccessChanged(
+                                    clickedPosition,
+                                    successesServiceModel.toModel()
+                                )
                             }
-
-                        }
-                        is SuccessesServiceResult.Error -> {
+                        } else {
                             ifViewAttached { view ->
                                 view.alerts?.displayUnexpectedError()
                             }
                         }
-                    }
 
-                }.addToDisposables(disposables)
+                    }
+                    is SuccessesServiceResult.Error -> {
+                        ifViewAttached { view ->
+                            view.alerts?.displayUnexpectedError()
+                        }
+                    }
+                }
+
+            }, {
+                ifViewAttached { view ->
+                    view.alerts?.displayUnexpectedError()
+                }
+            }).addToDisposables(disposables)
     }
 
 
@@ -241,26 +260,30 @@ class SuccessesPresenter @Inject() constructor(
                 view.hideSearchBar()
             }
             successesService.getSuccesses(searchFilter)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { successesServiceResult ->
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ successesServiceResult ->
 
-                        when (successesServiceResult) {
-                            is SuccessesServiceResult.Successes -> {
-                                ifViewAttached { view ->
-                                    view.displaySuccesses(
-                                            successesServiceResult.successes.map { it.toModel() }
-                                    )
-                                }
-                            }
-                            is SuccessesServiceResult.Error -> {
-                                ifViewAttached { view ->
-                                    view.alerts?.displayUnexpectedError()
-                                }
+                    when (successesServiceResult) {
+                        is SuccessesServiceResult.Successes -> {
+                            ifViewAttached { view ->
+                                view.displaySuccesses(
+                                    successesServiceResult.successes.map { it.toModel() }
+                                )
                             }
                         }
+                        is SuccessesServiceResult.Error -> {
+                            ifViewAttached { view ->
+                                view.alerts?.displayUnexpectedError()
+                            }
+                        }
+                    }
 
-                    }.addToDisposables(disposables)
+                }, {
+                    ifViewAttached { view ->
+                        view.alerts?.displayUnexpectedError()
+                    }
+                }).addToDisposables(disposables)
 
         } else {
             ifViewAttached { view ->
@@ -325,11 +348,11 @@ class SuccessesPresenter @Inject() constructor(
 
         when (id) {
 
-            R.id.action_learn -> categoryPicked(LEARN)
+            R.id.action_learn -> categoryPicked(KNOWLEDGE)
             R.id.action_sport -> categoryPicked(SPORT)
             R.id.action_journey -> categoryPicked(JOURNEY)
-            R.id.action_money -> categoryPicked(MONEY)
-            R.id.action_video -> categoryPicked(VIDEO)
+            R.id.action_money -> categoryPicked(BUSINESS)
+            R.id.action_video -> categoryPicked(MEDIA)
 
             else -> {
             }
@@ -344,20 +367,32 @@ class SuccessesPresenter @Inject() constructor(
 
     fun addSuccess(success: SuccessModel) {
 
-        if (sharedPreferencesService.isFirstSuccessAdded) {
+        if (sharedPreferencesService.isFirstSuccessAdded == false) {
             successesService.removeAllSuccesses()
-            sharedPreferencesService.setFirstSuccessAdded()
+                .subscribeOn(Schedulers.io())
+                .subscribe({
+                    sharedPreferencesService.setFirstSuccessAdded()
+
+                }, {
+                    ifViewAttached { view ->
+                        view.alerts?.displayUnexpectedError()
+                    }
+                }).addToDisposables(disposables)
         }
         val argument = SuccessesServiceArgument.Successes(listOf(success.toSuccessesServiceModel()))
         successesService.saveSuccesses(argument)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    loadSuccesses(searchFilter)
-                    ifViewAttached { view ->
-                        view.displayUpdatedSuccesses()
-                    }
-                }.addToDisposables(disposables)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                loadSuccesses(searchFilter)
+//                    ifViewAttached { view ->
+//                        view.displayUpdatedSuccesses()
+//                    }
+            }, {
+                ifViewAttached { view ->
+                    view.alerts?.displayUnexpectedError()
+                }
+            }).addToDisposables(disposables)
 
     }
 
@@ -371,16 +406,18 @@ class SuccessesPresenter @Inject() constructor(
 
                     val argument = SuccessesServiceArgument.Successes(successesServiceResult.successes)
                     successesService.saveSuccesses(argument)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe {
-                                sharedPreferencesService.setNotFirstRun()
-                                ifViewAttached { view ->
-                                    view.displaySuccesses(successesServiceResult.successes.map {
-                                        it.toModel()
-                                    })
-                                }
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            sharedPreferencesService.setNotFirstRun()
+                            ifViewAttached { view ->
+                                loadSuccesses(searchFilter)
                             }
+                        }, {
+                            ifViewAttached { view ->
+                                view.alerts?.displayUnexpectedError()
+                            }
+                        })
                 }
                 is SuccessesServiceResult.Error -> {
                     ifViewAttached { view ->
@@ -394,13 +431,15 @@ class SuccessesPresenter @Inject() constructor(
 
     }
 
-    fun startSlider(successes: MutableList<SuccessModel>, success: SuccessModel, position: Int,
-                    titleTv: TextView, categoryTv: TextView, dateStartedTv: TextView,
-                    dateEndedTv: TextView, categoryIv: ImageView, importanceIv: ImageView,
-                    constraintLayout: ConstraintLayout, cardView: CardView) {
+    fun startSlider(
+        successes: MutableList<SuccessModel>, success: SuccessModel, position: Int,
+        titleTv: TextView, categoryTv: TextView, dateStartedTv: TextView,
+        dateEndedTv: TextView, categoryIv: ImageView, importanceIv: ImageView,
+        constraintLayout: ConstraintLayout, cardView: CardView
+    ) {
 
         //TODO Fix this animation
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+        /*if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 
             ifViewAttached { view ->
                 view.displaySliderAnimation(successes, success, position, titleTv,
@@ -412,7 +451,7 @@ class SuccessesPresenter @Inject() constructor(
                 view.displaySlider(successes)
             }
 
-        }
+        }*/
 
         ifViewAttached { view ->
             view.displaySlider(successes)

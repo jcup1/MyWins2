@@ -13,17 +13,17 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class SuccessesServiceImpl @Inject constructor(
-        private var successesLocalDataSource: SuccessesLocalDataSource)
-    : SuccessesService {
+    private var successesLocalDataSource: SuccessesLocalDataSource
+) : SuccessesService {
 
     override fun saveSuccesses(argument: SuccessesServiceArgument): Completable =
 
-            when (argument) {
-                is SuccessesServiceArgument.Successes -> {
-                    val successEntities = argument.successes.map { it.toEntity() }
-                    successesLocalDataSource.addSuccesses(successEntities)
-                }
+        when (argument) {
+            is SuccessesServiceArgument.Successes -> {
+                val successEntities = argument.successes.map { it.toEntity() }
+                successesLocalDataSource.addSuccesses(successEntities)
             }
+        }
 
 
     override fun fetchSuccess(id: Long): Single<SuccessesServiceResult> {
@@ -33,21 +33,23 @@ class SuccessesServiceImpl @Inject constructor(
     }
 
     override fun getSuccesses(searchFilter: SearchFilter): Flowable<SuccessesServiceResult> {
-        return successesLocalDataSource.getSuccesses(searchFilter.searchTerm.orEmpty(),
-                searchFilter.sortType?.name?.toLowerCase() ?: TITLE.name.toLowerCase(),
-                searchFilter.isSortingAscending)
-                .subscribeOn(Schedulers.io())
-                .map { successEntities ->
-                    SuccessesServiceResult.Successes(successEntities.map { it.toServiceModel() })
-                }
+        return successesLocalDataSource.getSuccesses(
+            searchFilter.searchTerm.orEmpty(),
+            searchFilter.sortType?.name?.toLowerCase() ?: TITLE.name.toLowerCase(),
+            searchFilter.isSortingAscending
+        )
+            .subscribeOn(Schedulers.io())
+            .map { successEntities ->
+                SuccessesServiceResult.Successes(successEntities.map { it.toServiceModel() })
+            }
     }
 
 
     override fun getDefaultSuccesses(): SuccessesServiceResult {
         return SuccessesServiceResult.Successes(
-                successesLocalDataSource.getDefaultSuccesses().map { successEntity ->
-                    successEntity.toServiceModel()
-                }
+            successesLocalDataSource.getDefaultSuccesses().map { successEntity ->
+                successEntity.toServiceModel()
+            }
         )
     }
 
@@ -64,18 +66,14 @@ class SuccessesServiceImpl @Inject constructor(
         }
     }
 
-    override fun removeSuccesses(argument: SuccessesServiceArgument): Completable {
+    override fun removeSuccesses(argument: SuccessesServiceArgument): Completable =
 
-        return Completable.fromAction {
             when (argument) {
                 is SuccessesServiceArgument.Successes -> {
-                    argument.successes.map { it.toEntity() }.forEach {
-                        successesLocalDataSource.removeSuccess(it)
-                    }
+                    val successes = argument.successes.map { it.toEntity() }
+                    successesLocalDataSource.removeSuccess(successes)
                 }
             }
-        }
-    }
 
     override fun removeAllSuccesses(): Completable {
         return successesLocalDataSource.removeAllSuccesses()

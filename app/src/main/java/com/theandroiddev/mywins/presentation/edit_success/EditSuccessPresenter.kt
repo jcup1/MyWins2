@@ -24,8 +24,8 @@ import javax.inject.Inject
 
 class EditSuccessPresenter @Inject
 constructor(
-        private val successesService: SuccessesService,
-        private val successImagesService: SuccessImagesService
+    private val successesService: SuccessesService,
+    private val successImagesService: SuccessImagesService
 ) : MvpPresenter<EditSuccessView, EditSuccessBundle>() {
 
     override fun onViewCreated() {
@@ -54,63 +54,65 @@ constructor(
 
     private fun loadSuccess(id: Long) {
         successesService.fetchSuccess(id)
-                .subscribeOn(Schedulers.io())
-                .subscribe { successesServiceResult ->
+            .subscribeOn(Schedulers.io())
+            .subscribe { successesServiceResult ->
 
-                    when (successesServiceResult) {
-                        is SuccessesServiceResult.Successes -> {
+                when (successesServiceResult) {
+                    is SuccessesServiceResult.Successes -> {
 
-                            if (successesServiceResult.successes.hasOne()) {
-                                val successesServiceModel =
-                                        successesServiceResult.successes.first()
-                                loadSuccessImages(successesServiceModel, id)
-                            }
-
+                        if (successesServiceResult.successes.hasOne()) {
+                            val successesServiceModel =
+                                successesServiceResult.successes.first()
+                            loadSuccessImages(successesServiceModel, id)
                         }
-                        is SuccessesServiceResult.Error -> {
-                            ifViewAttached { view ->
-                                view.alerts?.displayUnexpectedError()
-                            }
+
+                    }
+                    is SuccessesServiceResult.Error -> {
+                        ifViewAttached { view ->
+                            view.alerts?.displayUnexpectedError()
                         }
                     }
+                }
 
-                }.addToDisposables(disposables)
+            }.addToDisposables(disposables)
     }
 
     private fun loadSuccessImages(successesServiceModel: SuccessesServiceModel, id: Long) {
 
         successImagesService.getSuccessImages(id)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { successImagesServiceResult ->
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { successImagesServiceResult ->
 
-                    when (successImagesServiceResult) {
-                        is SuccessImagesServiceResult.SuccessImages -> {
-                            val successes =
-                                    successImagesServiceResult.successImages.map {
-                                        it.toModel()
-                                    }.toMutableList()
+                when (successImagesServiceResult) {
+                    is SuccessImagesServiceResult.SuccessImages -> {
+                        val successes =
+                            successImagesServiceResult.successImages.map {
+                                it.toModel()
+                            }.toMutableList()
 
-                            successes.add(0, SuccessImageModel(null, id, ""))
+                        successes.add(0, SuccessImageModel(null, id, ""))
 
-                            ifViewAttached { view ->
-                                view.displaySuccessData(
-                                        successesServiceModel.toModel(),
-                                        successes
-                                )
-                            }
-                        }
-                        is SuccessImagesServiceResult.Error -> {
-                            ifViewAttached { view ->
-                                view.alerts?.displayUnexpectedError()
-                            }
+                        ifViewAttached { view ->
+                            view.displaySuccessData(
+                                successesServiceModel.toModel(),
+                                successes
+                            )
                         }
                     }
+                    is SuccessImagesServiceResult.Error -> {
+                        ifViewAttached { view ->
+                            view.alerts?.displayUnexpectedError()
+                        }
+                    }
+                }
 
-                }.addToDisposables(disposables)
+            }.addToDisposables(disposables)
     }
 
-    fun onImagePickerResultOk(successImages: MutableList<SuccessImageModel>?, data: Intent,
-                              isImagePickerNull: Boolean) {
+    fun onImagePickerResultOk(
+        successImages: MutableList<SuccessImageModel>?, data: Intent,
+        isImagePickerNull: Boolean
+    ) {
 
         images = ImagePicker.getImages(data) as ArrayList<com.esafirm.imagepicker.model.Image>
         if (successImages != null) {
@@ -118,8 +120,10 @@ constructor(
         }
     }
 
-    private fun printImages(successImages: MutableList<SuccessImageModel>, images: MutableList<Image>,
-                            isImagePickerNull: Boolean) {
+    private fun printImages(
+        successImages: MutableList<SuccessImageModel>, images: MutableList<Image>,
+        isImagePickerNull: Boolean
+    ) {
 
         if (selectedImagePosition != 0) {
 
@@ -133,14 +137,14 @@ constructor(
             if (isImagePickerNull == false) {
                 val successId = bundle.successId
 
-                    val sImages = ArrayList<SuccessImageModel>()
-                    for (i in images) {
-                        sImages.add(SuccessImageModel(null, successId, i.path))
+                val sImages = ArrayList<SuccessImageModel>()
+                for (i in images) {
+                    sImages.add(SuccessImageModel(null, successId, i.path))
 
-                    }
-                    ifViewAttached { view ->
-                        view.addSuccessImages(sImages)
-                    }
+                }
+                ifViewAttached { view ->
+                    view.addSuccessImages(sImages)
+                }
             }
         }
 
@@ -150,43 +154,47 @@ constructor(
 
         if (successImages != null) {
             success.id = bundle.successId
-            successImages.removeAt(0)
+            if (successImages.isNotEmpty()) {
+                successImages.removeAt(0)
+            }
             for (image in successImages) {
                 image.successId = bundle.successId
             }
             val argument = SuccessesServiceArgument.Successes(mutableListOf(success.toSuccessesServiceModel()))
             successesService.editSuccess(argument)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe {
-                        val id = success.id
-                        if (id != null) {
-                            successImagesService.editSuccessImages(
-                                    SuccessImagesServiceArgument.SuccessImages(
-                                            successImages.map { it.toSuccessImagesServiceModel() },
-                                            bundle.successId
-                                    )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    val id = success.id
+                    if (id != null) {
+                        successImagesService.editSuccessImages(
+                            SuccessImagesServiceArgument.SuccessImages(
+                                successImages.map { it.toSuccessImagesServiceModel() },
+                                bundle.successId
                             )
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe {
-                                        ifViewAttached { view ->
-                                            view.displaySlider()
-                                        }
-                                    }
-                        } else {
-                            ifViewAttached { view ->
-                                view.alerts?.displayUnexpectedError()
+                        )
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe {
+                                ifViewAttached { view ->
+                                    view.displaySlider()
+                                }
                             }
+                    } else {
+                        ifViewAttached { view ->
+                            view.alerts?.displayUnexpectedError()
                         }
-                    }.addToDisposables(disposables)
+                    }
+                }.addToDisposables(disposables)
 
         }
 
     }
 
-    fun onCameraResultOk(successImages: MutableList<SuccessImageModel>?, resultImages: MutableList<Image>,
-                         isImagePickerNull: Boolean) {
+    fun onCameraResultOk(
+        successImages: MutableList<SuccessImageModel>?, resultImages: MutableList<Image>,
+        isImagePickerNull: Boolean
+    ) {
 
         if (successImages != null) {
             images = resultImages as ArrayList<com.esafirm.imagepicker.model.Image>

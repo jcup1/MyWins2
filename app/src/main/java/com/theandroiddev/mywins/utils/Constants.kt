@@ -20,10 +20,10 @@ class Constants {
         dummyTitles.add("Learned Java")
         dummyTitles.add("20 km marathon")
 
-        dummyCategories.add(Category.VIDEO)
-        dummyCategories.add(Category.MONEY)
+        dummyCategories.add(Category.MEDIA)
+        dummyCategories.add(Category.BUSINESS)
         dummyCategories.add(Category.JOURNEY)
-        dummyCategories.add(Category.LEARN)
+        dummyCategories.add(Category.KNOWLEDGE)
         dummyCategories.add(Category.SPORT)
 
         dummyImportances.add(3)
@@ -32,30 +32,30 @@ class Constants {
         dummyImportances.add(3)
         dummyImportances.add(4)
 
-        dummyDescriptions.add("I always wanted to create youtube video and finally Hot Shitty Challenge is live...")
-        dummyDescriptions.add("It's my first sold company. I grew it in 10 years. I denied first offer which was 5.000$ and it's one of my the best choices in my life. I...")
-        dummyDescriptions.add("I travel now and then. Met girl but she introduced me her friend: 'Zoned'. Guess I've got to try again in 2018.")
-        dummyDescriptions.add("This language is easier than I thought and now I'm multilingual! :O")
-        dummyDescriptions.add("I burned a lot of calories. Fridge is empty tonight...")
+        dummyDescriptions.add("I had always wanted to create my own youtube video and finally I finished my Hot Icy Challenge!")
+        dummyDescriptions.add("It's my biggest deal ever. I just sold company that I developed for 2 years. I'm glad that I rejected all the tempting offers that I received earlier.")
+        dummyDescriptions.add("I travel from time to time but this is a place that I always wanted to visit.")
+        dummyDescriptions.add("This language is easier and more useful than I thought. Now I'm multilingual! :O")
+        dummyDescriptions.add("I just burned 50 calories. I better go eat something...")
 
-        dummyStartDates.add("17-05-20")
-        dummyStartDates.add("17-05-22")
-        dummyStartDates.add("16-04-15")
-        dummyStartDates.add("15-03-12")
-        dummyStartDates.add("16-02-21")
+        dummyStartDates.add("20-05-17")
+        dummyStartDates.add("22-05-17")
+        dummyStartDates.add("15-04-16")
+        dummyStartDates.add("12-03-15")
+        dummyStartDates.add("21-02-16")
 
-        dummyEndDates.add("17-05-25")
-        dummyEndDates.add("17-05-30")
-        dummyEndDates.add("16-04-20")
-        dummyEndDates.add("15-05-01")
-        dummyEndDates.add("16-02-21")
+        dummyEndDates.add("25-05-17")
+        dummyEndDates.add("30-05-17")
+        dummyEndDates.add("20-04-16")
+        dummyEndDates.add("01-05-15")
+        dummyEndDates.add("21-02-16")
 
     }
 
     companion object {
 
         //DUMMY VALUES
-        val dummyImportanceDefault = 3
+        val dummyImportanceDefault = 1
         val dummyTitles: MutableList<String> = ArrayList()
         val dummyCategories: MutableList<Category> = ArrayList()
         val dummyImportances: MutableList<Int> = ArrayList()
@@ -92,11 +92,11 @@ class Constants {
         val DATE = "Date"
 
         enum class Category(val res: Int) {
-            VIDEO(R.string.category_video),
+            MEDIA(R.string.category_media),
             SPORT(R.string.category_sport),
-            MONEY(R.string.category_money),
+            BUSINESS(R.string.category_business),
             JOURNEY(R.string.category_journey),
-            LEARN(R.string.category_learn),
+            KNOWLEDGE(R.string.category_learn),
             OTHER(R.string.category_other),
             NONE(R.string.category_none)
         }

@@ -12,8 +12,8 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class SuccessSliderFragmentPresenter @Inject constructor(
-        val successesService: SuccessesService,
-        val successImagesService: SuccessImagesService
+    val successesService: SuccessesService,
+    val successImagesService: SuccessImagesService
 ) : MvpPresenter<SuccessSliderFragmentView, SuccessSliderBundle>() {
 
     override fun onViewCreated() {
@@ -33,56 +33,62 @@ class SuccessSliderFragmentPresenter @Inject constructor(
 
     private fun fetchSuccess(id: Long) {
         successesService.fetchSuccess(id)
-                .subscribeOn(Schedulers.io())
-                .subscribe { successesServiceResult ->
+            .subscribeOn(Schedulers.io())
+            .subscribe { successesServiceResult ->
 
-                    when (successesServiceResult) {
-                        is SuccessesServiceResult.Successes -> {
+                when (successesServiceResult) {
+                    is SuccessesServiceResult.Successes -> {
 
-                            if (successesServiceResult.successes.hasOne()) {
-                                val successesServiceModel = successesServiceResult.successes.first()
-                                getSuccessImages(id, successesServiceModel)
-                            } else {
+                        if (successesServiceResult.successes.hasOne()) {
+                            val successesServiceModel = successesServiceResult.successes.first()
+                            getSuccessImages(id, successesServiceModel)
+                            if (successesServiceModel.id == null) {
                                 ifViewAttached { view ->
                                     view.alerts?.displayUnexpectedError()
                                 }
                             }
-
-                        }
-                        is SuccessesServiceResult.Error -> {
+                        } else {
                             ifViewAttached { view ->
                                 view.alerts?.displayUnexpectedError()
                             }
                         }
-                    }
 
-                }.addToDisposables(disposables)
+                    }
+                    is SuccessesServiceResult.Error -> {
+                        ifViewAttached { view ->
+                            view.alerts?.displayUnexpectedError()
+                        }
+                    }
+                }
+
+            }.addToDisposables(disposables)
     }
 
     private fun getSuccessImages(id: Long, successesServiceModel: SuccessesServiceModel) {
 
         successImagesService.getSuccessImages(id)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { successImagesServiceResult ->
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { successImagesServiceResult ->
 
-                    when (successImagesServiceResult) {
-                        is SuccessImagesServiceResult.SuccessImages -> {
+                when (successImagesServiceResult) {
+                    is SuccessImagesServiceResult.SuccessImages -> {
 
-                            val successImageModels = successImagesServiceResult.successImages.map {
-                                it.toModel()
-                            }
-                            ifViewAttached { view ->
-                                view.displaySuccessData(
-                                        successesServiceModel.toModel(),
-                                        successImageModels)
-                            }
+                        val successImageModels = successImagesServiceResult.successImages.map {
+                            it.toModel()
                         }
-                        is SuccessImagesServiceResult.Error -> {
-
+                        ifViewAttached { view ->
+                            view.displaySuccessData(
+                                successesServiceModel.toModel(),
+                                successImageModels
+                            )
                         }
                     }
+                    is SuccessImagesServiceResult.Error -> {
 
-                }.addToDisposables(disposables)
+                    }
+                }
+
+            }.addToDisposables(disposables)
     }
 
     fun onSuccessImageClick(position: Int, successImages: MutableList<SuccessImageModel>?) {

@@ -8,8 +8,9 @@
     <string name="dummy_title">Title</string>
     <string name="dummy_category">Android</string>
     <string name="importance_description">importance</string>
-    <string name="title_activity_show_success">ShowSuccess</string>
-    <string name="title_activity_edit_success">EditSuccess</string>
+    <string name="title_activity_success_slider">Success Slider</string>
+    <string name="title_activity_edit_success">Edit Success</string>
+    <string name="title_activity_importance_popup">Select importance</string>
     <string name="action_date_added">Sort by recent added</string>
     <string name="action_description">Sort by description length</string>
     <string name="action_date_started">Sort by date started</string>
@@ -36,11 +37,11 @@
     <string name="date_ended_empty">End Date</string>
     <string name="edit_success_pick_both">Take or pick photo</string>
 
-    <string name="category_video">Video</string>
+    <string name="category_media">Media</string>
     <string name="category_sport">Sport</string>
-    <string name="category_money">Money</string>
+    <string name="category_business">Business</string>
     <string name="category_journey">Journey</string>
-    <string name="category_learn">Learn</string>
+    <string name="category_learn">Education</string>
     <string name="category_other">Other</string>
     <string name="category_none">Other</string>
 
@@ -68,6 +69,7 @@
     <string name="transition_importance_iv">importance_iv</string>
 
     <string name="unexpected_error">Unexpected error</string>
+    <string name="success_list_empty">EMPTY :(</string>
 
 
 </resources>

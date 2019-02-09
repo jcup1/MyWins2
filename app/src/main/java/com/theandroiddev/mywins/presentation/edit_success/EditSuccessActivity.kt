@@ -204,7 +204,6 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView,
         val dateStarted: String
         val dateEnded: String
 
-
         if (dateHelper?.validateData(edit_title, edit_date_started, edit_date_ended) == true) {
 
             dateStarted = dateHelper?.checkBlankDate(edit_date_started.text.toString()).orEmpty()
