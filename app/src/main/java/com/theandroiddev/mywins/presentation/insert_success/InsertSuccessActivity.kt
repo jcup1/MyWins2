@@ -4,10 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.res.ResourcesCompat
 import android.util.DisplayMetrics
 import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.core.mvp.MvpDaggerAppCompatActivity
 import com.theandroiddev.mywins.presentation.edit_success.EditDescriptionActivity
@@ -20,11 +20,6 @@ import com.theandroiddev.mywins.utils.DrawableSelector
 import kotlinx.android.synthetic.main.activity_insert_success.*
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
-import org.joda.time.format.DateTimeFormatter
-import org.joda.time.format.DateTimeParser
-import java.text.SimpleDateFormat
-import java.time.Instant
-import java.util.*
 
 class InsertSuccessActivity : MvpDaggerAppCompatActivity<InsertSuccessView,
         InsertSuccessBundle, InsertSuccessPresenter>(), InsertSuccessView, View.OnClickListener {
@@ -200,12 +195,12 @@ class InsertSuccessActivity : MvpDaggerAppCompatActivity<InsertSuccessView,
 
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == Constants.REQUEST_CODE_DESCRIPTION) {
             if (resultCode == Activity.RESULT_OK) {
-                val description = data.extras.getString(Constants.EXTRA_DESCRIPTION)
+                val description = data?.extras?.getString(Constants.EXTRA_DESCRIPTION)
                 insert_description_et.setText(description)
 
             }

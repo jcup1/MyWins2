@@ -1,7 +1,7 @@
 package com.theandroiddev.mywins.core.mvp
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import com.hannesdorfmann.mosby3.mvp.MvpActivity
 import com.hannesdorfmann.mosby3.mvp.MvpView
 import com.theandroiddev.mywins.utils.Alerts
@@ -20,7 +20,7 @@ abstract class MvpDaggerAppCompatActivity<V : MvpView, B : Serializable, P : Mvp
     val alerts: Alerts by lazy { Alerts(this) }
 
     @Inject
-    lateinit var _supportFragmentInjector: DispatchingAndroidInjector<Fragment>
+    lateinit var _supportFragmentInjector: DispatchingAndroidInjector<androidx.fragment.app.Fragment>
 
     @Inject
     lateinit var _frameworkFragmentInjector: DispatchingAndroidInjector<android.app.Fragment>
@@ -37,7 +37,7 @@ abstract class MvpDaggerAppCompatActivity<V : MvpView, B : Serializable, P : Mvp
         presenter?.onViewCreated()
     }
 
-    override fun supportFragmentInjector(): AndroidInjector<Fragment>? {
+    override fun supportFragmentInjector(): AndroidInjector<androidx.fragment.app.Fragment>? {
         return _supportFragmentInjector
     }
 

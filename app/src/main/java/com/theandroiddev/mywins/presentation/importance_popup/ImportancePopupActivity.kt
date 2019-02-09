@@ -4,10 +4,9 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.core.mvp.MvpDaggerAppCompatActivity
 import com.theandroiddev.mywins.utils.Constants.Companion.Importance

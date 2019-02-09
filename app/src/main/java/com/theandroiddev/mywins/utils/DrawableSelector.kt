@@ -1,8 +1,8 @@
 package com.theandroiddev.mywins.utils
 
 import android.content.Context
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.res.ResourcesCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import android.widget.ImageView
 import android.widget.TextView
 

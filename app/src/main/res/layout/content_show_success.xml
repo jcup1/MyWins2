@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/click_reveal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusable="true"
     android:animateLayoutChanges="true"
+    android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical">
 
@@ -18,18 +18,16 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.v7.widget.CardView
-
+    <androidx.cardview.widget.CardView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/edit_card_description"
+        android:id="@+id/show_card_description"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/cardview_default_margin"
         android:layout_marginLeft="@dimen/cardview_default_margin"
         android:layout_marginEnd="@dimen/cardview_default_margin"
         android:layout_marginRight="@dimen/cardview_default_margin"
-
         android:clipToPadding="false"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="@dimen/cardview_default_radius"
@@ -44,22 +42,22 @@
             android:id="@+id/show_description"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/transparent"
-            android:gravity="top|left"
+            android:gravity="top"
             android:padding="16dp"
             android:textColor="@color/secondary_text"
             android:textSize="18sp" />
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
-    <android.support.v7.widget.CardView
-
+    <androidx.cardview.widget.CardView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/show_card_images"
         android:layout_width="0dp"
         android:layout_height="70dp"
+        android:layout_marginStart="@dimen/cardview_default_margin"
         android:layout_marginLeft="@dimen/cardview_default_margin"
+        android:layout_marginEnd="@dimen/cardview_default_margin"
         android:layout_marginRight="@dimen/cardview_default_margin"
         android:clipToPadding="false"
         android:padding="@dimen/item_date_default_padding"
@@ -70,7 +68,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
-
 
         <TextView
             android:id="@+id/no_images_tv"
@@ -85,13 +82,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/show_image_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
-
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

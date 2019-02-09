@@ -1,12 +1,8 @@
 package com.theandroiddev.mywins.presentation.successes
 
-import android.support.constraint.ConstraintLayout
-import android.support.v7.widget.CardView
-import android.support.v7.widget.RecyclerView
 import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.TextView
 import com.github.ajalt.timberkt.Timber.d
 import com.theandroiddev.mywins.R
@@ -30,9 +26,9 @@ import javax.inject.Inject
  * Created by jakub on 04.11.17.
  */
 
-class SuccessesPresenter @Inject() constructor(
-    private val successesService: SuccessesService,
-    private val sharedPreferencesService: SharedPreferencesService
+class SuccessesPresenter @Inject constructor(
+        private val successesService: SuccessesService,
+        private val sharedPreferencesService: SharedPreferencesService
 ) : MvpPresenter<SuccessesView, SuccessesBundle>() {
 
     override fun onViewCreated() {
@@ -152,7 +148,7 @@ class SuccessesPresenter @Inject() constructor(
         successesService.fetchSuccess(id)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ successesServiceResult ->
+            .subscribe ({ successesServiceResult ->
 
                 when (successesServiceResult) {
                     is SuccessesServiceResult.Successes -> {
@@ -332,13 +328,13 @@ class SuccessesPresenter @Inject() constructor(
         clearSearch()
     }
 
-    fun setSuccessListVisible(recyclerView: RecyclerView, emptyListTv: TextView) {
+    fun setSuccessListVisible(recyclerView: androidx.recyclerview.widget.RecyclerView, emptyListTv: TextView) {
         recyclerView.visibility = android.view.View.VISIBLE
         emptyListTv.visibility = android.view.View.INVISIBLE
     }
 
 
-    fun setSuccessListInvisible(recyclerView: RecyclerView, emptyListTv: TextView) {
+    fun setSuccessListInvisible(recyclerView: androidx.recyclerview.widget.RecyclerView, emptyListTv: TextView) {
         recyclerView.visibility = android.view.View.INVISIBLE
         emptyListTv.visibility = android.view.View.VISIBLE
     }
@@ -355,6 +351,7 @@ class SuccessesPresenter @Inject() constructor(
             R.id.action_video -> categoryPicked(MEDIA)
 
             else -> {
+                //TODO error
             }
         }
     }
@@ -430,35 +427,6 @@ class SuccessesPresenter @Inject() constructor(
         }
 
     }
-
-    fun startSlider(
-        successes: MutableList<SuccessModel>, success: SuccessModel, position: Int,
-        titleTv: TextView, categoryTv: TextView, dateStartedTv: TextView,
-        dateEndedTv: TextView, categoryIv: ImageView, importanceIv: ImageView,
-        constraintLayout: ConstraintLayout, cardView: CardView
-    ) {
-
-        //TODO Fix this animation
-        /*if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-
-            ifViewAttached { view ->
-                view.displaySliderAnimation(successes, success, position, titleTv,
-                        categoryTv, dateStartedTv, dateEndedTv, categoryIv, importanceIv,
-                        constraintLayout, cardView)
-            }
-        } else {
-            ifViewAttached { view ->
-                view.displaySlider(successes)
-            }
-
-        }*/
-
-        ifViewAttached { view ->
-            view.displaySlider(successes)
-        }
-
-    }
-
 
     private fun clearSearch() {
         searchTerm = ""

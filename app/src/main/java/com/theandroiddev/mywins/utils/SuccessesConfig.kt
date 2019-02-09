@@ -3,7 +3,7 @@ package com.theandroiddev.mywins.utils
 import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
-import android.support.v4.content.res.ResourcesCompat
+import androidx.core.content.res.ResourcesCompat
 
 import com.getbase.floatingactionbutton.FloatingActionButton
 import com.theandroiddev.mywins.R

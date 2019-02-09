@@ -3,9 +3,6 @@ package com.theandroiddev.mywins.presentation.success_slider
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
-import android.support.v7.widget.CardView
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.INVISIBLE
@@ -13,6 +10,8 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import android.widget.ImageView
+import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
@@ -28,8 +27,8 @@ import kotlinx.android.synthetic.main.content_show_success.*
 import kotlinx.android.synthetic.main.success_layout.*
 
 class SuccessSliderFragment : MvpDaggerFragment<SuccessSliderFragmentView,
-        SuccessSliderBundle, SuccessSliderFragmentPresenter>(),
-        SuccessImageAdapter.OnSuccessImageClickListener, SuccessSliderFragmentView {
+    SuccessSliderBundle, SuccessSliderFragmentPresenter>(),
+    SuccessImageAdapter.OnSuccessImageClickListener, SuccessSliderFragmentView {
 
     private var successImageAdapter: SuccessImageAdapter? = null
     private var actionHandler: ActionHandler? = null
@@ -37,16 +36,17 @@ class SuccessSliderFragment : MvpDaggerFragment<SuccessSliderFragmentView,
 
     private var id: Long? = null
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
 
         actionHandler = context as ActionHandler
         drawableSelector = DrawableSelector(context)
-
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
         return inflater.inflate(R.layout.content_show_success, container, false)
@@ -64,7 +64,6 @@ class SuccessSliderFragment : MvpDaggerFragment<SuccessSliderFragmentView,
         initRecycler()
         initBundle()
         initAnimation()
-
     }
 
     private fun initBundle() {
@@ -74,13 +73,17 @@ class SuccessSliderFragment : MvpDaggerFragment<SuccessSliderFragmentView,
 
     private fun initRecycler() {
 
-        val linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        val linearLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(
+            context,
+            androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL,
+            false
+        )
+
         show_image_recycler_view.layoutManager = linearLayoutManager
         show_image_recycler_view.setHasFixedSize(true)
 
-        successImageAdapter = SuccessImageAdapter(this, R.layout.success_image_layout, context)
+        successImageAdapter = SuccessImageAdapter(this, R.layout.success_image_layout)
         show_image_recycler_view.adapter = successImageAdapter
-
     }
 
     override fun displaySuccessData(success: SuccessModel, successImages: List<SuccessImageModel>) {
@@ -102,7 +105,6 @@ class SuccessSliderFragment : MvpDaggerFragment<SuccessSliderFragmentView,
 
         successImageAdapter?.successImages = successImages.toMutableList()
         successImageAdapter?.notifyDataSetChanged()
-
     }
 
     override fun startImageActivity(position: Int, imagePaths: ArrayList<String>) {
@@ -111,7 +113,6 @@ class SuccessSliderFragment : MvpDaggerFragment<SuccessSliderFragmentView,
         intent.putStringArrayListExtra("imagePaths", imagePaths)
         intent.putExtra("position", position)
         startActivity(intent)
-
     }
 
     private fun initAnimation() {
@@ -126,16 +127,26 @@ class SuccessSliderFragment : MvpDaggerFragment<SuccessSliderFragmentView,
         super.onResume()
 
         presenter.onResume(id)
-
     }
 
-    override fun onSuccessImageClick(successImage: SuccessImageModel, successImageIv: ImageView, position: Int, constraintLayout: ConstraintLayout, cardView: CardView) {
+    override fun onSuccessImageClick(
+        successImage: SuccessImageModel,
+        successImageIv: ImageView,
+        position: Int,
+        constraintLayout: ConstraintLayout,
+        cardView: CardView
+    ) {
 
         presenter.onSuccessImageClick(position, successImageAdapter?.successImages)
-
     }
 
-    override fun onSuccessImageLongClick(successImage: SuccessImageModel, successImageIv: ImageView, position: Int, constraintLayout: ConstraintLayout, cardView: CardView) {
+    override fun onSuccessImageLongClick(
+        successImage: SuccessImageModel,
+        successImageIv: ImageView,
+        position: Int,
+        constraintLayout: ConstraintLayout,
+        cardView: CardView
+    ) {
         //TODO add functionality
     }
 
@@ -148,5 +159,4 @@ class SuccessSliderFragment : MvpDaggerFragment<SuccessSliderFragmentView,
         config.tasksProcessingOrder(QueueProcessingType.LIFO)
         ImageLoader.getInstance().init(config.build())
     }
-
 }

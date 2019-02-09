@@ -1,9 +1,9 @@
 package com.theandroiddev.mywins.utils
 
 import android.app.Activity
-import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
 import android.view.View
+import androidx.core.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
 import com.theandroiddev.mywins.R
 
 class Alerts(val activity: Activity) {

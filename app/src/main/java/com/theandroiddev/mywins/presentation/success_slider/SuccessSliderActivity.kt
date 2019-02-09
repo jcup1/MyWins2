@@ -3,15 +3,11 @@ package com.theandroiddev.mywins.presentation.success_slider
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.res.ResourcesCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import android.widget.Toast
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.core.mvp.MvpDaggerAppCompatActivity
 import com.theandroiddev.mywins.core.mvp.startActivity
@@ -63,7 +59,7 @@ class SuccessSliderActivity : MvpDaggerAppCompatActivity<SuccessSliderView,
             if (resultCode == Activity.RESULT_OK) {
 
                 presenter.onRequestCodeInsert()
-                Snackbar.make(slider_constraint, "Saved", Toast.LENGTH_SHORT).show()
+                Snackbar.make(slider_constraint, "Saved", Snackbar.LENGTH_SHORT).show()
             }
         }
 
@@ -98,11 +94,11 @@ class SuccessSliderActivity : MvpDaggerAppCompatActivity<SuccessSliderView,
         sliderFabClicked()
     }
 
-    class ScreenSlidePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
+    class ScreenSlidePagerAdapter(fm: androidx.fragment.app.FragmentManager) : androidx.fragment.app.FragmentStatePagerAdapter(fm) {
 
         var successes = mutableListOf<SuccessModel>()
 
-        override fun getItem(position: Int): Fragment {
+        override fun getItem(position: Int): androidx.fragment.app.Fragment {
             val bundle = Bundle()
             bundle.putLong("id", successes[position].id ?: 0)
             val frag = SuccessSliderFragment()

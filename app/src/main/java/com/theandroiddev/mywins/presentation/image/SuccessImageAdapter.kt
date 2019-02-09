@@ -1,13 +1,11 @@
 package com.theandroiddev.mywins.presentation.image
 
-import android.content.Context
-import android.support.constraint.ConstraintLayout
-import android.support.v7.widget.CardView
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.squareup.picasso.Picasso
 import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.presentation.image.SuccessImageAdapter.ViewHolder
@@ -15,9 +13,9 @@ import com.theandroiddev.mywins.presentation.successes.SuccessImageModel
 import java.io.File
 
 class SuccessImageAdapter(
-        private val listener: OnSuccessImageClickListener,
-        private val successImageLayout: Int,
-        private val context: Context?) : RecyclerView.Adapter<ViewHolder>() {
+    private val listener: OnSuccessImageClickListener,
+    private val successImageLayout: Int
+) : androidx.recyclerview.widget.RecyclerView.Adapter<ViewHolder>() {
 
     var successImages: MutableList<SuccessImageModel> = mutableListOf()
 
@@ -37,7 +35,7 @@ class SuccessImageAdapter(
             }
         } else {
 
-            Picasso.with(context).load(File(successImages[position].imagePath)).resize(256, 256).centerCrop().into(holder.successImageIv)
+            Picasso.get().load(File(successImages[position].imagePath)).resize(256, 256).centerCrop().into(holder.successImageIv)
             holder.bind(successImages[position], position)
 
         }
@@ -50,13 +48,14 @@ class SuccessImageAdapter(
 
     interface OnSuccessImageClickListener {
         fun onSuccessImageClick(successImage: SuccessImageModel, successImageIv: ImageView, position: Int, constraintLayout: ConstraintLayout,
-                                cardView: CardView)
+                                cardView: CardView
+        )
 
         fun onSuccessImageLongClick(successImage: SuccessImageModel, successImageIv: ImageView, position: Int, constraintLayout: ConstraintLayout,
                                     cardView: CardView)
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
 
         var successImageIv: ImageView
         var constraintLayout: ConstraintLayout

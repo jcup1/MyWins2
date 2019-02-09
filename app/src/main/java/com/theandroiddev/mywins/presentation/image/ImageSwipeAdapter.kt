@@ -1,11 +1,8 @@
 package com.theandroiddev.mywins.presentation.image
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Parcelable
-import android.support.constraint.ConstraintLayout
-import android.support.v4.view.PagerAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,13 +23,11 @@ import java.util.ArrayList
 
 import javax.inject.Inject
 
-import butterknife.ButterKnife
-
 /**
  * Created by jakub on 27.10.17.
  */
 
-class ImageSwipeAdapter(context: Context, private val imagePaths: ArrayList<String>) : PagerAdapter() {
+class ImageSwipeAdapter(context: Context, private val imagePaths: ArrayList<String>) : androidx.viewpager.widget.PagerAdapter() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 

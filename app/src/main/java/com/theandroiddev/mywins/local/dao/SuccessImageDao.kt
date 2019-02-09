@@ -1,6 +1,6 @@
 package com.theandroiddev.mywins.local.dao
 
-import android.arch.persistence.room.*
+import androidx.room.*
 import com.theandroiddev.mywins.local.model.LocalSuccessImage
 
 @Dao
