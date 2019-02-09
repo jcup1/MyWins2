@@ -11,6 +11,7 @@ import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceArgumen
 import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceResult
 import com.theandroiddev.mywins.domain.service.successes.toModel
 import com.theandroiddev.mywins.presentation.edit_success.hasOne
+import com.theandroiddev.mywins.utils.Constants
 import com.theandroiddev.mywins.utils.Constants.Companion.Category
 import com.theandroiddev.mywins.utils.Constants.Companion.NOT_ACTIVE
 import com.theandroiddev.mywins.utils.Constants.Companion.SortType
@@ -111,7 +112,11 @@ class SuccessesPresenter @Inject constructor(
         }
     }
 
-    fun onSuccessAddedToRemoveQueue(position: Int, backupSuccess: SuccessModel?, successesSize: Int) {
+    fun onSuccessAddedToRemoveQueue(
+        position: Int,
+        backupSuccess: SuccessModel?,
+        successesSize: Int
+    ) {
 
         if (backupSuccess != null && position >= 0 && position < successesSize) {
             ifViewAttached { view ->
@@ -188,80 +193,58 @@ class SuccessesPresenter @Inject constructor(
 
         if (itemId == R.id.action_search) {
             toggleSearch(isSearchOpened)
+            return
         }
-        when (itemId) {
-            R.id.action_date_started -> {
 
-                if (sortType != SortType.DATE_STARTED) {
-                    sortType = SortType.DATE_STARTED
-                } else {
-                    isSortingAscending = !isSortingAscending
-                }
-                loadSuccesses(searchFilter)
+        val pickedSortType = when (itemId) {
+            R.id.action_date_started -> {
+                SortType.DATE_STARTED
             }
             R.id.action_date_ended -> {
-                if (sortType != SortType.DATE_ENDED) {
-                    sortType = SortType.DATE_ENDED
-                } else {
-                    isSortingAscending = !isSortingAscending
-                }
-                loadSuccesses(searchFilter)
+                SortType.DATE_ENDED
             }
             R.id.action_title -> {
-                if (sortType != SortType.TITLE) {
-                    sortType = SortType.TITLE
-                } else {
-                    isSortingAscending = !isSortingAscending
-                }
-                loadSuccesses(searchFilter)
+                SortType.TITLE
             }
             R.id.action_date_added -> {
-                if (sortType != SortType.DATE_ADDED) {
-                    sortType = SortType.DATE_ADDED
-                } else {
-                    isSortingAscending = !isSortingAscending
-                }
-                loadSuccesses(searchFilter)
+                SortType.DATE_ADDED
             }
             R.id.action_importance -> {
-                if (sortType != SortType.IMPORTANCE) {
-                    sortType = SortType.IMPORTANCE
-                } else {
-                    isSortingAscending = !isSortingAscending
-                }
-                loadSuccesses(searchFilter)
+                SortType.IMPORTANCE
             }
             R.id.action_description -> {
-                if (sortType != SortType.DESCRIPTION) {
-                    sortType = SortType.DESCRIPTION
-                } else {
-                    isSortingAscending = !isSortingAscending
-                }
-                loadSuccesses(searchFilter)
+                SortType.DESCRIPTION
             }
+            else -> Constants.Companion.SortType.DATE_ADDED
         }
+
+        if (sortType == pickedSortType) {
+            isSortingAscending = !isSortingAscending
+        } else {
+            sortType = pickedSortType
+        }
+        loadSuccesses(searchFilter)
     }
 
     fun handleBackPress(isFabOpened: Boolean, isSearchOpened: Boolean) {
 
-        if(isFabOpened) {
+        if (isFabOpened) {
             ifViewAttached { view ->
                 view.collapseFab()
             }
             return
         }
 
-        if(isSearchOpened) {
+        if (isSearchOpened) {
             toggleSearch(isSearchOpened)
             return
         }
 
-        if(isFabOpened == false && isSearchOpened == false) {
+        if (isFabOpened == false && isSearchOpened == false) {
             ifViewAttached { view ->
                 view.finish()
             }
         }
-
     }
 
     private fun toggleSearch(isSearchOpened: Boolean) {
