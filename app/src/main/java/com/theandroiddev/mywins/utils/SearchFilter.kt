@@ -11,5 +11,5 @@ import kotlinx.android.parcel.Parcelize
 data class SearchFilter(
         var searchTerm: String? = "",
         var sortType: SortType? = SortType.DATE_ADDED,
-        var isSortingAscending: Boolean = false
+        var isSortingAscending: Boolean = true
 ) : Parcelable

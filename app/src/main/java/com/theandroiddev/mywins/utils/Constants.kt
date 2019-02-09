@@ -1,7 +1,7 @@
 package com.theandroiddev.mywins.utils
 
 import com.theandroiddev.mywins.R
-import java.util.*
+import java.util.ArrayList
 
 /**
  * Created by jakub on 14.08.17.
@@ -49,7 +49,6 @@ class Constants {
         dummyEndDates.add("20-04-16")
         dummyEndDates.add("01-05-15")
         dummyEndDates.add("21-02-16")
-
     }
 
     companion object {
@@ -85,20 +84,19 @@ class Constants {
         val EXTRA_SUCCESS_IMPORTANCE_IV = "importance_iv"
         val EXTRA_SUCCESS_CARD_VIEW = "success_card_view"
 
-
         val NOT_ACTIVE = -1
         var PACKAGE_NAME = "com.theandroiddev.mywins"
         var DATE_FORMAT = "dd-MM-yy"
         val DATE = "Date"
 
-        enum class Category(val res: Int) {
-            MEDIA(R.string.category_media),
-            SPORT(R.string.category_sport),
-            BUSINESS(R.string.category_business),
-            JOURNEY(R.string.category_journey),
-            KNOWLEDGE(R.string.category_learn),
-            OTHER(R.string.category_other),
-            NONE(R.string.category_none)
+        enum class Category(val res: Int, val id: Int?) {
+            MEDIA(R.string.category_media, R.id.action_video),
+            SPORT(R.string.category_sport, R.id.action_sport),
+            BUSINESS(R.string.category_business, R.id.action_money),
+            JOURNEY(R.string.category_journey, R.id.action_journey),
+            KNOWLEDGE(R.string.category_learn, R.id.action_learn),
+            OTHER(R.string.category_other, null),
+            NONE(R.string.category_none, null)
         }
 
         enum class Importance(val value: Int, val res: Int) {
@@ -118,6 +116,9 @@ class Constants {
             DATE_ENDED,
             DATE_ADDED
         }
-
     }
+}
+
+fun Int?.getCategoryById(): Constants.Companion.Category {
+    return Constants.Companion.Category.values().find { it.id == this } ?: Constants.Companion.Category.OTHER
 }
