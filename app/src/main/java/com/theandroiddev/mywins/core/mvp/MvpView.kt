@@ -5,5 +5,7 @@ import com.theandroiddev.mywins.utils.Alerts
 
 interface MvpView : MvpView {
 
+    fun finish()
+
     val alerts: Alerts?
 }

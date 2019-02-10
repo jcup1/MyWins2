@@ -1,6 +1,5 @@
 package com.theandroiddev.mywins.presentation.successes
 
-import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.github.ajalt.timberkt.Timber.d
@@ -12,6 +11,7 @@ import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceArgumen
 import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceResult
 import com.theandroiddev.mywins.domain.service.successes.toModel
 import com.theandroiddev.mywins.presentation.edit_success.hasOne
+import com.theandroiddev.mywins.utils.Constants
 import com.theandroiddev.mywins.utils.Constants.Companion.Category
 import com.theandroiddev.mywins.utils.Constants.Companion.NOT_ACTIVE
 import com.theandroiddev.mywins.utils.Constants.Companion.SortType
@@ -112,9 +112,13 @@ class SuccessesPresenter @Inject constructor(
         }
     }
 
-    fun onSuccessAddedToRemoveQueue(position: Int, backupSuccess: SuccessModel?) {
+    fun onSuccessAddedToRemoveQueue(
+        position: Int,
+        backupSuccess: SuccessModel?,
+        successesSize: Int
+    ) {
 
-        if (backupSuccess != null) {
+        if (backupSuccess != null && position >= 0 && position < successesSize) {
             ifViewAttached { view ->
                 view.removeSuccess(position, backupSuccess)
             }
@@ -185,66 +189,65 @@ class SuccessesPresenter @Inject constructor(
         }
     }
 
-    fun handleOptionsItemSelected(item: MenuItem, isSearchOpened: Boolean) {
-        val id = item.itemId
+    fun handleOptionsItemSelected(itemId: Int, isSearchOpened: Boolean) {
 
-        if (id == R.id.action_search) {
-            toggleSearchBar(isSearchOpened)
+        if (itemId == R.id.action_search) {
+            toggleSearch(isSearchOpened)
+            return
         }
-        when (id) {
-            R.id.action_date_started -> {
 
-                if (sortType != SortType.DATE_STARTED) {
-                    sortType = SortType.DATE_STARTED
-                } else {
-                    isSortingAscending = !isSortingAscending
-                }
-                loadSuccesses(searchFilter)
+        val pickedSortType = when (itemId) {
+            R.id.action_date_started -> {
+                SortType.DATE_STARTED
             }
             R.id.action_date_ended -> {
-                if (sortType != SortType.DATE_ENDED) {
-                    sortType = SortType.DATE_ENDED
-                } else {
-                    isSortingAscending = !isSortingAscending
-                }
-                loadSuccesses(searchFilter)
+                SortType.DATE_ENDED
             }
             R.id.action_title -> {
-                if (sortType != SortType.TITLE) {
-                    sortType = SortType.TITLE
-                } else {
-                    isSortingAscending = !isSortingAscending
-                }
-                loadSuccesses(searchFilter)
+                SortType.TITLE
             }
             R.id.action_date_added -> {
-                if (sortType != SortType.DATE_ADDED) {
-                    sortType = SortType.DATE_ADDED
-                } else {
-                    isSortingAscending = !isSortingAscending
-                }
-                loadSuccesses(searchFilter)
+                SortType.DATE_ADDED
             }
             R.id.action_importance -> {
-                if (sortType != SortType.IMPORTANCE) {
-                    sortType = SortType.IMPORTANCE
-                } else {
-                    isSortingAscending = !isSortingAscending
-                }
-                loadSuccesses(searchFilter)
+                SortType.IMPORTANCE
             }
             R.id.action_description -> {
-                if (sortType != SortType.DESCRIPTION) {
-                    sortType = SortType.DESCRIPTION
-                } else {
-                    isSortingAscending = !isSortingAscending
-                }
-                loadSuccesses(searchFilter)
+                SortType.DESCRIPTION
+            }
+            else -> Constants.Companion.SortType.DATE_ADDED
+        }
+
+        if (sortType == pickedSortType) {
+            isSortingAscending = !isSortingAscending
+        } else {
+            sortType = pickedSortType
+        }
+        loadSuccesses(searchFilter)
+    }
+
+    fun handleBackPress(isFabOpened: Boolean, isSearchOpened: Boolean) {
+
+        if (isFabOpened) {
+            ifViewAttached { view ->
+                view.collapseFab()
+            }
+            return
+        }
+
+        if (isSearchOpened) {
+            toggleSearch(isSearchOpened)
+            return
+        }
+
+        if (isFabOpened == false && isSearchOpened == false) {
+            ifViewAttached { view ->
+                view.finish()
             }
         }
     }
 
-    fun toggleSearchBar(isSearchOpened: Boolean) {
+    private fun toggleSearch(isSearchOpened: Boolean) {
         if (isSearchOpened) {
             ifViewAttached { view ->
                 view.hideSearchBar()
@@ -257,7 +260,7 @@ class SuccessesPresenter @Inject constructor(
         }
     }
 
-    fun showSearch() {
+    private fun showSearch() {
         ifViewAttached { view ->
             view.displaySearch()
         }
@@ -329,7 +332,11 @@ class SuccessesPresenter @Inject constructor(
             }).addToDisposables(disposables)
     }
 
-    fun checkPreferences() {
+    fun onStart() {
+        checkPreferences()
+    }
+
+    private fun checkPreferences() {
         if (sharedPreferencesService.isFirstRun) {
             //TODO add to database
             val successesServiceResult = successesService.getDefaultSuccesses()

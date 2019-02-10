@@ -31,6 +31,8 @@ interface SuccessesView : MvpView {
 
     fun hideSearchBar()
 
+    fun collapseFab()
+
     fun displaySearchBar()
 
     fun displayUpdatedSuccesses()
