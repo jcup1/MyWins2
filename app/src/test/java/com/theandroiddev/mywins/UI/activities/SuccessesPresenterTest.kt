@@ -333,7 +333,7 @@ class SuccessesPresenterTest : Spek({
         }
 
         on("search is closed") {
-            it("on back pressed") {
+            it("display search bar") {
 
                 whenever(successesService.getSuccesses(SearchFilter())).thenReturn(
                     SuccessesServiceResult.Successes(
@@ -352,7 +352,6 @@ class SuccessesPresenterTest : Spek({
     given("show search") {
 
         it("display search") {
-
             SUT.onEditorActionListener("")
             verify(view, times(1)).displaySearch()
         }
