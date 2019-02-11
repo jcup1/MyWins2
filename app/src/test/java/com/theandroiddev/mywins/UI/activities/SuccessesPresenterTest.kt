@@ -58,50 +58,47 @@ class SuccessesPresenterTest : Spek({
 
     given("adding a new success") {
         on("proper category id passed") {
+            val category = Constants.Companion.Category.BUSINESS
+            SUT.onFabCategorySelected(category.id)
             it("should display category") {
-                val category = Constants.Companion.Category.BUSINESS
-                SUT.onFabCategorySelected(category.id)
                 verify(view, times(1)).displayCategory(category)
             }
         }
 
         on("wrong category id passed") {
+            SUT.onFabCategorySelected(-2000)
             it("should display 'other' category") {
-                SUT.onFabCategorySelected(-2000)
                 verify(view, times(1)).displayCategory(Constants.Companion.Category.OTHER)
             }
         }
     }
 
     given("loading Successes") {
-
         on("Successes available") {
             val successList = listOf(
                 SuccessesServiceModel(),
                 SuccessesServiceModel()
             )
+            val searchFilter = SearchFilter("", Constants.Companion.SortType.DATE_ADDED, true)
+            `when`(successesService.getSuccesses(searchFilter))
+                .thenReturn(SuccessesServiceResult.Successes(successList).asSingle())
+
+            SUT.onSearchTextChanged("")
 
             it("should display 2 Successes") {
-                val searchFilter = SearchFilter("", Constants.Companion.SortType.DATE_ADDED, true)
-                `when`(successesService.getSuccesses(searchFilter))
-                    .thenReturn(SuccessesServiceResult.Successes(successList).asSingle())
-
-                SUT.onSearchTextChanged("")
-
                 verify(view, times(1)).displaySuccesses(successList.map { it.toModel() })
             }
         }
 
         on("no Successes") {
             val successList = listOf<SuccessesServiceModel>()
+            val searchFilter = SearchFilter()
+            `when`(successesService.getSuccesses(searchFilter))
+                .thenReturn(SuccessesServiceResult.Successes(successList).asSingle())
+
+            SUT.onSearchTextChanged("")
 
             it("should display no Successes") {
-                val searchFilter = SearchFilter()
-                `when`(successesService.getSuccesses(searchFilter))
-                    .thenReturn(SuccessesServiceResult.Successes(successList).asSingle())
-
-                SUT.onSearchTextChanged("")
-
                 verify(view, times(1)).displaySuccesses(listOf())
             }
         }
@@ -110,18 +107,17 @@ class SuccessesPresenterTest : Spek({
 
     given("pause") {
 
-        on("passed successes") {
+        on("passed valid successes") {
+            val successToRemove = SuccessModel()
+
+            val argument = SuccessesServiceArgument.Successes(
+                listOf(successToRemove.toSuccessesServiceModel())
+            )
+
+            whenever(successesService.removeSuccesses(argument)).thenReturn(Completable.complete())
+            SUT.onPause(mutableListOf(successToRemove))
+
             it("should remove Successes") {
-                val successToRemove = SuccessModel()
-
-                val argument = SuccessesServiceArgument.Successes(
-                    listOf(successToRemove.toSuccessesServiceModel())
-                )
-
-                whenever(successesService.removeSuccesses(argument)).thenReturn(Completable.complete())
-
-                SUT.onPause(mutableListOf(successToRemove))
-
                 verify(
                     successesService,
                     times(1)
@@ -130,17 +126,27 @@ class SuccessesPresenterTest : Spek({
         }
 
         on("passed empty list") {
+            val successesToRemove = mutableListOf<SuccessModel>()
+
+            SUT.onPause(successesToRemove)
+
+            val serviceModel =
+                SuccessesServiceArgument.Successes(successesToRemove.map { it.toSuccessesServiceModel() })
+
             it("should not remove Successes") {
-                val successesToRemove = mutableListOf<SuccessModel>()
-
-                SUT.onPause(successesToRemove)
-
-                val serviceModel =
-                    SuccessesServiceArgument.Successes(successesToRemove.map { it.toSuccessesServiceModel() })
                 verify(
                     successesService,
                     never()
                 ).removeSuccesses(serviceModel)
+            }
+        }
+    }
+
+    given("filters clicked") {
+
+        on("") {
+            it("") {
+
             }
         }
     }
@@ -205,20 +211,20 @@ class SuccessesPresenterTest : Spek({
     given("undo to remove") {
 
         on("backup success is null") {
-            it("should not undo removing success") {
+            val backupSuccess = null
+            SUT.onUndoToRemove(0, backupSuccess)
 
-                val backupSuccess = null
-                SUT.onUndoToRemove(0, backupSuccess)
+            it("should not undo removing success") {
                 verify(view, never()).restoreSuccess(0, SuccessModel())
 
             }
         }
 
         on("backup success is not null") {
-            it("should undo removing success") {
+            val backupSuccess = SuccessModel()
+            SUT.onUndoToRemove(0, backupSuccess)
 
-                val backupSuccess = SuccessModel()
-                SUT.onUndoToRemove(0, backupSuccess)
+            it("should undo removing success") {
                 verify(view, times(1)).restoreSuccess(0, backupSuccess)
             }
         }
@@ -228,19 +234,21 @@ class SuccessesPresenterTest : Spek({
     given("update success") {
 
         on("Successes not available") {
+            val position = 0
+            val successes = mutableListOf<SuccessModel>()
+            SUT.updateSuccess(position, successes)
+
             it("should no update success") {
-                val position = 0
-                val successes = mutableListOf<SuccessModel>()
-                SUT.updateSuccess(position, successes)
                 verify(view, never()).displaySuccessChanged(position, SuccessModel())
             }
         }
 
         on("invalid clicked position") {
+            val position = -10
+            val successes = mutableListOf(SuccessModel(id = 123))
+            SUT.updateSuccess(position, successes)
+
             it("should not update success") {
-                val position = -10
-                val successes = mutableListOf(SuccessModel(id = 123))
-                SUT.updateSuccess(position, successes)
                 verify(view, never()).removeSuccess(position, SuccessModel(id = 123))
             }
         }
@@ -280,83 +288,87 @@ class SuccessesPresenterTest : Spek({
     given("on back pressed") {
 
         on("search is opened") {
+            val successesToDisplay =
+                mutableListOf(SuccessesServiceModel(), SuccessesServiceModel())
 
-            it("hide search bar and display Successes") {
-                val successesToDisplay =
-                    mutableListOf(SuccessesServiceModel(), SuccessesServiceModel())
+            `when`(successesService.getSuccesses(SUT.searchFilter))
+                .thenReturn(SuccessesServiceResult.Successes(successesToDisplay).asSingle())
 
-                `when`(successesService.getSuccesses(SUT.searchFilter))
-                    .thenReturn(SuccessesServiceResult.Successes(successesToDisplay).asSingle())
+            SUT.handleBackPress(false, true)
 
-                SUT.handleBackPress(false, true)
-
+            it("hide search bar") {
                 verify(view, times(1)).hideSearchBar()
 
-                verify(view, times(1)).displaySuccesses(successesToDisplay.map { it.toModel() })
+            }
 
+            it("display successes") {
+                verify(view, times(1)).displaySuccesses(successesToDisplay.map { it.toModel() })
             }
 
         }
 
         on("search is closed") {
+            whenever(successesService.getSuccesses(SearchFilter())).thenReturn(
+                SuccessesServiceResult.Successes(
+                    listOf(SuccessesServiceModel())
+                ).asSingle()
+            )
+
+            SUT.handleOptionsItemSelected(R.id.action_search, false)
 
             it("display search bar") {
-
-                whenever(successesService.getSuccesses(SearchFilter())).thenReturn(
-                    SuccessesServiceResult.Successes(
-                        listOf(SuccessesServiceModel())
-                    ).asSingle()
-                )
-
-                SUT.handleOptionsItemSelected(R.id.action_search, false)
                 verify(view, times(1)).displaySearchBar()
             }
 
         }
+    }
+
+    given("action start search") {
+        on("search is closed") {
+            whenever(successesService.getSuccesses(SearchFilter())).thenReturn(
+                SuccessesServiceResult.Successes(
+                    listOf()
+                ).asSingle()
+            )
+            val isSearchOpened = false
+
+            SUT.handleOptionsItemSelected(R.id.action_search, isSearchOpened)
+
+            it("display search bar") {
+                verify(view, times(1)).displaySearchBar()
+            }
+        }
+
     }
 
     given("action search") {
-
         on("search is opened") {
+            whenever(successesService.getSuccesses(SearchFilter())).thenReturn(
+                SuccessesServiceResult.Successes(
+                    listOf()
+                ).asSingle()
+            )
+            val isSearchOpened = true
+            SUT.handleOptionsItemSelected(R.id.action_search, isSearchOpened)
             it("hide search bar") {
-
-                whenever(successesService.getSuccesses(SearchFilter())).thenReturn(
-                    SuccessesServiceResult.Successes(
-                        listOf()
-                    ).asSingle()
-                )
-                val isSearchOpened = true
-
-                SUT.handleOptionsItemSelected(R.id.action_search, isSearchOpened)
                 verify(view, times(1)).hideSearchBar()
             }
         }
 
         on("search is closed") {
-            it("display search bar") {
-
-                whenever(successesService.getSuccesses(SearchFilter())).thenReturn(
-                    SuccessesServiceResult.Successes(
-                        listOf()
-                    ).asSingle()
-                )
-                val isSearchOpened = false
-
+            whenever(successesService.getSuccesses(SearchFilter())).thenReturn(
+                SuccessesServiceResult.Successes(
+                    listOf()
+                ).asSingle()
+            )
+            val isSearchOpened = false
+            it("display search") {
                 SUT.handleOptionsItemSelected(R.id.action_search, isSearchOpened)
                 verify(view, times(1)).displaySearchBar()
             }
         }
 
     }
-
-    given("show search") {
-
-        it("display search") {
-            SUT.onEditorActionListener("")
-            verify(view, times(1)).displaySearch()
-        }
-    }
-
 })
 
 fun <T> T.asFlowable(): Flowable<T> {
