@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:elevation="12dp"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/successes_filters_label"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/successes_filters_sort_by_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/successes_filters_sort_by_label"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/successes_filters_sort_by_title_radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/successes_filters_sort_by_title_radio_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:text="@string/successes_filters_sort_by_title_radio_button" />
+
+        <RadioButton
+            android:id="@+id/successes_filters_sort_by_importance_radio_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:text="@string/successes_filters_sort_by_importance_radio_button" />
+
+        <RadioButton
+            android:id="@+id/successes_filters_sort_by_creation_date_radio_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:text="@string/successes_filters_sort_by_creation_date_radio_button" />
+    </RadioGroup>
+
+    <Switch
+        android:id="@+id/successes_filters_ascending_order_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:text="@string/successes_filters_ascending_order_switch" />
+
+    <TextView
+        android:id="@+id/successes_filters_importance_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/successes_filters_importance_label"
+        android:textStyle="bold" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/successes_filters_importance_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:nestedScrollingEnabled="false"
+        tools:layoutManager="android.support.v7.widget.GridLayoutManager"
+        tools:layout_height="170dp"
+        tools:listitem="@layout/checkbox_item_view"
+        tools:spanCount="2" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="16dp">
+
+        <Button
+            android:id="@+id/successes_filters_cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="end"
+            android:layout_toStartOf="@+id/successes_filters_save_button"
+            android:text="@string/successes_filters_cancel_button" />
+
+        <Button
+            android:id="@+id/successes_filters_save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="end"
+            android:text="@string/successes_filters_save_button" />
+
+    </RelativeLayout>
+
+</LinearLayout>

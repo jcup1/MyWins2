@@ -501,8 +501,11 @@ class SuccessesActivity :
     }
 
     override fun displaySearch() {
-
         hideSoftKeyboard()
+    }
+
+    override fun displayFiltersView() {
+        //TODO display view
     }
 
     private fun hideSoftKeyboard() {

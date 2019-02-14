@@ -4,48 +4,17 @@
       tools:context="com.example.jakubchmiel.mywins.MainActivity">
 
     <item
-
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search"
         android:orderInCategory="200"
         android:title="@string/search"
-        app:showAsAction="ifRoom"
-        />
+        app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_date_added"
-        android:orderInCategory="100"
-        android:title="@string/action_date_added"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/action_title"
-        android:orderInCategory="100"
-        android:title="@string/action_title"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/action_importance"
-        android:orderInCategory="100"
-        android:title="@string/importance"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/action_date_started"
-        android:orderInCategory="100"
-        android:title="@string/action_date_started"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/action_date_ended"
-        android:orderInCategory="100"
-        android:title="@string/action_date_ended"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/action_description"
-        android:orderInCategory="100"
-        android:title="@string/action_description"
-        app:showAsAction="never"/>
-
+        android:id="@+id/action_filter"
+        android:icon="@drawable/ic_filter"
+        android:orderInCategory="200"
+        android:title="@string/filter"
+        app:showAsAction="ifRoom" />
 
 </menu>

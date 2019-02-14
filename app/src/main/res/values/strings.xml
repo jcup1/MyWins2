@@ -21,6 +21,7 @@
 
     <string name="importance">Sort by importance</string>
     <string name="search">Search</string>
+    <string name="filter">Filter</string>
     <string name="default_description">Default description</string>
     <string name="edit_date_menu_title">Edit Date</string>
     <string name="remove_date_menu">Remove date</string>
@@ -71,5 +72,14 @@
     <string name="unexpected_error">Unexpected error</string>
     <string name="success_list_empty">EMPTY :(</string>
 
+    <string name="successes_filters_label">Filters</string>
+    <string name="successes_filters_sort_by_label">Sort by</string>
+    <string name="successes_filters_sort_by_title_radio_button">Title</string>
+    <string name="successes_filters_sort_by_importance_radio_button">Importance</string>
+    <string name="successes_filters_sort_by_creation_date_radio_button">Creation date</string>
+    <string name="successes_filters_ascending_order_switch">Ascending order</string>
+    <string name="successes_filters_importance_label">Importance</string>
+    <string name="successes_filters_save_button">Save</string>
+    <string name="successes_filters_cancel_button">Cancel</string>
 
 </resources>

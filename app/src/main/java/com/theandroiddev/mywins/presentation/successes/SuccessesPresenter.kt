@@ -11,7 +11,6 @@ import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceArgumen
 import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceResult
 import com.theandroiddev.mywins.domain.service.successes.toModel
 import com.theandroiddev.mywins.presentation.edit_success.hasOne
-import com.theandroiddev.mywins.utils.Constants
 import com.theandroiddev.mywins.utils.Constants.Companion.Category
 import com.theandroiddev.mywins.utils.Constants.Companion.NOT_ACTIVE
 import com.theandroiddev.mywins.utils.Constants.Companion.SortType
@@ -191,39 +190,17 @@ class SuccessesPresenter @Inject constructor(
 
     fun handleOptionsItemSelected(itemId: Int, isSearchOpened: Boolean) {
 
-        if (itemId == R.id.action_search) {
-            toggleSearch(isSearchOpened)
-            return
+        when(itemId) {
+            R.id.action_search -> {
+                toggleSearch(isSearchOpened)
+            }
+            R.id.action_filter -> {
+                ifViewAttached { view ->
+                    view.displayFiltersView()
+                }
+            }
         }
 
-        val pickedSortType = when (itemId) {
-            R.id.action_date_started -> {
-                SortType.DATE_STARTED
-            }
-            R.id.action_date_ended -> {
-                SortType.DATE_ENDED
-            }
-            R.id.action_title -> {
-                SortType.TITLE
-            }
-            R.id.action_date_added -> {
-                SortType.DATE_ADDED
-            }
-            R.id.action_importance -> {
-                SortType.IMPORTANCE
-            }
-            R.id.action_description -> {
-                SortType.DESCRIPTION
-            }
-            else -> Constants.Companion.SortType.DATE_ADDED
-        }
-
-        if (sortType == pickedSortType) {
-            isSortingAscending = !isSortingAscending
-        } else {
-            sortType = pickedSortType
-        }
-        loadSuccesses(searchFilter)
     }
 
     fun handleBackPress(isFabOpened: Boolean, isSearchOpened: Boolean) {
@@ -379,5 +356,11 @@ class SuccessesPresenter @Inject constructor(
     }
 
     override fun destroy() {
+    }
+
+    fun onFiltersClicked() {
+        ifViewAttached { view ->
+            view.displayFiltersView()
+        }
     }
 }
