@@ -20,12 +20,11 @@ import io.reactivex.Single
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.mockito.Mockito
 import org.mockito.Mockito.*
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.gherkin.Feature
+import kotlin.test.assertEquals
 
 /**
  * Created by jakub on 28.10.17.
@@ -38,86 +37,99 @@ class SuccessesPresenterTest : Spek({
     val preferencesHelper = mock(SharedPreferencesService::class.java)
     val view = Mockito.mock(SuccessesView::class.java)
 
-    beforeEachTest {
+    beforeGroup {
 
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
         RxJavaPlugins.setComputationSchedulerHandler { Schedulers.trampoline() }
         RxJavaPlugins.setNewThreadSchedulerHandler { Schedulers.trampoline() }
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
-
-    }
-
-    beforeEachTest {
-
-        reset(successesService)
-        reset(preferencesHelper)
-        reset(view)
         SUT = SuccessesPresenter(successesService, preferencesHelper)
         SUT.attachView(view)
     }
 
-    given("adding a new success") {
-        on("proper category id passed") {
-            val category = Constants.Companion.Category.BUSINESS
-            SUT.onFabCategorySelected(category.id)
-            it("should display category") {
+    Feature("adding a new success") {
+        var category = Constants.Companion.Category.OTHER
+
+        Scenario("proper category id passed") {
+            Given("business category") {
+                category = Constants.Companion.Category.BUSINESS
+            }
+            When("fab category selected") {
+                SUT.onFabCategorySelected(category.id)
+            }
+            Then("should display category") {
                 verify(view, times(1)).displayCategory(category)
             }
         }
 
-        on("wrong category id passed") {
-            SUT.onFabCategorySelected(-2000)
-            it("should display 'other' category") {
+        Scenario("wrong category id passed") {
+            When("fab category selected") {
+                SUT.onFabCategorySelected(-2000)
+            }
+            Then("should display 'other' category") {
                 verify(view, times(1)).displayCategory(Constants.Companion.Category.OTHER)
             }
         }
     }
 
-    given("loading Successes") {
-        on("Successes available") {
-            val successList = listOf(
-                SuccessesServiceModel(),
-                SuccessesServiceModel()
-            )
-            val searchFilter = SearchFilter("", Constants.Companion.SortType.DATE_ADDED, true)
-            `when`(successesService.getSuccesses(searchFilter))
-                .thenReturn(SuccessesServiceResult.Successes(successList).asSingle())
+    Feature("loading Successes") {
+        var successList = listOf<SuccessesServiceModel>()
+        var searchFilter = SearchFilter()
+        Scenario("Successes are available and displayed") {
+            Given("list of successes") {
+                successList = listOf(SuccessesServiceModel(), SuccessesServiceModel())
+                searchFilter = SearchFilter("", Constants.Companion.SortType.DATE_ADDED, true)
+            }
+            When("getting successes") {
+                `when`(successesService.getSuccesses(searchFilter))
+                    .thenReturn(SuccessesServiceResult.Successes(successList).asSingle())
 
-            SUT.onSearchTextChanged("")
-
-            it("should display 2 Successes") {
+                SUT.onSearchTextChanged("")
+            }
+            Then("should display 2 Successes") {
                 verify(view, times(1)).displaySuccesses(successList.map { it.toModel() })
             }
         }
 
-        on("no Successes") {
-            val successList = listOf<SuccessesServiceModel>()
-            val searchFilter = SearchFilter()
-            `when`(successesService.getSuccesses(searchFilter))
-                .thenReturn(SuccessesServiceResult.Successes(successList).asSingle())
-
-            SUT.onSearchTextChanged("")
-
-            it("should display no Successes") {
+        Scenario("No Successes available, TextView displayed") {
+            Given("empty list") {
+                successList = listOf()
+                searchFilter = SearchFilter()
+            }
+            When("getting successes") {
+                `when`(successesService.getSuccesses(searchFilter))
+                    .thenReturn(SuccessesServiceResult.Successes(successList).asSingle())
+                SUT.onSearchTextChanged("")
+            }
+            Then("should display no Successes") {
                 verify(view, times(1)).displaySuccesses(listOf())
+            }
+            Then("should display no successes available TextView") {
+                assertEquals(view.isSuccessListVisible, false)
             }
         }
 
     }
 
-    given("pause") {
+    Feature("Removing successes from queue") {
+        var successToRemove = SuccessModel()
+        var argument = SuccessesServiceArgument.Successes(listOf())
 
-        on("passed valid successes") {
-            val successToRemove = SuccessModel()
+        var backupSuccess = SuccessModel()
+        var position = 0
+        var successesSize = 5
 
-            val argument = SuccessesServiceArgument.Successes(
-                listOf(successToRemove.toSuccessesServiceModel())
-            )
-
-            whenever(successesService.removeSuccesses(argument)).thenReturn(Completable.complete())
-            SUT.onPause(mutableListOf(successToRemove))
-
-            it("should remove Successes") {
+        Scenario("App pauses and removes successes from queue") {
+            Given("list of successes to remove") {
+                successToRemove = SuccessModel()
+                argument =
+                    SuccessesServiceArgument.Successes(listOf(successToRemove).map { it.toSuccessesServiceModel() })
+            }
+            When("activity pauses") {
+                whenever(successesService.removeSuccesses(argument)).thenReturn(Completable.complete())
+                SUT.onPause(mutableListOf(successToRemove))
+            }
+            Then("should remove Successes") {
                 verify(
                     successesService,
                     times(1)
@@ -125,159 +137,184 @@ class SuccessesPresenterTest : Spek({
             }
         }
 
-        on("passed empty list") {
-            val successesToRemove = mutableListOf<SuccessModel>()
-
-            SUT.onPause(successesToRemove)
-
-            val serviceModel =
-                SuccessesServiceArgument.Successes(successesToRemove.map { it.toSuccessesServiceModel() })
-
-            it("should not remove Successes") {
+        Scenario("App pauses and have no successes to remove") {
+            Given("empty list of successes to remove") {
+                argument =
+                    SuccessesServiceArgument.Successes(listOf<SuccessModel>().map { it.toSuccessesServiceModel() })
+            }
+            When("activity pauses") {
+                whenever(successesService.removeSuccesses(argument)).thenReturn(Completable.complete())
+                SUT.onPause(mutableListOf(successToRemove))
+            }
+            Then("should remove no Successes") {
                 verify(
                     successesService,
                     never()
-                ).removeSuccesses(serviceModel)
+                ).removeSuccesses(argument)
             }
         }
-    }
 
-    given("filters clicked") {
-
-        on("") {
-            it("") {
-
+        Scenario("Add successes to remove queue") {
+            Given("proper data") {
+                backupSuccess = SuccessModel()
+                position = 0
+                successesSize = 5
             }
-        }
-    }
-
-    given("add success to remove queue") {
-
-        on("proper data") {
-            val backupSuccess = SuccessModel()
-            val position = 0
-            val successesSize = 5
-            SUT.onSuccessAddedToRemoveQueue(position, backupSuccess, successesSize)
-
-            it("should remove Successes") {
+            When("adding success to remove queue") {
+                SUT.onSuccessAddedToRemoveQueue(position, backupSuccess, successesSize)
+            }
+            Then("should remove Successes") {
                 verify(view).removeSuccess(position, backupSuccess)
             }
-            it("should not display error") {
+            Then("should not display error") {
                 verify(view, never()).alerts?.displayUnexpectedError()
             }
         }
 
-        on("too small position") {
-            val backupSuccess = SuccessModel()
-            val position = -1
-            val successesSize = 5
-            SUT.onSuccessAddedToRemoveQueue(position, backupSuccess, successesSize)
-
-            it("should not remove Successes") {
+        Scenario("Too small position to add success to remove queue") {
+            Given("too small position") {
+                backupSuccess = SuccessModel()
+                position = -1
+                successesSize = 5
+            }
+            When("adding success to remove queue") {
+                SUT.onSuccessAddedToRemoveQueue(position, backupSuccess, successesSize)
+            }
+            Then("should not remove Successes") {
                 verify(view, never()).removeSuccess(position, backupSuccess)
             }
-            it("should display error") {
+            Then("should display error") {
                 verify(view).alerts?.displayUnexpectedError()
             }
         }
 
-        on("too big position") {
-            val backupSuccess = SuccessModel()
-            val position = 5
-            val successesSize = 5
-            SUT.onSuccessAddedToRemoveQueue(position, backupSuccess, successesSize)
-
-            it("should not remove Successes") {
+        Scenario("Too big position to add success to remove queue") {
+            Given("too big position") {
+                backupSuccess = SuccessModel()
+                position = 5
+                successesSize = 5
+            }
+            When("adding success to remove queue") {
+                SUT.onSuccessAddedToRemoveQueue(position, backupSuccess, successesSize)
+            }
+            Then("should not remove Successes") {
                 verify(view, never()).removeSuccess(position, backupSuccess)
             }
 
-            it("should display error") {
-                verify(view).alerts?.displayUnexpectedError()
+            Then("should display error") {
+                verify(view, times(2)).alerts?.displayUnexpectedError()
             }
         }
 
-        on("success is null") {
-            val backupSuccess = null
-            val position = 5
-            val successesSize = 5
-            SUT.onSuccessAddedToRemoveQueue(position, backupSuccess, successesSize)
-
-            it("should display error") {
-                verify(view).alerts?.displayUnexpectedError()
+        Scenario("Can't add success to remove queue because success is null") {
+            Given("null success") {
+                position = 5
+                successesSize = 5
+            }
+            When("adding success to remove queue") {
+                SUT.onSuccessAddedToRemoveQueue(position, backupSuccess, successesSize)
+            }
+            Then("should display error") {
+                verify(view, times(3)).alerts?.displayUnexpectedError()
             }
         }
-    }
 
-    given("undo to remove") {
+        Scenario("Undo to remove success failed") {
+            Given("null success") {
 
-        on("backup success is null") {
-            val backupSuccess = null
-            SUT.onUndoToRemove(0, backupSuccess)
-
-            it("should not undo removing success") {
+            }
+            When("undoing success remove") {
+                SUT.onUndoToRemove(0, null)
+            }
+            Then("should not undo removing success") {
                 verify(view, never()).restoreSuccess(0, SuccessModel())
-
             }
         }
 
-        on("backup success is not null") {
-            val backupSuccess = SuccessModel()
-            SUT.onUndoToRemove(0, backupSuccess)
-
-            it("should undo removing success") {
+        Scenario("Undo to remove success succeed") {
+            Given("valid success") {
+                backupSuccess = SuccessModel()
+            }
+            When("undoing success remove") {
+                SUT.onUndoToRemove(0, backupSuccess)
+            }
+            Then("should not undo removing success") {
                 verify(view, times(1)).restoreSuccess(0, backupSuccess)
             }
         }
 
     }
 
-    given("update success") {
+    Feature("Successes filters") {
 
-        on("Successes not available") {
-            val position = 0
-            val successes = mutableListOf<SuccessModel>()
-            SUT.updateSuccess(position, successes)
+        Scenario("Starting filters view") {
+            When("handling filters click") {
+                SUT.handleOptionsItemSelected(R.id.action_filter, false)
+            }
+            Then("display filters view") {
+                verify(view, times(1)).displayFiltersView()
+            }
+        }
+    }
 
-            it("should no update success") {
+    Feature("Updating success") {
+        var position = -1
+        var successes = mutableListOf<SuccessModel>()
+        var id: Long = -1
+        Scenario("Successes not available") {
+            Given("empty list of successes") {
+                position = 0
+                successes = mutableListOf()
+            }
+            When("updating success") {
+                SUT.updateSuccess(position, successes)
+            }
+            Then("should no update success") {
                 verify(view, never()).displaySuccessChanged(position, SuccessModel())
             }
         }
 
-        on("invalid clicked position") {
-            val position = -10
-            val successes = mutableListOf(SuccessModel(id = 123))
-            SUT.updateSuccess(position, successes)
-
-            it("should not update success") {
+        Scenario("invalid clicked position") {
+            Given("negative position") {
+                position = -10
+                successes = mutableListOf(SuccessModel(id = 123))
+            }
+            When("updating success") {
+                SUT.updateSuccess(position, successes)
+            }
+            Then("should not update success") {
                 verify(view, never()).removeSuccess(position, SuccessModel(id = 123))
             }
         }
 
-        on("success id is null") {
-            val position = 0
-            val successes = listOf(SuccessModel())
-
-            SUT.updateSuccess(position, successes.toMutableList())
-
-            it("should not update success") {
+        Scenario("success id is null") {
+            Given("null success") {
+                position = 0
+                successes = mutableListOf(SuccessModel())
+            }
+            When("updating success") {
+                SUT.updateSuccess(position, successes)
+            }
+            Then("should not update success") {
                 verify(view, never()).displaySuccessChanged(position, successes[position])
             }
-            it("should display error") {
-                verify(view).alerts?.displayUnexpectedError()
+            Then("should display error") {
+                verify(view, times(5)).alerts?.displayUnexpectedError()
             }
 
         }
-        on("passed valid data") {
-            val position = 0
-            val successes = listOf(SuccessModel(id = 1234))
-
-            val id = successes[position].id ?: 0
-
-            `when`(successesService.fetchSuccess(id))
-                .thenReturn(SuccessesServiceResult.Successes(successes.map { it.toSuccessesServiceModel() }).asSingle())
-            SUT.updateSuccess(position, successes.toMutableList())
-
-            it("should update success") {
+        Scenario("passed valid data") {
+            Given("proper data") {
+                position = 0
+                successes = mutableListOf(SuccessModel(id = 1234))
+                id = successes[position].id ?: 0
+            }
+            When("updating success") {
+                `when`(successesService.fetchSuccess(id))
+                    .thenReturn(SuccessesServiceResult.Successes(successes.map { it.toSuccessesServiceModel() }).asSingle())
+                SUT.updateSuccess(position, successes.toMutableList())
+            }
+            Then("should update success") {
                 verify(view, times(1)).displaySuccessChanged(position, successes[position])
             }
 
@@ -285,90 +322,65 @@ class SuccessesPresenterTest : Spek({
 
     }
 
-    given("on back pressed") {
+    Feature("Successes search bar") {
+        var successesToDisplay = mutableListOf<SuccessesServiceModel>()
+        var isSearchOpened = false
 
-        on("search is opened") {
-            val successesToDisplay =
-                mutableListOf(SuccessesServiceModel(), SuccessesServiceModel())
-
-            `when`(successesService.getSuccesses(SUT.searchFilter))
-                .thenReturn(SuccessesServiceResult.Successes(successesToDisplay).asSingle())
-
-            SUT.handleBackPress(false, true)
-
-            it("hide search bar") {
+        Scenario("On back pressed closes search bar and loads new list") {
+            Given("valid successes to display") {
+                successesToDisplay = mutableListOf(SuccessesServiceModel(), SuccessesServiceModel())
+            }
+            When("getting successes") {
+                `when`(successesService.getSuccesses(SUT.searchFilter))
+                    .thenReturn(SuccessesServiceResult.Successes(successesToDisplay).asSingle())
+                SUT.handleBackPress(false, true)
+            }
+            Then("hide search bar") {
                 verify(view, times(1)).hideSearchBar()
 
             }
-
-            it("display successes") {
-                verify(view, times(1)).displaySuccesses(successesToDisplay.map { it.toModel() })
-            }
-
-        }
-
-        on("search is closed") {
-            whenever(successesService.getSuccesses(SearchFilter())).thenReturn(
-                SuccessesServiceResult.Successes(
-                    listOf(SuccessesServiceModel())
-                ).asSingle()
-            )
-
-            SUT.handleOptionsItemSelected(R.id.action_search, false)
-
-            it("display search bar") {
-                verify(view, times(1)).displaySearchBar()
-            }
-
-        }
-    }
-
-    given("action start search") {
-        on("search is closed") {
-            whenever(successesService.getSuccesses(SearchFilter())).thenReturn(
-                SuccessesServiceResult.Successes(
-                    listOf()
-                ).asSingle()
-            )
-            val isSearchOpened = false
-
-            SUT.handleOptionsItemSelected(R.id.action_search, isSearchOpened)
-
-            it("display search bar") {
-                verify(view, times(1)).displaySearchBar()
+            Then("display successes") {
+                verify(view, times(2)).displaySuccesses(successesToDisplay.map { it.toModel() })
             }
         }
 
-    }
-
-    given("action search") {
-        on("search is opened") {
-            whenever(successesService.getSuccesses(SearchFilter())).thenReturn(
-                SuccessesServiceResult.Successes(
-                    listOf()
-                ).asSingle()
-            )
-            val isSearchOpened = true
-            SUT.handleOptionsItemSelected(R.id.action_search, isSearchOpened)
-            it("hide search bar") {
-                verify(view, times(1)).hideSearchBar()
+        Scenario("Search icon click opens search bar") {
+            Given("search is closed") {
+                isSearchOpened = false
             }
-        }
-
-        on("search is closed") {
-            whenever(successesService.getSuccesses(SearchFilter())).thenReturn(
-                SuccessesServiceResult.Successes(
-                    listOf()
-                ).asSingle()
-            )
-            val isSearchOpened = false
-            it("display search") {
+            When("clicking action search") {
+                whenever(successesService.getSuccesses(SearchFilter())).thenReturn(
+                    SuccessesServiceResult.Successes(
+                        listOf(SuccessesServiceModel())
+                    ).asSingle()
+                )
                 SUT.handleOptionsItemSelected(R.id.action_search, isSearchOpened)
+            }
+            Then("display search bar") {
                 verify(view, times(1)).displaySearchBar()
             }
         }
 
+        Scenario("Search icon click closes search bar") {
+            Given("search is opened") {
+                isSearchOpened = true
+            }
+            When("clicking action search") {
+                whenever(successesService.getSuccesses(SearchFilter())).thenReturn(
+                    SuccessesServiceResult.Successes(
+                        listOf()
+                    ).asSingle()
+                )
+                SUT.handleOptionsItemSelected(R.id.action_search, isSearchOpened)
+            }
+            Then("hide search bar") {
+                //initial property = false and call
+                verify(view, times(2)).hideSearchBar()
+            }
+        }
+
     }
+
 })
 
 fun <T> T.asFlowable(): Flowable<T> {
