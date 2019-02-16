@@ -26,6 +26,7 @@ class SuccessesPresenter @Inject constructor(
 ) : MvpPresenter<SuccessesView, SuccessesBundle>() {
 
     override fun onViewCreated() {
+
     }
 
     private var searchTerm: String? = ""
@@ -36,9 +37,6 @@ class SuccessesPresenter @Inject constructor(
             field = value
             successesService.saveFilters(value, searchFilter)
             loadSuccesses(value)
-            ifViewAttached {
-                view.areFiltersActive = areFiltersEqual(value, SearchFilter()) == false
-            }
         }
 
     var successes = listOf<SuccessModel>()
@@ -46,6 +44,7 @@ class SuccessesPresenter @Inject constructor(
             field = value
             ifViewAttached { view ->
                 view.isSuccessListVisible = value.isNotEmpty()
+                view.areFiltersActive = areFiltersEqual(searchFilter, SearchFilter()) == false
                 view.displaySuccesses(value)
             }
         }
