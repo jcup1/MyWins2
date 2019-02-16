@@ -76,6 +76,12 @@ class SuccessesActivity :
             empty_list_text.visibleOrInvisible(!value)
         }
 
+    override var areFiltersActive: Boolean = false
+        set(value) {
+            field = value
+            invalidateOptionsMenu()
+        }
+
     private var simpleCallback: ItemTouchHelper.SimpleCallback =
         object : ItemTouchHelper.SimpleCallback(
             0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
@@ -120,7 +126,17 @@ class SuccessesActivity :
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+
         searchAction = menu.findItem(R.id.action_search)
+
+        val color = if(areFiltersActive) {
+            getColor(R.color.accent)
+        } else {
+            getColor(R.color.white)
+        }
+
+        menu.findItem(R.id.action_filter)?.icon?.setTint(color)
+
         return super.onPrepareOptionsMenu(menu)
     }
 

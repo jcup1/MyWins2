@@ -15,6 +15,8 @@ interface SuccessesView : MvpView {
 
     var isSuccessListVisible: Boolean
 
+    var areFiltersActive: Boolean
+
     fun displayDefaultSuccesses(successList: MutableList<SuccessModel>)
 
     fun displaySuccesses(successes: List<SuccessModel>)

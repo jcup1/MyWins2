@@ -270,12 +270,30 @@ class SuccessesPresenterTest : Spek({
             }
         }
 
-        Scenario("New filters saved") {
-            Given("different filters customization") {
+        Scenario("New filters not saved") {
+            Given("the same filters customization") {
                 newCustomization = SearchFilter(SortType.DATE_ADDED, true)
             }
             When("handle new filers") {
+                whenever(successesService.getFilters()).thenReturn(SearchFilter())
                 sut.handleNewFilters(customization)
+            }
+            Then("don't save new filters") {
+                verify(successesService, never()).saveFilters(newCustomization, customization)
+            }
+            Then("don't display successes") {
+                verify(view, times(1)).displaySuccesses(successes)
+            }
+        }
+
+        Scenario("New filters saved") {
+            Given("different filters customization") {
+                newCustomization = SearchFilter(SortType.IMPORTANCE, false)
+            }
+            When("handle new filers") {
+                whenever(successesService.getFilters()).thenReturn(customization)
+                whenever(successesService.getSuccesses("", newCustomization)).thenReturn(successServiceResult.asSingle())
+                sut.handleNewFilters(newCustomization)
             }
             Then("save new filters") {
                 verify(successesService, times(1)).saveFilters(newCustomization, customization)
@@ -283,20 +301,41 @@ class SuccessesPresenterTest : Spek({
             Then("load successes") {
                 verify(view, atLeastOnce()).displaySuccesses(successes)
             }
+
         }
 
-        Scenario("Get filters") {
+        Scenario("Get inactive filters") {
             When("getting filters") {
                 whenever(successesService.getSuccesses("", SearchFilter())).thenReturn(successServiceResult.asSingle())
                 sut.searchFilter = SearchFilter()
             }
-            Then("return filters") {
+            Then("return inactive filters") {
                 verify(successesService, atLeastOnce()).getFilters()
             }
             Then("display successes") {
                 verify(view, atLeastOnce()).displaySuccesses(successes)
             }
+            Then("display filters inactive") {
+                verify(view, times(1)).areFiltersActive = false
+            }
         }
+
+        Scenario("Get active filters") {
+            When("getting filters") {
+                whenever(successesService.getSuccesses("", SearchFilter())).thenReturn(successServiceResult.asSingle())
+                sut.searchFilter = SearchFilter()
+            }
+            Then("return active filters") {
+                verify(successesService, atLeastOnce()).getFilters()
+            }
+            Then("display successes") {
+                verify(view, atLeastOnce()).displaySuccesses(successes)
+            }
+            Then("display filters active") {
+                verify(view, times(1)).areFiltersActive = true
+            }
+        }
+
     }
 
     Feature("Updating success") {

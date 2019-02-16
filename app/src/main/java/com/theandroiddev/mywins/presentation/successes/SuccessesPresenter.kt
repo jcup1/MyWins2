@@ -34,7 +34,11 @@ class SuccessesPresenter @Inject constructor(
         get() = successesService.getFilters()
         set(value) {
             field = value
+            successesService.saveFilters(value, searchFilter)
             loadSuccesses(value)
+            ifViewAttached {
+                view.areFiltersActive = areFiltersEqual(value, SearchFilter()) == false
+            }
         }
 
     var successes = listOf<SuccessModel>()
@@ -343,7 +347,21 @@ class SuccessesPresenter @Inject constructor(
     }
 
     fun handleNewFilters(newSearchCustomization: SearchFilter) {
-        successesService.saveFilters(newSearchCustomization, searchFilter)
+        if (areFiltersEqual(newSearchCustomization, searchFilter)) {
+            return
+        }
         searchFilter = newSearchCustomization
+    }
+
+    private fun areFiltersEqual(
+        newCustomization: SearchFilter,
+        oldCustomization: SearchFilter
+    ): Boolean {
+        val isSortingOrderTheSame = newCustomization.isSortingAscending == oldCustomization.isSortingAscending
+        val isSortTypeTheSame = newCustomization.sortType == oldCustomization.sortType
+        if (isSortingOrderTheSame && isSortTypeTheSame) {
+            return true
+        }
+        return false
     }
 }

@@ -81,9 +81,7 @@ class SuccessesServiceImpl @Inject constructor(
         newCustomization: SearchFilter,
         oldCustomization: SearchFilter
     ) {
-        if (areFiltersEqual(newCustomization, oldCustomization)) {
-            return
-        }
+
         sharedPreferencesService.saveSuccessesFilters(newCustomization)
     }
 
@@ -91,15 +89,5 @@ class SuccessesServiceImpl @Inject constructor(
         return sharedPreferencesService.getSuccessesFilters()
     }
 
-    private fun areFiltersEqual(
-        newCustomization: SearchFilter,
-        oldCustomization: SearchFilter
-    ): Boolean {
-        val isSortingOrderTheSame = newCustomization.isSortingAscending == oldCustomization.isSortingAscending
-        val isSortTypeTheSame = newCustomization.sortType == oldCustomization.sortType
-        if (isSortingOrderTheSame && isSortTypeTheSame) {
-            return true
-        }
-        return false
-    }
+
 }
