@@ -1,7 +1,5 @@
 package com.theandroiddev.mywins.presentation.successes
 
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import com.github.ajalt.timberkt.Timber.d
 import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.core.mvp.MvpPresenter
@@ -11,9 +9,7 @@ import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceArgumen
 import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceResult
 import com.theandroiddev.mywins.domain.service.successes.toModel
 import com.theandroiddev.mywins.presentation.edit_success.hasOne
-import com.theandroiddev.mywins.utils.Constants.Companion.Category
 import com.theandroiddev.mywins.utils.Constants.Companion.NOT_ACTIVE
-import com.theandroiddev.mywins.utils.Constants.Companion.SortType
 import com.theandroiddev.mywins.utils.SearchFilter
 import com.theandroiddev.mywins.utils.getCategoryById
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -37,7 +33,7 @@ class SuccessesPresenter @Inject constructor(
     private var searchTerm: String? = ""
 
     val searchFilter: SearchFilter
-        get() = SearchFilter(searchTerm, sortType, isSortingAscending)
+        get() = SearchFilter(sortType, isSortingAscending)
 
     var successes = listOf<SuccessModel>()
         set(value) {
@@ -50,7 +46,7 @@ class SuccessesPresenter @Inject constructor(
 
     private fun loadSuccesses(searchFilter: SearchFilter) {
 
-        successesService.getSuccesses(searchFilter)
+        successesService.getSuccesses(searchTerm, searchFilter)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ successesServiceResult ->
@@ -182,7 +178,7 @@ class SuccessesPresenter @Inject constructor(
             }).addToDisposables(disposables)
     }
 
-    private fun categoryPicked(category: Category) {
+    private fun categoryPicked(category: SuccessCategory) {
         ifViewAttached { view ->
             view.displayCategory(category)
         }
@@ -190,17 +186,14 @@ class SuccessesPresenter @Inject constructor(
 
     fun handleOptionsItemSelected(itemId: Int, isSearchOpened: Boolean) {
 
-        when(itemId) {
+        when (itemId) {
             R.id.action_search -> {
                 toggleSearch(isSearchOpened)
             }
             R.id.action_filter -> {
-                ifViewAttached { view ->
-                    view.displayFiltersView()
-                }
+                displayFilters()
             }
         }
-
     }
 
     fun handleBackPress(isFabOpened: Boolean, isSearchOpened: Boolean) {
@@ -253,29 +246,12 @@ class SuccessesPresenter @Inject constructor(
         updateSuccess(clickedPosition, successes)
     }
 
-    fun onShowSoftKeyboard(imm: InputMethodManager?, searchBox: EditText?) {
-
-        if (searchBox != null) {
-            imm?.toggleSoftInput(
-                InputMethodManager.SHOW_FORCED,
-                InputMethodManager.SHOW_IMPLICIT
-            )
-        }
-    }
-
-    fun onHideSoftKeyboard(searchBox: EditText?, imm: InputMethodManager?) {
-
-        if (imm != null && searchBox != null) {
-            imm.hideSoftInputFromWindow(searchBox.windowToken, 0)
-        }
-    }
-
     fun onHideSearchBar() {
         clearSearch()
     }
 
     fun onFabCategorySelected(categoryId: Int?) {
-        val category = categoryId?.getCategoryById() ?: Category.OTHER
+        val category = categoryId?.getCategoryById() ?: SuccessCategory.OTHER
         categoryPicked(category)
     }
 
@@ -358,9 +334,13 @@ class SuccessesPresenter @Inject constructor(
     override fun destroy() {
     }
 
-    fun onFiltersClicked() {
+    private fun displayFilters() {
         ifViewAttached { view ->
-            view.displayFiltersView()
+            view.displayFiltersView(searchFilter)
         }
+    }
+
+    fun handleNewFilters(newSearchCustomization: SearchFilter) {
+        successesService.saveFilters(newSearchCustomization, searchFilter)
     }
 }

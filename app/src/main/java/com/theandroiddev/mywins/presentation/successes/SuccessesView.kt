@@ -5,7 +5,7 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.theandroiddev.mywins.core.mvp.MvpView
-import com.theandroiddev.mywins.utils.Constants.Companion.Category
+import com.theandroiddev.mywins.utils.SearchFilter
 
 /**
  * Created by jakub on 12.11.17.
@@ -27,7 +27,7 @@ interface SuccessesView : MvpView {
 
     fun displaySuccessChanged(position: Int, updatedSuccess: SuccessModel)
 
-    fun displayCategory(category: Category)
+    fun displayCategory(category: SuccessCategory)
 
     fun hideSearchBar()
 
@@ -51,6 +51,6 @@ interface SuccessesView : MvpView {
 
     fun removeSuccess(position: Int, backupSuccess: SuccessModel)
 
-    fun displayFiltersView()
+    fun displayFiltersView(customization: SearchFilter)
 }
 

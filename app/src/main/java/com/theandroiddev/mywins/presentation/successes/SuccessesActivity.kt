@@ -23,6 +23,7 @@ import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.getbase.floatingactionbutton.FloatingActionButton
 import com.getbase.floatingactionbutton.FloatingActionsMenu
@@ -35,7 +36,8 @@ import com.theandroiddev.mywins.presentation.insert_success.InsertSuccessActivit
 import com.theandroiddev.mywins.presentation.insert_success.InsertSuccessBundle
 import com.theandroiddev.mywins.presentation.success_slider.SuccessSliderActivity
 import com.theandroiddev.mywins.presentation.success_slider.SuccessSliderBundle
-import com.theandroiddev.mywins.utils.Constants.Companion.Category
+import com.theandroiddev.mywins.presentation.successes.filters.SuccessesFiltersDialog
+import com.theandroiddev.mywins.presentation.successes.filters.SuccessesFiltersDialogListener
 import com.theandroiddev.mywins.utils.Constants.Companion.EXTRA_INSERT_SUCCESS_ITEM
 import com.theandroiddev.mywins.utils.Constants.Companion.EXTRA_SUCCESS_CARD_VIEW
 import com.theandroiddev.mywins.utils.Constants.Companion.EXTRA_SUCCESS_CATEGORY
@@ -49,14 +51,17 @@ import com.theandroiddev.mywins.utils.Constants.Companion.REQUEST_CODE_INSERT
 import com.theandroiddev.mywins.utils.Constants.Companion.REQUEST_CODE_SLIDER
 import com.theandroiddev.mywins.utils.DrawableSelector
 import com.theandroiddev.mywins.utils.KEY_MVP_BUNDLE
+import com.theandroiddev.mywins.utils.SearchFilter
 import com.theandroiddev.mywins.utils.SuccessesConfig
 import io.codetail.animation.ViewAnimationUtils
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.search_bar.*
 
 class SuccessesActivity :
     MvpDaggerAppCompatActivity<SuccessesView, SuccessesBundle, SuccessesPresenter>(),
-    android.view.View.OnClickListener, SuccessAdapter.OnItemClickListener, SuccessesView {
+    android.view.View.OnClickListener, SuccessAdapter.OnItemClickListener, SuccessesView,
+    SuccessesFiltersDialogListener {
 
     private lateinit var successAdapter: SuccessAdapter
 
@@ -97,7 +102,7 @@ class SuccessesActivity :
 
     private val searchText: String
         get() = if (searchBox != null) {
-            searchBox?.text.toString()
+            search_bar.text.toString()
         } else ""
 
     override fun onPause() {
@@ -280,7 +285,7 @@ class SuccessesActivity :
 
     override fun removeSuccess(position: Int, backupSuccess: SuccessModel) {
 
-        if(position < successAdapter.successes.size) {
+        if (position < successAdapter.successes.size) {
             successAdapter.successes.removeAt(position)
             successRemoved(position)
             successAdapter.successesToRemove.add(backupSuccess)
@@ -425,11 +430,11 @@ class SuccessesActivity :
         if (action != null) {
             action?.setCustomView(view, layoutParams)
             action?.setDisplayShowTitleEnabled(false)
-            searchBox = action?.customView?.findViewById(R.id.edt_search)
+//            searchBox = action?.customView?.findViewById(R.id.edt_search)
             showSoftKeyboard()
         }
 
-        searchBox?.addTextChangedListener(object : TextWatcher {
+        search_bar.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
             }
 
@@ -440,13 +445,13 @@ class SuccessesActivity :
             override fun afterTextChanged(editable: Editable) {
             }
         })
-        searchBox?.setOnEditorActionListener { v, actionId, event ->
+        search_bar.setOnEditorActionListener { v, actionId, event ->
             presenter?.onEditorActionListener(searchText)
 
             true
         }
 
-        searchBox?.requestFocus()
+        search_bar.requestFocus()
         searchAction?.icon = ContextCompat.getDrawable(this, R.drawable.ic_close)
     }
 
@@ -454,7 +459,7 @@ class SuccessesActivity :
         successAdapter.notifyDataSetChanged()
     }
 
-    override fun displayCategory(category: Category) {
+    override fun displayCategory(category: SuccessCategory) {
 
         startActivity<InsertSuccessActivity>(InsertSuccessBundle(category), REQUEST_CODE_INSERT)
         multiple_actions?.collapse()
@@ -462,6 +467,11 @@ class SuccessesActivity :
 
     override fun displaySuccesses(successes: List<SuccessModel>) {
         successAdapter.updateSuccessList(successes)
+    }
+
+    override fun onSaveFilters(dialogFragment: DialogFragment, filtersModel: SearchFilter) {
+        super.onSaveFilters(dialogFragment, filtersModel)
+        presenter.handleNewFilters(filtersModel)
     }
 
     private fun startSuccessesSlider() {
@@ -504,19 +514,24 @@ class SuccessesActivity :
         hideSoftKeyboard()
     }
 
-    override fun displayFiltersView() {
-        //TODO display view
+    override fun displayFiltersView(customization: SearchFilter) {
+        SuccessesFiltersDialog.show(this, customization)
     }
 
     private fun hideSoftKeyboard() {
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         if (searchBox != null) {
-            presenter?.onHideSoftKeyboard(searchBox, imm)
+                inputManager.hideSoftInputFromWindow(search_bar.windowToken, 0)
         }
     }
 
     private fun showSoftKeyboard() {
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        presenter?.onShowSoftKeyboard(imm, searchBox)
+        val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        if (searchBox != null) {
+            inputManager.toggleSoftInput(
+                InputMethodManager.SHOW_FORCED,
+                InputMethodManager.SHOW_IMPLICIT
+            )
+        }
     }
 }

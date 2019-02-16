@@ -3,15 +3,17 @@ package com.theandroiddev.mywins.domain.service.successes
 import com.theandroiddev.mywins.data.model.toServiceModel
 import com.theandroiddev.mywins.data.repository.SuccessesLocalDataSource
 import com.theandroiddev.mywins.domain.service.common.InvalidArgumentException
+import com.theandroiddev.mywins.domain.service.shared_preferences.SharedPreferencesService
 import com.theandroiddev.mywins.presentation.edit_success.hasOne
-import com.theandroiddev.mywins.utils.Constants.Companion.SortType.TITLE
+import com.theandroiddev.mywins.presentation.successes.SortType
 import com.theandroiddev.mywins.utils.SearchFilter
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
 
 class SuccessesServiceImpl @Inject constructor(
-    private var successesLocalDataSource: SuccessesLocalDataSource
+    private var successesLocalDataSource: SuccessesLocalDataSource,
+    private var sharedPreferencesService: SharedPreferencesService
 ) : SuccessesService {
 
     override fun saveSuccesses(argument: SuccessesServiceArgument): Completable {
@@ -30,10 +32,10 @@ class SuccessesServiceImpl @Inject constructor(
         }
     }
 
-    override fun getSuccesses(searchFilter: SearchFilter): Single<SuccessesServiceResult> {
+    override fun getSuccesses(searchTerm: String?, searchFilter: SearchFilter): Single<SuccessesServiceResult> {
         return successesLocalDataSource.getSuccesses(
-            searchFilter.searchTerm.orEmpty(),
-            searchFilter.sortType?.name?.toLowerCase() ?: TITLE.name.toLowerCase(),
+            searchTerm.orEmpty(),
+            searchFilter.sortType?.name?.toLowerCase() ?: SortType.TITLE.name.toLowerCase(),
             searchFilter.isSortingAscending
         ).map { successEntities ->
             SuccessesServiceResult.Successes(successEntities.map { it.toServiceModel() })
@@ -73,5 +75,27 @@ class SuccessesServiceImpl @Inject constructor(
 
     override fun removeAllSuccesses(): Completable {
         return successesLocalDataSource.removeAllSuccesses()
+    }
+
+    override fun saveFilters(
+        newCustomization: SearchFilter,
+        oldCustomization: SearchFilter
+    ) {
+        if (areFiltersEqual(newCustomization, oldCustomization)) {
+            return
+        }
+        sharedPreferencesService.saveSuccessesFilters(newCustomization)
+    }
+
+    private fun areFiltersEqual(
+        newCustomization: SearchFilter,
+        oldCustomization: SearchFilter
+    ): Boolean {
+        val isSortingOrderTheSame = newCustomization.isSortingAscending == oldCustomization.isSortingAscending
+        val isSortTypeTheSame = newCustomization.sortType == oldCustomization.sortType
+        if (isSortingOrderTheSame && isSortTypeTheSame) {
+            return true
+        }
+        return false
     }
 }

@@ -1,6 +1,6 @@
 package com.theandroiddev.mywins.utils
 
-import com.theandroiddev.mywins.R
+import com.theandroiddev.mywins.presentation.successes.SuccessCategory
 import java.util.ArrayList
 
 /**
@@ -20,11 +20,11 @@ class Constants {
         dummyTitles.add("Learned Java")
         dummyTitles.add("20 km marathon")
 
-        dummyCategories.add(Category.MEDIA)
-        dummyCategories.add(Category.BUSINESS)
-        dummyCategories.add(Category.JOURNEY)
-        dummyCategories.add(Category.KNOWLEDGE)
-        dummyCategories.add(Category.SPORT)
+        dummyCategories.add(SuccessCategory.MEDIA)
+        dummyCategories.add(SuccessCategory.BUSINESS)
+        dummyCategories.add(SuccessCategory.JOURNEY)
+        dummyCategories.add(SuccessCategory.KNOWLEDGE)
+        dummyCategories.add(SuccessCategory.SPORT)
 
         dummyImportances.add(3)
         dummyImportances.add(4)
@@ -56,7 +56,7 @@ class Constants {
         //DUMMY VALUES
         val dummyImportanceDefault = 1
         val dummyTitles: MutableList<String> = ArrayList()
-        val dummyCategories: MutableList<Category> = ArrayList()
+        val dummyCategories: MutableList<SuccessCategory> = ArrayList()
         val dummyImportances: MutableList<Int> = ArrayList()
         val dummyDescriptions: MutableList<String> = ArrayList()
         val dummyStartDates: MutableList<String> = ArrayList()
@@ -88,37 +88,9 @@ class Constants {
         var PACKAGE_NAME = "com.theandroiddev.mywins"
         var DATE_FORMAT = "dd-MM-yy"
         val DATE = "Date"
-
-        enum class Category(val res: Int, val id: Int?) {
-            MEDIA(R.string.category_media, R.id.action_video),
-            SPORT(R.string.category_sport, R.id.action_sport),
-            BUSINESS(R.string.category_business, R.id.action_money),
-            JOURNEY(R.string.category_journey, R.id.action_journey),
-            KNOWLEDGE(R.string.category_learn, R.id.action_learn),
-            OTHER(R.string.category_other, null),
-            NONE(R.string.category_none, null)
-        }
-
-        enum class Importance(val value: Int, val res: Int) {
-            NONE(0, R.string.importance_none),
-            SMALL(1, R.string.importance_small),
-            MEDIUM(2, R.string.importance_medium),
-            BIG(3, R.string.importance_big),
-            HUGE(4, R.string.importance_huge)
-        }
-
-        enum class SortType {
-            TITLE,
-            CATEGORY,
-            IMPORTANCE,
-            DESCRIPTION,
-            DATE_STARTED,
-            DATE_ENDED,
-            DATE_ADDED
-        }
     }
 }
 
-fun Int?.getCategoryById(): Constants.Companion.Category {
-    return Constants.Companion.Category.values().find { it.id == this } ?: Constants.Companion.Category.OTHER
+fun Int?.getCategoryById(): SuccessCategory {
+    return SuccessCategory.values().find { it.id == this } ?: SuccessCategory.OTHER
 }

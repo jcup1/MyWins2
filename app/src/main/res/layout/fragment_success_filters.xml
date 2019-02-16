@@ -70,10 +70,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
+        android:visibility="gone"
         android:text="@string/successes_filters_importance_label"
         android:textStyle="bold" />
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/successes_filters_importance_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -81,6 +82,7 @@
         android:clickable="false"
         android:focusable="false"
         android:focusableInTouchMode="false"
+        android:visibility="gone"
         android:nestedScrollingEnabled="false"
         tools:layoutManager="android.support.v7.widget.GridLayoutManager"
         tools:layout_height="170dp"

@@ -1,48 +1,47 @@
 package com.theandroiddev.mywins.utils
 
 import android.content.Context
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import android.widget.ImageView
 import android.widget.TextView
-
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.theandroiddev.mywins.R
-import com.theandroiddev.mywins.utils.Constants.Companion.Category
-import com.theandroiddev.mywins.utils.Constants.Companion.Importance
+import com.theandroiddev.mywins.presentation.successes.Importance
+import com.theandroiddev.mywins.presentation.successes.SuccessCategory
 
 class DrawableSelector(private val context: Context) {
 
-    fun selectCategoryImage(image: ImageView, category: Category, categoryTv: TextView) {
+    fun selectCategoryImage(image: ImageView, category: SuccessCategory, categoryTv: TextView) {
         val id: Int
         val color: Int
 
         when(category) {
-            Category.MEDIA -> {
+            SuccessCategory.MEDIA -> {
                 id = R.drawable.ic_video
                 color = R.color.video
             }
-            Category.SPORT -> {
+            SuccessCategory.SPORT -> {
                 id = R.drawable.ic_sport
                 color = R.color.sport
             }
-            Category.BUSINESS -> {
+            SuccessCategory.BUSINESS -> {
                 id = R.drawable.ic_money
                 color = R.color.money
             }
-            Category.JOURNEY -> {
+            SuccessCategory.JOURNEY -> {
                 id = R.drawable.ic_journey
                 color = R.color.journey
             }
-            Category.KNOWLEDGE -> {
+            SuccessCategory.KNOWLEDGE -> {
                 id = R.drawable.ic_learn
                 color = R.color.learn
             }
             //TODO change data for last 2
-            Constants.Companion.Category.OTHER -> {
+            SuccessCategory.OTHER -> {
                 id = R.drawable.ic_other
                 color = R.color.learn
             }
-            Constants.Companion.Category.NONE -> {
+            SuccessCategory.NONE -> {
                 id = R.drawable.ic_other
                 color = R.color.learn
             }

@@ -34,8 +34,8 @@ import com.theandroiddev.mywins.presentation.importance_popup.ImportancePopupAct
 import com.theandroiddev.mywins.presentation.importance_popup.ImportancePopupBundle
 import com.theandroiddev.mywins.presentation.successes.SuccessImageModel
 import com.theandroiddev.mywins.presentation.successes.SuccessModel
-import com.theandroiddev.mywins.utils.Constants.Companion.Category
-import com.theandroiddev.mywins.utils.Constants.Companion.Importance
+import com.theandroiddev.mywins.presentation.successes.SuccessCategory
+import com.theandroiddev.mywins.presentation.successes.Importance
 import com.theandroiddev.mywins.utils.Constants.Companion.REQUEST_CODE_IMPORTANCE
 import com.theandroiddev.mywins.utils.DateHelper
 import com.theandroiddev.mywins.utils.DrawableSelector
@@ -51,7 +51,7 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView,
     private var imagePicker: ImagePicker? = null
 
     private var currentImportance = Importance.NONE
-    private var currentCategory = Category.NONE
+    private var currentCategory = SuccessCategory.NONE
 
     private var animShow: Animation? = null
     private var animHide: Animation? = null

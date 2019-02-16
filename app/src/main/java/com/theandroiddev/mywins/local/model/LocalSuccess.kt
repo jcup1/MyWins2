@@ -4,8 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.theandroiddev.mywins.data.model.SuccessEntity
-import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceModel
-import com.theandroiddev.mywins.utils.Constants
+import com.theandroiddev.mywins.presentation.successes.Importance
+import com.theandroiddev.mywins.presentation.successes.SuccessCategory
 import java.io.Serializable
 
 @Entity(tableName = "success")
@@ -25,11 +25,11 @@ fun LocalSuccess.toEntity(): SuccessEntity {
     return SuccessEntity(
             this.id,
             this.title,
-            Constants.Companion.Category.valueOf(this.category),
+            SuccessCategory.valueOf(this.category),
             this.description,
             this.dateAdded,
             this.dateStarted,
             this.dateEnded,
-            Constants.Companion.Importance.values()[this.importance]
+            Importance.values()[this.importance]
     )
 }

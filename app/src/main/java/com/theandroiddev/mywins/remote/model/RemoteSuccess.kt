@@ -1,8 +1,8 @@
 package com.theandroiddev.mywins.remote.model
 
 import com.theandroiddev.mywins.data.model.SuccessEntity
-import com.theandroiddev.mywins.local.model.toEntity
-import com.theandroiddev.mywins.utils.Constants
+import com.theandroiddev.mywins.presentation.successes.Importance
+import com.theandroiddev.mywins.presentation.successes.SuccessCategory
 
 class SuccessRemoteModel(
         var id: Long,
@@ -18,11 +18,11 @@ fun SuccessRemoteModel.toEntity(): SuccessEntity {
     return SuccessEntity(
             this.id,
             this.title,
-            Constants.Companion.Category.valueOf(this.category),
+            SuccessCategory.valueOf(this.category),
             this.description,
             this.dateAdded,
             this.dateStarted,
             this.dateEnded,
-            Constants.Companion.Importance.values()[this.importance]
+            Importance.values()[this.importance]
     )
 }

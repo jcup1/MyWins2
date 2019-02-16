@@ -2,9 +2,6 @@ package com.theandroiddev.mywins.core.mvp
 
 import com.hannesdorfmann.mosby3.mvp.MvpBasePresenter
 import com.hannesdorfmann.mosby3.mvp.MvpView
-import com.theandroiddev.mywins.utils.Constants
-import com.theandroiddev.mywins.utils.Constants.Companion.Category
-import com.theandroiddev.mywins.utils.MvpBundle
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import java.io.Serializable

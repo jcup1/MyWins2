@@ -1,12 +1,9 @@
 package com.theandroiddev.mywins.data.model
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceModel
 import com.theandroiddev.mywins.local.model.LocalSuccess
-import com.theandroiddev.mywins.utils.Constants.Companion.Category
-import com.theandroiddev.mywins.utils.Constants.Companion.Importance
+import com.theandroiddev.mywins.presentation.successes.Importance
+import com.theandroiddev.mywins.presentation.successes.SuccessCategory
 import java.io.Serializable
 
 /**
@@ -16,7 +13,7 @@ import java.io.Serializable
 data class SuccessEntity(
         var id: Long? = null,
         val title: String = "N/A",
-        val category: Category = Category.NONE,
+        val category: SuccessCategory = SuccessCategory.NONE,
         val description: String = "N/A",
         val dateAdded: String = "N/A",
         val dateStarted: String = "N/A",
