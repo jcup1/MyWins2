@@ -87,6 +87,10 @@ class SuccessesServiceImpl @Inject constructor(
         sharedPreferencesService.saveSuccessesFilters(newCustomization)
     }
 
+    override fun getFilters(): SearchFilter {
+        return sharedPreferencesService.getSuccessesFilters()
+    }
+
     private fun areFiltersEqual(
         newCustomization: SearchFilter,
         oldCustomization: SearchFilter

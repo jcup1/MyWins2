@@ -84,8 +84,11 @@ class SuccessesPresenterTest : Spek({
                 searchFilter = SearchFilter(SortType.DATE_ADDED, true)
             }
             When("getting successes") {
+
+
                 whenever(successesService.getSuccesses(searchTerm, searchFilter))
                     .thenReturn(SuccessesServiceResult.Successes(successList).asSingle())
+                whenever(successesService.getFilters()).thenReturn(searchFilter)
 
                 sut.onSearchTextChanged(searchTerm)
             }
@@ -100,6 +103,8 @@ class SuccessesPresenterTest : Spek({
                 searchFilter = SearchFilter()
             }
             When("getting successes") {
+                whenever(successesService.getFilters()).thenReturn(SearchFilter())
+
                 whenever(successesService.getSuccesses(searchTerm, searchFilter))
                     .thenReturn(SuccessesServiceResult.Successes(successList).asSingle())
                 sut.onSearchTextChanged(searchTerm)
@@ -257,6 +262,7 @@ class SuccessesPresenterTest : Spek({
 
         Scenario("Starting filters view") {
             When("handling filters click") {
+                whenever(successesService.getFilters()).thenReturn(SearchFilter())
                 sut.handleOptionsItemSelected(R.id.action_filter, false)
             }
             Then("display filters view") {
@@ -273,6 +279,22 @@ class SuccessesPresenterTest : Spek({
             }
             Then("save new filters") {
                 verify(successesService, times(1)).saveFilters(newCustomization, customization)
+            }
+            Then("load successes") {
+                verify(view, atLeastOnce()).displaySuccesses(successes)
+            }
+        }
+
+        Scenario("Get filters") {
+            When("getting filters") {
+                whenever(successesService.getSuccesses("", SearchFilter())).thenReturn(successServiceResult.asSingle())
+                sut.searchFilter = SearchFilter()
+            }
+            Then("return filters") {
+                verify(successesService, atLeastOnce()).getFilters()
+            }
+            Then("display successes") {
+                verify(view, atLeastOnce()).displaySuccesses(successes)
             }
         }
     }
@@ -362,7 +384,7 @@ class SuccessesPresenterTest : Spek({
 
             }
             Then("display successes") {
-                verify(view, times(2)).displaySuccesses(successesToDisplay.map { it.toModel() })
+                verify(view, atLeastOnce()).displaySuccesses(successesToDisplay.map { it.toModel() })
             }
         }
 

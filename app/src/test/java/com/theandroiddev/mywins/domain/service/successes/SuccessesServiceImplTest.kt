@@ -39,6 +39,15 @@ class SuccessesServiceImplTest : Spek({
                 sharedPreferencesService.saveSuccessesFilters(newFilters)
             }
         }
+
+        Scenario("getting filters") {
+            When("getting filters") {
+                sut.getFilters()
+            }
+            Then("return filters") {
+                sharedPreferencesService.getSuccessesFilters()
+            }
+        }
     }
 
 })

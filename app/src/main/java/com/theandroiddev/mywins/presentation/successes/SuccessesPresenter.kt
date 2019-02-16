@@ -28,12 +28,14 @@ class SuccessesPresenter @Inject constructor(
     override fun onViewCreated() {
     }
 
-    private var sortType: SortType = SortType.DATE_ADDED
-    private var isSortingAscending: Boolean = true
     private var searchTerm: String? = ""
 
-    val searchFilter: SearchFilter
-        get() = SearchFilter(sortType, isSortingAscending)
+    var searchFilter: SearchFilter = successesService.getFilters()
+        get() = successesService.getFilters()
+        set(value) {
+            field = value
+            loadSuccesses(value)
+        }
 
     var successes = listOf<SuccessModel>()
         set(value) {
@@ -342,5 +344,6 @@ class SuccessesPresenter @Inject constructor(
 
     fun handleNewFilters(newSearchCustomization: SearchFilter) {
         successesService.saveFilters(newSearchCustomization, searchFilter)
+        searchFilter = newSearchCustomization
     }
 }

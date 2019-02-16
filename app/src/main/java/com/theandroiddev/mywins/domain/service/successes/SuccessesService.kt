@@ -24,4 +24,6 @@ interface SuccessesService {
         newCustomization: SearchFilter,
         oldCustomization: SearchFilter
     )
+
+    fun getFilters(): SearchFilter
 }
