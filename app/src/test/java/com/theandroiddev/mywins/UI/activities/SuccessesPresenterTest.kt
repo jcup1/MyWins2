@@ -44,6 +44,9 @@ class SuccessesPresenterTest : Spek({
         RxJavaPlugins.setComputationSchedulerHandler { Schedulers.trampoline() }
         RxJavaPlugins.setNewThreadSchedulerHandler { Schedulers.trampoline() }
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
+    }
+
+    beforeEachTest {
         sut = SuccessesPresenter(successesService, preferencesHelper)
         sut.attachView(view)
     }
@@ -76,16 +79,24 @@ class SuccessesPresenterTest : Spek({
     Feature("loading Successes") {
         var successList = listOf<SuccessesServiceModel>()
         var searchFilter = SearchFilter()
-        val searchTerm = ""
+        var searchTerm = ""
+
+        Scenario("Search text stays the same ") {
+            When("on search text has not changed") {
+                sut.onSearchTextChanged(searchTerm)
+            }
+            Then("should not load ") {
+                verify(view, never()).displaySuccesses(successList.map { it.toModel() })
+            }
+        }
 
         Scenario("Successes are available and displayed") {
             Given("list of successes") {
+                searchTerm = "abc"
                 successList = listOf(SuccessesServiceModel(), SuccessesServiceModel())
                 searchFilter = SearchFilter(SortType.DATE_ADDED, true)
             }
-            When("getting successes") {
-
-
+            When("on search text has changed") {
                 whenever(successesService.getSuccesses(searchTerm, searchFilter))
                     .thenReturn(SuccessesServiceResult.Successes(successList).asSingle())
                 whenever(successesService.getFilters()).thenReturn(searchFilter)
@@ -99,6 +110,7 @@ class SuccessesPresenterTest : Spek({
 
         Scenario("No Successes available, TextView displayed") {
             Given("empty list") {
+                searchTerm = "xyz"
                 successList = listOf()
                 searchFilter = SearchFilter()
             }
@@ -292,7 +304,12 @@ class SuccessesPresenterTest : Spek({
             }
             When("handle new filers") {
                 whenever(successesService.getFilters()).thenReturn(customization)
-                whenever(successesService.getSuccesses("", newCustomization)).thenReturn(successServiceResult.asSingle())
+                whenever(
+                    successesService.getSuccesses(
+                        "",
+                        newCustomization
+                    )
+                ).thenReturn(successServiceResult.asSingle())
                 sut.handleNewFilters(newCustomization)
             }
             Then("save new filters") {
@@ -307,7 +324,7 @@ class SuccessesPresenterTest : Spek({
         Scenario("Get inactive filters") {
             When("getting filters") {
                 whenever(successesService.getSuccesses("", SearchFilter())).thenReturn(successServiceResult.asSingle())
-                sut.searchFilter = SearchFilter()
+                sut.searchFilter = customization
             }
             Then("return inactive filters") {
                 verify(successesService, atLeastOnce()).getFilters()
@@ -316,14 +333,15 @@ class SuccessesPresenterTest : Spek({
                 verify(view, atLeastOnce()).displaySuccesses(successes)
             }
             Then("display filters inactive") {
-                verify(view, times(1)).areFiltersActive = false
+                verify(view, atLeastOnce()).areFiltersActive = false
             }
         }
 
         Scenario("Get active filters") {
             When("getting filters") {
-                whenever(successesService.getSuccesses("", SearchFilter())).thenReturn(successServiceResult.asSingle())
-                sut.searchFilter = SearchFilter()
+                whenever(successesService.getFilters()).thenReturn(newCustomization)
+                whenever(successesService.getSuccesses("", newCustomization)).thenReturn(successServiceResult.asSingle())
+                sut.searchFilter = newCustomization
             }
             Then("return active filters") {
                 verify(successesService, atLeastOnce()).getFilters()
@@ -332,7 +350,7 @@ class SuccessesPresenterTest : Spek({
                 verify(view, atLeastOnce()).displaySuccesses(successes)
             }
             Then("display filters active") {
-                verify(view, times(1)).areFiltersActive = true
+                verify(view, atLeastOnce()).areFiltersActive = true
             }
         }
 
@@ -398,9 +416,7 @@ class SuccessesPresenterTest : Spek({
             Then("should update success") {
                 verify(view, times(1)).displaySuccessChanged(position, successes[position])
             }
-
         }
-
     }
 
     Feature("Successes search bar") {
@@ -418,9 +434,11 @@ class SuccessesPresenterTest : Spek({
                     .thenReturn(SuccessesServiceResult.Successes(successesToDisplay).asSingle())
                 sut.handleBackPress(false, true)
             }
-            Then("hide search bar") {
-                verify(view, times(1)).hideSearchBar()
-
+            Then("deactivate search mode") {
+                verify(view, times(1)).isSearchModeActive = false
+            }
+            Then("clear search text") {
+                verify(view, times(1)).searchText = ""
             }
             Then("display successes") {
                 verify(view, atLeastOnce()).displaySuccesses(successesToDisplay.map { it.toModel() })
@@ -439,8 +457,8 @@ class SuccessesPresenterTest : Spek({
                 )
                 sut.handleOptionsItemSelected(R.id.action_search, isSearchOpened)
             }
-            Then("display search bar") {
-                verify(view, times(1)).displaySearchBar()
+            Then("activate search mode") {
+                verify(view, times(1)).isSearchModeActive = true
             }
         }
 
@@ -456,12 +474,10 @@ class SuccessesPresenterTest : Spek({
                 )
                 sut.handleOptionsItemSelected(R.id.action_search, isSearchOpened)
             }
-            Then("hide search bar") {
-                //initial property = false and call
-                verify(view, times(2)).hideSearchBar()
+            Then("deactivate search mode") {
+                verify(view, times(1)).isSearchModeActive = false
             }
         }
-
     }
 
 })

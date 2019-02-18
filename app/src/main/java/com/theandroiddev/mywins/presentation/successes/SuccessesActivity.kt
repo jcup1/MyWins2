@@ -56,7 +56,6 @@ import com.theandroiddev.mywins.utils.SuccessesConfig
 import io.codetail.animation.ViewAnimationUtils
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.android.synthetic.main.search_bar.*
 
 class SuccessesActivity :
     MvpDaggerAppCompatActivity<SuccessesView, SuccessesBundle, SuccessesPresenter>(),
@@ -64,10 +63,10 @@ class SuccessesActivity :
     SuccessesFiltersDialogListener {
 
     private lateinit var successAdapter: SuccessAdapter
-
     private var action: ActionBar? = null
-
     var searchBox: EditText? = null
+
+    private var clickedPosition = NOT_ACTIVE
 
     override var isSuccessListVisible: Boolean = false
         set(value) {
@@ -80,6 +79,28 @@ class SuccessesActivity :
         set(value) {
             field = value
             invalidateOptionsMenu()
+        }
+
+    override var isSearchModeActive: Boolean = false
+        set(value) {
+            field = value
+
+            if (value == true) {
+                displaySearchBar()
+            } else {
+                hideSearchBar()
+            }
+
+            invalidateOptionsMenu()
+        }
+
+    override var searchText: String = ""
+        set(value) {
+            field = value
+            if(searchBox?.text.toString() != value) {
+                searchBox?.setText(value)
+            }
+            presenter?.onSearchTextChanged(searchText)
         }
 
     private var simpleCallback: ItemTouchHelper.SimpleCallback =
@@ -103,13 +124,6 @@ class SuccessesActivity :
                 toRemove(viewHolder.adapterPosition)
             }
         }
-    private var searchAction: MenuItem? = null
-    private var clickedPosition = NOT_ACTIVE
-
-    private val searchText: String
-        get() = if (searchBox != null) {
-            search_bar.text.toString()
-        } else ""
 
     override fun onPause() {
         presenter.onPause(successAdapter.successesToRemove)
@@ -127,14 +141,18 @@ class SuccessesActivity :
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
 
-        searchAction = menu.findItem(R.id.action_search)
+        val searchDrawable = if (isSearchModeActive) {
+            R.drawable.ic_close
+        } else {
+            R.drawable.ic_search
+        }
+        menu.findItem(R.id.action_search)?.icon = ContextCompat.getDrawable(this, searchDrawable)
 
-        val color = if(areFiltersActive) {
+        val color = if (areFiltersActive) {
             getColor(R.color.accent)
         } else {
             getColor(R.color.white)
         }
-
         menu.findItem(R.id.action_filter)?.icon?.setTint(color)
 
         return super.onPrepareOptionsMenu(menu)
@@ -422,8 +440,6 @@ class SuccessesActivity :
             action?.setDisplayShowCustomEnabled(false)
             action?.setDisplayShowTitleEnabled(true)
         }
-        searchAction?.icon = ContextCompat.getDrawable(this, R.drawable.ic_search)
-        presenter?.onHideSearchBar()
         searchBox = null
     }
 
@@ -446,29 +462,28 @@ class SuccessesActivity :
         if (action != null) {
             action?.setCustomView(view, layoutParams)
             action?.setDisplayShowTitleEnabled(false)
-//            searchBox = action?.customView?.findViewById(R.id.edt_search)
+            searchBox = action?.customView?.findViewById(R.id.search_bar_edit_text)
+            searchBox?.setText(searchText)
             showSoftKeyboard()
         }
 
-        search_bar.addTextChangedListener(object : TextWatcher {
+        searchBox?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
             }
 
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                presenter?.onSearchTextChanged(searchText)
+                searchText = charSequence.toString()
             }
 
             override fun afterTextChanged(editable: Editable) {
             }
         })
-        search_bar.setOnEditorActionListener { v, actionId, event ->
+        searchBox?.setOnEditorActionListener { v, actionId, event ->
             presenter?.onEditorActionListener(searchText)
-
             true
         }
 
-        search_bar.requestFocus()
-        searchAction?.icon = ContextCompat.getDrawable(this, R.drawable.ic_close)
+        searchBox?.requestFocus()
     }
 
     override fun displayUpdatedSuccesses() {
@@ -526,18 +541,14 @@ class SuccessesActivity :
         startActivity(intent, activityOptionsCompat.toBundle())
     }
 
-    override fun displaySearch() {
-        hideSoftKeyboard()
-    }
-
     override fun displayFiltersView(customization: SearchFilter) {
         SuccessesFiltersDialog.show(this, customization)
     }
 
-    private fun hideSoftKeyboard() {
+    override fun hideSoftKeyboard() {
         val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         if (searchBox != null) {
-                inputManager.hideSoftInputFromWindow(search_bar.windowToken, 0)
+            inputManager.hideSoftInputFromWindow(searchBox?.windowToken, 0)
         }
     }
 

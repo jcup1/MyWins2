@@ -26,7 +26,6 @@ class SuccessesPresenter @Inject constructor(
 ) : MvpPresenter<SuccessesView, SuccessesBundle>() {
 
     override fun onViewCreated() {
-
     }
 
     private var searchTerm: String? = ""
@@ -211,7 +210,10 @@ class SuccessesPresenter @Inject constructor(
         }
 
         if (isSearchOpened) {
-            toggleSearch(isSearchOpened)
+            ifViewAttached { view ->
+                view.searchText = ""
+                view.isSearchModeActive = false
+            }
             return
         }
 
@@ -225,34 +227,28 @@ class SuccessesPresenter @Inject constructor(
     private fun toggleSearch(isSearchOpened: Boolean) {
         if (isSearchOpened) {
             ifViewAttached { view ->
-                view.hideSearchBar()
+                view.searchText = ""
             }
             loadSuccesses(searchFilter)
         } else {
             ifViewAttached { view ->
-                view.displaySearchBar()
+                view.isSearchModeActive = true
             }
         }
     }
 
-    private fun showSearch() {
+    fun onEditorActionListener(searchTerm: String) {
+        if (this.searchTerm != searchTerm) {
+            this.searchTerm = searchTerm
+        }
+
         ifViewAttached { view ->
-            view.displaySearch()
+            view.hideSoftKeyboard()
         }
     }
 
-    fun onEditorActionListener(searchTerm: String) {
-        this.searchTerm = searchTerm
-        showSearch()
-    }
-
     fun onResumeActivity(successes: MutableList<SuccessModel>, clickedPosition: Int) {
-
         updateSuccess(clickedPosition, successes)
-    }
-
-    fun onHideSearchBar() {
-        clearSearch()
     }
 
     fun onFabCategorySelected(categoryId: Int?) {
@@ -261,8 +257,10 @@ class SuccessesPresenter @Inject constructor(
     }
 
     fun onSearchTextChanged(searchTerm: String) {
-        this.searchTerm = searchTerm
-        loadSuccesses(searchFilter)
+        if (this.searchTerm != searchTerm) {
+            this.searchTerm = searchTerm
+            loadSuccesses(searchFilter)
+        }
     }
 
     fun onSuccessAdded(success: SuccessModel) {
@@ -326,11 +324,6 @@ class SuccessesPresenter @Inject constructor(
         } else {
             loadSuccesses(SearchFilter())
         }
-    }
-
-    private fun clearSearch() {
-        searchTerm = ""
-        //onExtrasLoaded();
     }
 
     override fun detachView() {

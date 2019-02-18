@@ -17,6 +17,10 @@ interface SuccessesView : MvpView {
 
     var areFiltersActive: Boolean
 
+    var isSearchModeActive: Boolean
+
+    var searchText: String
+
     fun displayDefaultSuccesses(successList: MutableList<SuccessModel>)
 
     fun displaySuccesses(successes: List<SuccessModel>)
@@ -47,12 +51,13 @@ interface SuccessesView : MvpView {
         constraintLayout: ConstraintLayout, cardView: CardView
     )
 
-    fun displaySearch()
-
     fun restoreSuccess(position: Int, backupSuccess: SuccessModel)
 
     fun removeSuccess(position: Int, backupSuccess: SuccessModel)
 
     fun displayFiltersView(customization: SearchFilter)
+
+    fun hideSoftKeyboard()
+
 }
 
