@@ -11,10 +11,10 @@ import androidx.core.content.res.ResourcesCompat
 import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.core.mvp.MvpDaggerAppCompatActivity
 import com.theandroiddev.mywins.presentation.edit_success.EditDescriptionActivity
+import com.theandroiddev.mywins.presentation.successes.Importance
+import com.theandroiddev.mywins.presentation.successes.SuccessCategory
 import com.theandroiddev.mywins.presentation.successes.SuccessModel
 import com.theandroiddev.mywins.utils.Constants
-import com.theandroiddev.mywins.utils.Constants.Companion.Category
-import com.theandroiddev.mywins.utils.Constants.Companion.Importance
 import com.theandroiddev.mywins.utils.DateHelper
 import com.theandroiddev.mywins.utils.DrawableSelector
 import kotlinx.android.synthetic.main.activity_insert_success.*
@@ -30,7 +30,7 @@ class InsertSuccessActivity : MvpDaggerAppCompatActivity<InsertSuccessView,
     private var displayMetrics: DisplayMetrics? = null
     private var accentColor: Int = 0
 
-    private var currentCategory: Category = Category.NONE
+    private var currentCategory: SuccessCategory = SuccessCategory.NONE
     private var currentImportance: Importance = Importance.SMALL
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,7 +95,7 @@ class InsertSuccessActivity : MvpDaggerAppCompatActivity<InsertSuccessView,
 
     }
 
-    override fun displayInitCategory(category: Category) {
+    override fun displayInitCategory(category: SuccessCategory) {
 
         insert_category_tv.text = getString(category.res)
         currentCategory = category

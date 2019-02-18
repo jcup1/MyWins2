@@ -8,7 +8,7 @@ interface SuccessesService {
 
     fun getDefaultSuccesses(): SuccessesServiceResult
 
-    fun getSuccesses(searchFilter: SearchFilter): Single<SuccessesServiceResult>
+    fun getSuccesses(searchTerm: String?, searchFilter: SearchFilter): Single<SuccessesServiceResult>
 
     fun removeSuccesses(argument: SuccessesServiceArgument): Completable
 
@@ -19,4 +19,11 @@ interface SuccessesService {
     fun saveSuccesses(argument: SuccessesServiceArgument): Completable
 
     fun removeAllSuccesses(): Completable
+
+    fun saveFilters(
+        newCustomization: SearchFilter,
+        oldCustomization: SearchFilter
+    )
+
+    fun getFilters(): SearchFilter
 }

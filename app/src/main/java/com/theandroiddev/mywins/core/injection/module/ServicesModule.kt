@@ -1,6 +1,7 @@
 package com.theandroiddev.mywins.core.injection.module
 
 import android.content.Context
+import com.google.gson.Gson
 import com.theandroiddev.mywins.domain.service.shared_preferences.SharedPreferencesService
 import com.theandroiddev.mywins.domain.service.success_images.SuccessImagesService
 import com.theandroiddev.mywins.domain.service.success_images.SuccessImagesServiceImpl
@@ -15,7 +16,7 @@ class ServicesModule {
 
     @Provides
     @Singleton
-    fun provideSharedPreferencesService(context: Context) = SharedPreferencesService(context)
+    fun provideSharedPreferencesService(context: Context, gson: Gson) = SharedPreferencesService(context, gson)
 
     @Provides
     @Singleton

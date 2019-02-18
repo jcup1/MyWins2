@@ -1,15 +1,15 @@
 package com.theandroiddev.mywins.domain.service.successes
 
 import com.theandroiddev.mywins.data.model.SuccessEntity
+import com.theandroiddev.mywins.presentation.successes.Importance
+import com.theandroiddev.mywins.presentation.successes.SuccessCategory
 import com.theandroiddev.mywins.presentation.successes.SuccessModel
-import com.theandroiddev.mywins.utils.Constants.Companion.Category
-import com.theandroiddev.mywins.utils.Constants.Companion.Importance
 import java.io.Serializable
 
 data class SuccessesServiceModel(
         val id: Long? = null,
         val title: String = "N/A",
-        val category: Category = Category.NONE,
+        val category: SuccessCategory = SuccessCategory.NONE,
         val description: String = "N/A",
         val dateAdded: String = "N/A",
         val dateStarted: String = "N/A",

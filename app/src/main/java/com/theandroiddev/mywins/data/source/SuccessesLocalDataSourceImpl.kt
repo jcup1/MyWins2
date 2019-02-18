@@ -6,6 +6,7 @@ import com.theandroiddev.mywins.data.model.toLocal
 import com.theandroiddev.mywins.data.repository.SuccessesLocalDataSource
 import com.theandroiddev.mywins.local.dao.SuccessDao
 import com.theandroiddev.mywins.local.model.toEntity
+import com.theandroiddev.mywins.presentation.successes.Importance
 import com.theandroiddev.mywins.utils.Constants
 import com.theandroiddev.mywins.utils.Constants.Companion.dummyCategories
 import com.theandroiddev.mywins.utils.Constants.Companion.dummyDescriptions
@@ -35,7 +36,7 @@ class SuccessesLocalDataSourceImpl @Inject constructor(
                     dummyStartDates[i],
                     dummyStartDates[i],
                     dummyEndDates[i],
-                    Constants.Companion.Importance.values()[dummyImportances[i]]
+                    Importance.values()[dummyImportances[i]]
                 )
             )
             i++

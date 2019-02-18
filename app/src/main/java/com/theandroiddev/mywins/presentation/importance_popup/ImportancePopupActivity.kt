@@ -9,7 +9,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.core.mvp.MvpDaggerAppCompatActivity
-import com.theandroiddev.mywins.utils.Constants.Companion.Importance
+import com.theandroiddev.mywins.presentation.successes.Importance
 import com.theandroiddev.mywins.utils.DrawableSelector
 import kotlinx.android.synthetic.main.activity_popup_importance.*
 
