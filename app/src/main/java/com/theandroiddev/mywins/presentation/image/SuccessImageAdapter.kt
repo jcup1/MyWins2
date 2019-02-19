@@ -8,6 +8,7 @@ import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.squareup.picasso.Picasso
 import com.theandroiddev.mywins.R
+import com.theandroiddev.mywins.core.extensions.getSelectableBackgroundResource
 import com.theandroiddev.mywins.presentation.image.SuccessImageAdapter.ViewHolder
 import com.theandroiddev.mywins.presentation.successes.SuccessImageModel
 import java.io.File
@@ -28,7 +29,9 @@ class SuccessImageAdapter(
 
         if (successImages[position].imagePath.isEmpty()) {
             if (position == 0) {
-                holder.successImageIv.setImageResource(R.drawable.ic_action_add)
+                holder.successImageIv.setImageResource(com.theandroiddev.mywins.R.drawable.ic_action_add)
+                val resource = holder.itemView.context.getSelectableBackgroundResource()
+                holder.successImageIv.setBackgroundResource(resource)
                 //holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary));
                 holder.bind(successImages[position], position)
 
