@@ -6,22 +6,19 @@
      
 This is the refactored version of MyWins app
 ## About MyWins
-MyWins allows you to keep the list of your life achievements in one eye-friendly place. Achievements are editable and can contain title, description, date, importance, category, and photos. 
+MyWins allows you to keep your achievements in one place. Achievements are editable and contain title, description, date, importance, category, and photos. 
 
-It's a simple way to stay motivated. In case you are a very successful person, you can sort successes in many ways. Although I don't recommend adding too much of them because of the risk of being critically overwhelmed.
+It helps you stay motivated and remember about your abilities in tough times. Also, in case you are a very successful person, you can sort successes in many ways lol.
 
 ![App overview](https://media.giphy.com/media/Nm1I1ufzp3sFxe5IHu/giphy.gif)
 
-
-PS: I don't take responsibility for your potential suffering from success.
-
 ## History
-This was my first "bigger" app and for sure it's not a gold standard. Alternatively, I find time to improve something once a week. I do not intend to grow it crazily. But it remains as a example of not being afraid of new arenas as I started it with almost no knowledge at all.
+I created this app for Android dev recrutation purposes so it's not a gold standard and has many flaws.
 
-Now I'm in process of refactoring it. Special thanks to [MrOnyszko](https://github.com/mronyszko) for great Android mentoring as he is the author of some profound concepts that I implemented durning the code refactoring. 
+Special thanks to [MrOnyszko](https://github.com/mronyszko) for teaching me many concepts that resulted in improving code in this app back then.
 
 ## For nerds
-This app includes things like:
+This app includes:
 
     -Kotlin language
     -MVP architecture
