@@ -159,7 +159,7 @@ class InsertSuccessActivity : MvpDaggerAppCompatActivity<InsertSuccessView,
 
     private fun insertSuccess() {
 
-        if (dateHelper.validateData(instert_title_et, insert_date_started_tv, insert_date_ended_tv)) {
+        if (dateHelper.validateData(instert_title_et, insert_date_started_tv, insert_date_ended_tv, insert_repeat_count)) {
 
             val formatter = DateTimeFormat.forPattern(Constants.DATE_FORMAT)
             val dateNow = DateTime.now()

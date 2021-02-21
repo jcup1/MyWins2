@@ -61,7 +61,7 @@ class DateHelper(private val context: Context) {
             s
     }
 
-    fun validateData(titleEt: EditText, dateStartedTv: TextView, dateEndedTv: TextView): Boolean {
+    fun validateData(titleEt: EditText, dateStartedTv: TextView, dateEndedTv: TextView, repeatCountEt: TextView): Boolean {
 
         if (TextUtils.isEmpty(titleEt.text.toString())) {
             titleEt.error = context.getString(R.string.error_title)
@@ -85,6 +85,11 @@ class DateHelper(private val context: Context) {
 
             }
 
+        }
+
+        if (TextUtils.isEmpty(repeatCountEt.text.toString())) {
+            repeatCountEt.error = context.getString(R.string.error_repeat_count)
+            return false
         }
 
         return true
