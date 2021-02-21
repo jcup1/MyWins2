@@ -43,6 +43,7 @@
     <string name="category_business">Business</string>
     <string name="category_journey">Journey</string>
     <string name="category_learn">Education</string>
+    <string name="category_hobby">Hobby</string>
     <string name="category_other">Other</string>
     <string name="category_none">Other</string>
 

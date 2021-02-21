@@ -27,7 +27,7 @@ class SuccessesLocalDataSourceImpl @Inject constructor(
         Constants()
         var i = 0
         val defaultSuccesses = mutableListOf<SuccessEntity>()
-        while (i < 5) {
+        while (i < 6) {
             defaultSuccesses.add(SuccessEntity(null, dummyTitles[i], dummyCategories[i], dummyDescriptions[i],
                     dummyStartDates[i], dummyStartDates[i], dummyEndDates[i], Constants.Companion.Importance.values()[dummyImportances[i]]))
             i++

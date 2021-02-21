@@ -19,7 +19,8 @@ class SuccessesConfig {
                    actionSport: FloatingActionButton,
                    actionJourney: FloatingActionButton,
                    actionBusiness: FloatingActionButton,
-                   actionMedia: FloatingActionButton) {
+                   actionMedia: FloatingActionButton,
+                   actionHobby: FloatingActionButton) {
 
         actionEducation.size = FloatingActionButton.SIZE_MINI
         actionSport.size = FloatingActionButton.SIZE_MINI
@@ -32,6 +33,7 @@ class SuccessesConfig {
         val colorJourney = ResourcesCompat.getColor(context.resources, R.color.journey, null)
         val colorSport = ResourcesCompat.getColor(context.resources, R.color.sport, null)
         val colorEducation = ResourcesCompat.getColor(context.resources, R.color.learn, null)
+        val colorHobby = ResourcesCompat.getColor(context.resources, R.color.hobby, null)
         val colorWhite = ResourcesCompat.getColor(context.resources, R.color.white, null)
 
         val videoDrawable = ResourcesCompat.getDrawable(context.resources, R.drawable.ic_video, null)
@@ -39,6 +41,7 @@ class SuccessesConfig {
         val journeyDrawable = ResourcesCompat.getDrawable(context.resources, R.drawable.ic_journey, null)
         val sportDrawable = ResourcesCompat.getDrawable(context.resources, R.drawable.ic_sport, null)
         val learnDrawable = ResourcesCompat.getDrawable(context.resources, R.drawable.ic_learn, null)
+        val hobbyDrawable = ResourcesCompat.getDrawable(context.resources, R.drawable.ic_hobby, null)
 
 
         if (videoDrawable != null) {
@@ -62,11 +65,17 @@ class SuccessesConfig {
             actionEducation.setIconDrawable(learnDrawable)
         }
 
+        if (hobbyDrawable != null) {
+            hobbyDrawable.colorFilter = PorterDuffColorFilter(colorWhite, PorterDuff.Mode.SRC_IN)
+            actionHobby.setIconDrawable(hobbyDrawable)
+        }
+
         actionMedia.colorNormal = colorMedia
         actionBusiness.colorNormal = colorBusiness
         actionJourney.colorNormal = colorJourney
         actionSport.colorNormal = colorSport
         actionEducation.colorNormal = colorEducation
+        actionHobby.colorNormal = colorHobby
 
 
     }

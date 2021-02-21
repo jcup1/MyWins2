@@ -221,7 +221,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
 
         successesConfig.configFABs(
             applicationContext,
-            action_learn, action_sport, action_journey, action_money, action_video
+            action_learn, action_sport, action_journey, action_money, action_video, action_hobby
         )
 
         action_learn.setOnClickListener(this)
@@ -229,6 +229,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
         action_journey.setOnClickListener(this)
         action_money.setOnClickListener(this)
         action_video.setOnClickListener(this)
+        action_hobby.setOnClickListener(this)
 
     }
 

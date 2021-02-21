@@ -358,6 +358,7 @@ class SuccessesPresenter @Inject() constructor(
             R.id.action_journey -> categoryPicked(JOURNEY)
             R.id.action_money -> categoryPicked(BUSINESS)
             R.id.action_video -> categoryPicked(MEDIA)
+            R.id.action_hobby -> categoryPicked(HOBBY)
 
             else -> {
             }
