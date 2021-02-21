@@ -441,7 +441,7 @@ class SuccessesPresenter @Inject() constructor(
         successes: MutableList<SuccessModel>, success: SuccessModel, position: Int,
         titleTv: TextView, categoryTv: TextView, dateStartedTv: TextView,
         dateEndedTv: TextView, categoryIv: ImageView, importanceIv: ImageView,
-        constraintLayout: ConstraintLayout, cardView: CardView
+        repeatCountTv: TextView, constraintLayout: ConstraintLayout, cardView: CardView
     ) {
 
         //TODO Fix this animation

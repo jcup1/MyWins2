@@ -44,6 +44,7 @@ class SuccessAdapter @Inject constructor(
         drawableSelector.selectImportanceImage(
                 holder.importanceIv,
                 successes[position].importance)
+        holder.repeatCountTv.text = successes[position].repeatCount.toString()
 
         holder.bind(successes[position], listener, position)
 
@@ -68,6 +69,7 @@ class SuccessAdapter @Inject constructor(
                         dateEndedTv: TextView,
                         categoryIv: ImageView,
                         importanceIv: ImageView,
+                        repeatCountTv: TextView,
                         constraintLayout: ConstraintLayout,
                         cardView: CardView)
 
@@ -82,6 +84,7 @@ class SuccessAdapter @Inject constructor(
         var dateEndedTv = itemView.item_date_ended
         var categoryIv = itemView.item_category_iv
         var importanceIv = itemView.item_importance_iv
+        var repeatCountTv = itemView.item_repeat_count
         var constraintLayout = itemView.item_constraint_layout
         var cardView = itemView.item_card_view
 
@@ -89,7 +92,7 @@ class SuccessAdapter @Inject constructor(
 
             itemView.setOnClickListener {
                 listener.onItemClick(success, position, titleTv, categoryTv, dateStartedTv, dateEndedTv,
-                        categoryIv, importanceIv, constraintLayout, cardView)
+                        categoryIv, importanceIv, repeatCountTv, constraintLayout, cardView)
             }
 
             itemView.setOnLongClickListener {

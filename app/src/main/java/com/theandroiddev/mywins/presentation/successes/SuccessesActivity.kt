@@ -361,7 +361,8 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
     override fun onItemClick(
         success: SuccessModel, position: Int, titleTv: TextView, categoryTv: TextView,
         dateStartedTv: TextView, dateEndedTv: TextView, categoryIv: ImageView,
-        importanceIv: ImageView, constraintLayout: ConstraintLayout, cardView: CardView
+        importanceIv: ImageView, repeatCountTv: TextView, constraintLayout: ConstraintLayout,
+        cardView: CardView
     ) {
 
         this.clickedPosition = position
@@ -369,7 +370,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
         successAdapter.successes
         presenter?.startSlider(
             successAdapter.successes, success, position, titleTv, categoryTv, dateStartedTv, dateEndedTv, categoryIv,
-            importanceIv, constraintLayout, cardView
+            importanceIv, repeatCountTv, constraintLayout, cardView
         )
 
     }
