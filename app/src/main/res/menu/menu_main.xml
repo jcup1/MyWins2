@@ -1,51 +1,54 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:tools="http://schemas.android.com/tools"
-      tools:context="com.example.jakubchmiel.mywins.MainActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.jakubchmiel.mywins.MainActivity">
 
     <item
-
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search"
         android:orderInCategory="200"
         android:title="@string/search"
-        app:showAsAction="ifRoom"
-        />
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_about_app"
+        android:icon="@drawable/ic_info"
+        android:orderInCategory="200"
+        android:title="@string/about_app"
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_date_added"
         android:orderInCategory="100"
         android:title="@string/action_date_added"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_title"
         android:orderInCategory="100"
         android:title="@string/action_title"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_importance"
         android:orderInCategory="100"
         android:title="@string/importance"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_date_started"
         android:orderInCategory="100"
         android:title="@string/action_date_started"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_date_ended"
         android:orderInCategory="100"
         android:title="@string/action_date_ended"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_description"
         android:orderInCategory="100"
         android:title="@string/action_description"
-        app:showAsAction="never"/>
-
-
+        app:showAsAction="never" />
 </menu>

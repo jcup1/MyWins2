@@ -49,5 +49,7 @@ interface SuccessesView : MvpView {
 
     fun removeSuccess(position: Int, backupSuccess: SuccessModel)
 
+    fun displayAppInfoDialog()
+
 }
 

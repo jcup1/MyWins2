@@ -199,6 +199,11 @@ class SuccessesPresenter @Inject() constructor(
         if (id == R.id.action_search) {
             toggleSearchBar(isSearchOpened)
         }
+        if (id == R.id.action_about_app) {
+            ifViewAttached { view ->
+                view.displayAppInfoDialog()
+            }
+        }
         when (id) {
             R.id.action_date_started -> {
 

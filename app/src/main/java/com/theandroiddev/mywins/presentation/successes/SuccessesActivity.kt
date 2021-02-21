@@ -32,6 +32,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu
 import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.core.mvp.MvpDaggerAppCompatActivity
 import com.theandroiddev.mywins.core.mvp.startActivity
+import com.theandroiddev.mywins.presentation.about_app.AboutAppDialog
 import com.theandroiddev.mywins.presentation.insert_success.InsertSuccessActivity
 import com.theandroiddev.mywins.presentation.insert_success.InsertSuccessBundle
 import com.theandroiddev.mywins.presentation.success_slider.SuccessSliderActivity
@@ -303,6 +304,10 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
             presenter?.setSuccessListVisible(recycler_view, empty_list_text)
         }
 
+    }
+
+    override fun displayAppInfoDialog() {
+        AboutAppDialog().show(fragmentManager, "AppInfo")
     }
 
     private fun onSliderResultSuccess(data: Intent) {
