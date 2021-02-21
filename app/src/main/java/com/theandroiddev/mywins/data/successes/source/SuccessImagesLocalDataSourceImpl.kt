@@ -1,9 +1,9 @@
-package com.theandroiddev.mywins.data.source
+package com.theandroiddev.mywins.data.successes.source
 
 import com.theandroiddev.mywins.local.dao.SuccessImageDao
-import com.theandroiddev.mywins.data.model.SuccessImageEntity
-import com.theandroiddev.mywins.data.model.toLocal
-import com.theandroiddev.mywins.data.repository.SuccessImagesLocalDataSource
+import com.theandroiddev.mywins.data.successes.model.SuccessImageEntity
+import com.theandroiddev.mywins.data.successes.model.toLocal
+import com.theandroiddev.mywins.data.successes.repository.SuccessImagesLocalDataSource
 import com.theandroiddev.mywins.local.model.toEntity
 import io.reactivex.Completable
 import io.reactivex.Single

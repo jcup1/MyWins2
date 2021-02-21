@@ -1,6 +1,6 @@
-package com.theandroiddev.mywins.data.repository
+package com.theandroiddev.mywins.data.successes.repository
 
-import com.theandroiddev.mywins.data.model.SuccessEntity
+import com.theandroiddev.mywins.data.successes.model.SuccessEntity
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single

@@ -1,4 +1,4 @@
-package com.theandroiddev.mywins.data.source
+package com.theandroiddev.mywins.data.successes.source
 
 import com.theandroiddev.mywins.remote.SuccessesRemoteService
 import javax.inject.Inject
