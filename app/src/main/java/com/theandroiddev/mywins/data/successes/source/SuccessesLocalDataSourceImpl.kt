@@ -11,6 +11,7 @@ import com.theandroiddev.mywins.utils.Constants.Companion.dummyCategories
 import com.theandroiddev.mywins.utils.Constants.Companion.dummyDescriptions
 import com.theandroiddev.mywins.utils.Constants.Companion.dummyEndDates
 import com.theandroiddev.mywins.utils.Constants.Companion.dummyImportances
+import com.theandroiddev.mywins.utils.Constants.Companion.dummyRepeatCounts
 import com.theandroiddev.mywins.utils.Constants.Companion.dummyStartDates
 import com.theandroiddev.mywins.utils.Constants.Companion.dummyTitles
 import io.reactivex.Completable
@@ -29,7 +30,7 @@ class SuccessesLocalDataSourceImpl @Inject constructor(
         val defaultSuccesses = mutableListOf<SuccessEntity>()
         while (i < 6) {
             defaultSuccesses.add(SuccessEntity(null, dummyTitles[i], dummyCategories[i], dummyDescriptions[i],
-                    dummyStartDates[i], dummyStartDates[i], dummyEndDates[i], Constants.Companion.Importance.values()[dummyImportances[i]]))
+                    dummyStartDates[i], dummyStartDates[i], dummyEndDates[i], Constants.Companion.Importance.values()[dummyImportances[i]], dummyRepeatCounts[i]))
             i++
         }
         return defaultSuccesses

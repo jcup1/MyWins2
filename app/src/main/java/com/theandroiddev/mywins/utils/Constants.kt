@@ -2,6 +2,7 @@ package com.theandroiddev.mywins.utils
 
 import com.theandroiddev.mywins.R
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Created by jakub on 14.08.17.
@@ -56,6 +57,13 @@ class Constants {
         dummyEndDates.add("21-02-16")
         dummyEndDates.add("21-02-21")
 
+        dummyRepeatCounts.add(1);
+        dummyRepeatCounts.add(1);
+        dummyRepeatCounts.add(3);
+        dummyRepeatCounts.add(2);
+        dummyRepeatCounts.add(5);
+        dummyRepeatCounts.add(2);
+
     }
 
     companion object {
@@ -68,6 +76,7 @@ class Constants {
         val dummyDescriptions: MutableList<String> = ArrayList()
         val dummyStartDates: MutableList<String> = ArrayList()
         val dummyEndDates: MutableList<String> = ArrayList()
+        val dummyRepeatCounts: MutableList<Int> = ArrayList()
 
         //REQUESTS
         val REQUEST_CODE_INSERT = 1
