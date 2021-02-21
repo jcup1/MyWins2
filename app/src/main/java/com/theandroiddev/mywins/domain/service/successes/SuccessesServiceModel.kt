@@ -1,6 +1,6 @@
 package com.theandroiddev.mywins.domain.service.successes
 
-import com.theandroiddev.mywins.data.model.SuccessEntity
+import com.theandroiddev.mywins.data.successes.model.SuccessEntity
 import com.theandroiddev.mywins.presentation.successes.SuccessModel
 import com.theandroiddev.mywins.utils.Constants.Companion.Category
 import com.theandroiddev.mywins.utils.Constants.Companion.Importance

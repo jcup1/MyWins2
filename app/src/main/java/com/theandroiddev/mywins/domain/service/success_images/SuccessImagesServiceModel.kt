@@ -1,6 +1,6 @@
 package com.theandroiddev.mywins.domain.service.success_images
 
-import com.theandroiddev.mywins.data.model.SuccessImageEntity
+import com.theandroiddev.mywins.data.successes.model.SuccessImageEntity
 import com.theandroiddev.mywins.presentation.successes.SuccessImageModel
 import java.io.Serializable
 
