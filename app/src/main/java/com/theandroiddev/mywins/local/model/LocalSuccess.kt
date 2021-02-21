@@ -16,7 +16,8 @@ data class LocalSuccess(
         @ColumnInfo(name = "date_added") var dateAdded: String,
         @ColumnInfo(name = "date_started") var dateStarted: String,
         @ColumnInfo(name = "date_ended") var dateEnded: String,
-        @ColumnInfo(name = "importance") var importance: Int
+        @ColumnInfo(name = "importance") var importance: Int,
+        @ColumnInfo(name = "repeat_count") var repeatCount: Int
 ) : Serializable
 
 
@@ -29,6 +30,7 @@ fun LocalSuccess.toEntity(): SuccessEntity {
             this.dateAdded,
             this.dateStarted,
             this.dateEnded,
-            Constants.Companion.Importance.values()[this.importance]
+            Constants.Companion.Importance.values()[this.importance],
+            this.repeatCount
     )
 }

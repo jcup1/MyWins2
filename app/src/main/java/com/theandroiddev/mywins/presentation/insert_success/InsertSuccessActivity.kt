@@ -182,7 +182,8 @@ class InsertSuccessActivity : MvpDaggerAppCompatActivity<InsertSuccessView,
                 currentCategory,
                 insert_description_et.text.toString(),
                 dateAdded, dateStarted, dateEnded,
-                currentImportance)
+                currentImportance,
+                insert_repeat_count.text.toString().toInt())
         //s.setId(UUID.randomUUID().toString());
         //Log.e(TAG, "sendData: uuid" + s.getId() );
 
