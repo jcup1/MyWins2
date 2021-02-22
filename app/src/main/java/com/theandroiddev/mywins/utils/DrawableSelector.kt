@@ -37,6 +37,10 @@ class DrawableSelector(private val context: Context) {
                 id = R.drawable.ic_learn
                 color = R.color.learn
             }
+            Category.HOBBY -> {
+                id = R.drawable.ic_hobby
+                color = R.color.hobby
+            }
             //TODO change data for last 2
             Constants.Companion.Category.OTHER -> {
                 id = R.drawable.ic_other

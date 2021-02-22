@@ -2,36 +2,34 @@ package com.theandroiddev.mywins.presentation.successes
 
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.CardView
-import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.utils.DrawableSelector
+import eu.davidea.flexibleadapter.FlexibleAdapter
+import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
+import eu.davidea.flexibleadapter.items.IFlexible
+import eu.davidea.viewholders.FlexibleViewHolder
 import kotlinx.android.synthetic.main.success_layout.view.*
-import javax.inject.Inject
 
-/**
- * Created by jakub on 07.08.17.
- */
+class FlexibleSuccess(private val listener: OnItemClickListener,
+                      private val drawableSelector: DrawableSelector
+) : AbstractFlexibleItem<FlexibleSuccess.SuccessViewHolder>() {
 
-class SuccessAdapter @Inject constructor(
-        private val itemLayout: Int,
-        private val listener: OnItemClickListener,
-        private val drawableSelector: DrawableSelector) : RecyclerView.Adapter<SuccessAdapter.ViewHolder>() {
-
-    var successes = mutableListOf<SuccessModel>()
-    var successesToRemove = mutableListOf<SuccessModel>()
-    var backupSuccess: SuccessModel? = null
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(itemLayout, parent, false)
-        return ViewHolder(v)
-
+    override fun getLayoutRes(): Int {
+        return R.layout.success_layout
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun createViewHolder(view: View, adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>): SuccessViewHolder {
+        return SuccessViewHolder(view, adapter)
+    }
+
+    override fun bindViewHolder(adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>,
+                                holder: SuccessViewHolder,
+                                position: Int, payloads: MutableList<Any>) {
+        val successes = payloads as MutableList<SuccessModel>
 
         holder.titleTv.text = successes[position].title
         holder.categoryTv.text = holder.categoryTv.context.getString(successes[position].category.res)
@@ -47,18 +45,11 @@ class SuccessAdapter @Inject constructor(
         holder.repeatCountTv.text = successes[position].repeatCount.toString()
 
         holder.bind(successes[position], listener, position)
-
     }
 
-    override fun getItemCount(): Int {
-        return successes.size
+    override fun equals(other: Any?): Boolean {
+        TODO("Not yet implemented")
     }
-
-    fun updateSuccessList(successList: List<SuccessModel>) {
-        this.successes = successList.toMutableList()
-        notifyDataSetChanged()
-    }
-
 
     interface OnItemClickListener {
         fun onItemClick(success: SuccessModel,
@@ -76,8 +67,8 @@ class SuccessAdapter @Inject constructor(
         fun onLongItemClick(position: Int, cardView: CardView)
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
+    inner class SuccessViewHolder(itemView: View, adapter: FlexibleAdapter<*>) :
+            FlexibleViewHolder(itemView, adapter) {
         var titleTv = itemView.item_title
         var categoryTv = itemView.item_category
         var dateStartedTv = itemView.item_date_started
@@ -100,8 +91,5 @@ class SuccessAdapter @Inject constructor(
                 true
             }
         }
-
     }
-
-
 }

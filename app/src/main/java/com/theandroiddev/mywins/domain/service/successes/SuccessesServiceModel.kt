@@ -1,6 +1,6 @@
 package com.theandroiddev.mywins.domain.service.successes
 
-import com.theandroiddev.mywins.data.model.SuccessEntity
+import com.theandroiddev.mywins.data.successes.model.SuccessEntity
 import com.theandroiddev.mywins.presentation.successes.SuccessModel
 import com.theandroiddev.mywins.utils.Constants.Companion.Category
 import com.theandroiddev.mywins.utils.Constants.Companion.Importance
@@ -14,7 +14,8 @@ data class SuccessesServiceModel(
         val dateAdded: String = "N/A",
         val dateStarted: String = "N/A",
         val dateEnded: String = "N/A",
-        val importance: Importance = Importance.NONE) : Serializable
+        val importance: Importance = Importance.NONE,
+        val repeatCount: Int = 1) : Serializable
 
 fun SuccessesServiceModel.toModel(): SuccessModel {
     return SuccessModel(
@@ -25,7 +26,8 @@ fun SuccessesServiceModel.toModel(): SuccessModel {
             this.dateAdded,
             this.dateStarted,
             this.dateEnded,
-            this.importance
+            this.importance,
+            this.repeatCount
     )
 }
 
@@ -38,6 +40,7 @@ fun SuccessesServiceModel.toEntity(): SuccessEntity {
             this.dateAdded,
             this.dateStarted,
             this.dateEnded,
-            this.importance
+            this.importance,
+            this.repeatCount
     )
 }

@@ -3,8 +3,7 @@ package com.theandroiddev.mywins.local.model
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
-import com.theandroiddev.mywins.data.model.SuccessEntity
-import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceModel
+import com.theandroiddev.mywins.data.successes.model.SuccessEntity
 import com.theandroiddev.mywins.utils.Constants
 import java.io.Serializable
 
@@ -17,7 +16,8 @@ data class LocalSuccess(
         @ColumnInfo(name = "date_added") var dateAdded: String,
         @ColumnInfo(name = "date_started") var dateStarted: String,
         @ColumnInfo(name = "date_ended") var dateEnded: String,
-        @ColumnInfo(name = "importance") var importance: Int
+        @ColumnInfo(name = "importance") var importance: Int,
+        @ColumnInfo(name = "repeat_count") var repeatCount: Int
 ) : Serializable
 
 
@@ -30,6 +30,7 @@ fun LocalSuccess.toEntity(): SuccessEntity {
             this.dateAdded,
             this.dateStarted,
             this.dateEnded,
-            Constants.Companion.Importance.values()[this.importance]
+            Constants.Companion.Importance.values()[this.importance],
+            this.repeatCount
     )
 }

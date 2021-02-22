@@ -32,6 +32,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu
 import com.theandroiddev.mywins.R
 import com.theandroiddev.mywins.core.mvp.MvpDaggerAppCompatActivity
 import com.theandroiddev.mywins.core.mvp.startActivity
+import com.theandroiddev.mywins.presentation.about_app.AboutAppDialog
 import com.theandroiddev.mywins.presentation.insert_success.InsertSuccessActivity
 import com.theandroiddev.mywins.presentation.insert_success.InsertSuccessBundle
 import com.theandroiddev.mywins.presentation.success_slider.SuccessSliderActivity
@@ -220,7 +221,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
 
         successesConfig.configFABs(
             applicationContext,
-            action_learn, action_sport, action_journey, action_money, action_video
+            action_learn, action_sport, action_journey, action_money, action_video, action_hobby
         )
 
         action_learn.setOnClickListener(this)
@@ -228,6 +229,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
         action_journey.setOnClickListener(this)
         action_money.setOnClickListener(this)
         action_video.setOnClickListener(this)
+        action_hobby.setOnClickListener(this)
 
     }
 
@@ -305,6 +307,10 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
 
     }
 
+    override fun displayAppInfoDialog() {
+        AboutAppDialog().show(fragmentManager, "AppInfo")
+    }
+
     private fun onSliderResultSuccess(data: Intent) {
         val position = data.getIntExtra("position", 0)
 
@@ -355,7 +361,8 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
     override fun onItemClick(
         success: SuccessModel, position: Int, titleTv: TextView, categoryTv: TextView,
         dateStartedTv: TextView, dateEndedTv: TextView, categoryIv: ImageView,
-        importanceIv: ImageView, constraintLayout: ConstraintLayout, cardView: CardView
+        importanceIv: ImageView, repeatCountTv: TextView, constraintLayout: ConstraintLayout,
+        cardView: CardView
     ) {
 
         this.clickedPosition = position
@@ -363,7 +370,7 @@ class SuccessesActivity : MvpDaggerAppCompatActivity<SuccessesView, SuccessesBun
         successAdapter.successes
         presenter?.startSlider(
             successAdapter.successes, success, position, titleTv, categoryTv, dateStartedTv, dateEndedTv, categoryIv,
-            importanceIv, constraintLayout, cardView
+            importanceIv, repeatCountTv, constraintLayout, cardView
         )
 
     }

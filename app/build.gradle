@@ -146,6 +146,9 @@ dependencies {
 
     // FAB
     implementation 'com.getbase:floatingactionbutton:1.10.1'
+
+    // FlexibleAdapter
+    implementation 'eu.davidea:flexible-adapter:5.1.0'
 }
 repositories {
     mavenCentral()

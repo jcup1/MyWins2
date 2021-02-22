@@ -2,6 +2,7 @@ package com.theandroiddev.mywins.utils
 
 import com.theandroiddev.mywins.R
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Created by jakub on 14.08.17.
@@ -19,36 +20,49 @@ class Constants {
         dummyTitles.add("Visited Wroclaw")
         dummyTitles.add("Learned Java")
         dummyTitles.add("20 km marathon")
+        dummyTitles.add("Played \"Stairway to heaven\"")
 
         dummyCategories.add(Category.MEDIA)
         dummyCategories.add(Category.BUSINESS)
         dummyCategories.add(Category.JOURNEY)
         dummyCategories.add(Category.KNOWLEDGE)
         dummyCategories.add(Category.SPORT)
+        dummyCategories.add(Category.HOBBY)
 
         dummyImportances.add(3)
         dummyImportances.add(4)
         dummyImportances.add(2)
         dummyImportances.add(3)
         dummyImportances.add(4)
+        dummyImportances.add(3)
 
         dummyDescriptions.add("I had always wanted to create my own youtube video and finally I finished my Hot Icy Challenge!")
         dummyDescriptions.add("It's my biggest deal ever. I just sold company that I developed for 2 years. I'm glad that I rejected all the tempting offers that I received earlier.")
         dummyDescriptions.add("I travel from time to time but this is a place that I always wanted to visit.")
         dummyDescriptions.add("This language is easier and more useful than I thought. Now I'm multilingual! :O")
         dummyDescriptions.add("I just burned 50 calories. I better go eat something...")
+        dummyDescriptions.add("Managed to play the whole intro of \"Stairway to heaven\" in guitar store and not get caught")
 
         dummyStartDates.add("20-05-17")
         dummyStartDates.add("22-05-17")
         dummyStartDates.add("15-04-16")
         dummyStartDates.add("12-03-15")
         dummyStartDates.add("21-02-16")
+        dummyStartDates.add("21-02-21")
 
         dummyEndDates.add("25-05-17")
         dummyEndDates.add("30-05-17")
         dummyEndDates.add("20-04-16")
         dummyEndDates.add("01-05-15")
         dummyEndDates.add("21-02-16")
+        dummyEndDates.add("21-02-21")
+
+        dummyRepeatCounts.add(1);
+        dummyRepeatCounts.add(1);
+        dummyRepeatCounts.add(3);
+        dummyRepeatCounts.add(2);
+        dummyRepeatCounts.add(5);
+        dummyRepeatCounts.add(2);
 
     }
 
@@ -62,6 +76,7 @@ class Constants {
         val dummyDescriptions: MutableList<String> = ArrayList()
         val dummyStartDates: MutableList<String> = ArrayList()
         val dummyEndDates: MutableList<String> = ArrayList()
+        val dummyRepeatCounts: MutableList<Int> = ArrayList()
 
         //REQUESTS
         val REQUEST_CODE_INSERT = 1
@@ -97,6 +112,7 @@ class Constants {
             BUSINESS(R.string.category_business),
             JOURNEY(R.string.category_journey),
             KNOWLEDGE(R.string.category_learn),
+            HOBBY(R.string.category_hobby),
             OTHER(R.string.category_other),
             NONE(R.string.category_none)
         }

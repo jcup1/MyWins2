@@ -1,7 +1,7 @@
 package com.theandroiddev.mywins.domain.service.success_images
 
-import com.theandroiddev.mywins.data.repository.SuccessImagesLocalDataSource
-import com.theandroiddev.mywins.data.model.toServiceModel
+import com.theandroiddev.mywins.data.successes.repository.SuccessImagesLocalDataSource
+import com.theandroiddev.mywins.data.successes.model.toServiceModel
 import com.theandroiddev.mywins.domain.service.common.InvalidArgumentException
 import io.reactivex.Completable
 import io.reactivex.Single

@@ -37,6 +37,7 @@ import com.theandroiddev.mywins.utils.Constants.Companion.REQUEST_CODE_IMPORTANC
 import com.theandroiddev.mywins.utils.DateHelper
 import com.theandroiddev.mywins.utils.DrawableSelector
 import kotlinx.android.synthetic.main.activity_edit_success.*
+import kotlinx.android.synthetic.main.activity_insert_success.*
 import kotlinx.android.synthetic.main.content_edit_success.*
 import java.util.*
 
@@ -204,7 +205,7 @@ class EditSuccessActivity : MvpDaggerAppCompatActivity<EditSuccessView,
         val dateStarted: String
         val dateEnded: String
 
-        if (dateHelper?.validateData(edit_title, edit_date_started, edit_date_ended) == true) {
+        if (dateHelper?.validateData(edit_title, edit_date_started, edit_date_ended, insert_repeat_count) == true) {
 
             dateStarted = dateHelper?.checkBlankDate(edit_date_started.text.toString()).orEmpty()
             dateEnded = dateHelper?.checkBlankDate(edit_date_ended.text.toString()).orEmpty()

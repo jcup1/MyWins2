@@ -1,8 +1,5 @@
-package com.theandroiddev.mywins.data.model
+package com.theandroiddev.mywins.data.successes.model
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.PrimaryKey
 import com.theandroiddev.mywins.domain.service.successes.SuccessesServiceModel
 import com.theandroiddev.mywins.local.model.LocalSuccess
 import com.theandroiddev.mywins.utils.Constants.Companion.Category
@@ -21,7 +18,8 @@ data class SuccessEntity(
         val dateAdded: String = "N/A",
         val dateStarted: String = "N/A",
         val dateEnded: String = "N/A",
-        val importance: Importance = Importance.NONE) : Serializable
+        val importance: Importance = Importance.NONE,
+        val repeatCount: Int = 1) : Serializable
 
 fun SuccessEntity.toLocal() = LocalSuccess(
         this.id,
@@ -31,7 +29,8 @@ fun SuccessEntity.toLocal() = LocalSuccess(
         this.dateAdded,
         this.dateStarted,
         this.dateEnded,
-        this.importance.value
+        this.importance.value,
+        this.repeatCount
 )
 
 fun SuccessEntity.toServiceModel() = SuccessesServiceModel(
@@ -42,5 +41,6 @@ fun SuccessEntity.toServiceModel() = SuccessesServiceModel(
         this.dateAdded,
         this.dateStarted,
         this.dateEnded,
-        this.importance
+        this.importance,
+        this.repeatCount
 )

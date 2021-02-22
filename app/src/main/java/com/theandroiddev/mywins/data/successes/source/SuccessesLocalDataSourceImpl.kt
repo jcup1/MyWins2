@@ -1,18 +1,17 @@
-package com.theandroiddev.mywins.data.source
+package com.theandroiddev.mywins.data.successes.source
 
 import android.arch.persistence.db.SimpleSQLiteQuery
-import android.arch.persistence.db.SupportSQLiteQuery
-import com.github.ajalt.timberkt.e
 import com.theandroiddev.mywins.local.dao.SuccessDao
-import com.theandroiddev.mywins.data.model.SuccessEntity
-import com.theandroiddev.mywins.data.model.toLocal
-import com.theandroiddev.mywins.data.repository.SuccessesLocalDataSource
+import com.theandroiddev.mywins.data.successes.model.SuccessEntity
+import com.theandroiddev.mywins.data.successes.model.toLocal
+import com.theandroiddev.mywins.data.successes.repository.SuccessesLocalDataSource
 import com.theandroiddev.mywins.local.model.toEntity
 import com.theandroiddev.mywins.utils.Constants
 import com.theandroiddev.mywins.utils.Constants.Companion.dummyCategories
 import com.theandroiddev.mywins.utils.Constants.Companion.dummyDescriptions
 import com.theandroiddev.mywins.utils.Constants.Companion.dummyEndDates
 import com.theandroiddev.mywins.utils.Constants.Companion.dummyImportances
+import com.theandroiddev.mywins.utils.Constants.Companion.dummyRepeatCounts
 import com.theandroiddev.mywins.utils.Constants.Companion.dummyStartDates
 import com.theandroiddev.mywins.utils.Constants.Companion.dummyTitles
 import io.reactivex.Completable
@@ -29,9 +28,9 @@ class SuccessesLocalDataSourceImpl @Inject constructor(
         Constants()
         var i = 0
         val defaultSuccesses = mutableListOf<SuccessEntity>()
-        while (i < 5) {
+        while (i < 6) {
             defaultSuccesses.add(SuccessEntity(null, dummyTitles[i], dummyCategories[i], dummyDescriptions[i],
-                    dummyStartDates[i], dummyStartDates[i], dummyEndDates[i], Constants.Companion.Importance.values()[dummyImportances[i]]))
+                    dummyStartDates[i], dummyStartDates[i], dummyEndDates[i], Constants.Companion.Importance.values()[dummyImportances[i]], dummyRepeatCounts[i]))
             i++
         }
         return defaultSuccesses

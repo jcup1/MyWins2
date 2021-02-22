@@ -1,7 +1,6 @@
 package com.theandroiddev.mywins.remote.model
 
-import com.theandroiddev.mywins.data.model.SuccessEntity
-import com.theandroiddev.mywins.local.model.toEntity
+import com.theandroiddev.mywins.data.successes.model.SuccessEntity
 import com.theandroiddev.mywins.utils.Constants
 
 class SuccessRemoteModel(

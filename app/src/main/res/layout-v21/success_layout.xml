@@ -28,23 +28,44 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/item_title"
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginBottom="@dimen/items_default_margin"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
                 android:layout_marginLeft="24dp"
-                android:layout_marginTop="@dimen/items_default_margin"
-                android:gravity="left|center"
-                android:maxLines="3"
-                android:textColor="@color/primary_text"
-                android:textSize="18sp"
-                android:transitionName="@string/transition_title"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@+id/item_category_iv"
-                app:layout_constraintRight_toLeftOf="@+id/item_date_started"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="@string/dummy_title"/>
+                android:layout_marginRight="24dp"
+                app:layout_constraintEnd_toStartOf="@+id/item_date_started"
+                app:layout_constraintStart_toEndOf="@+id/item_category">
+
+                <TextView
+                    android:id="@+id/item_title"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/items_default_margin"
+                    android:layout_marginBottom="@dimen/items_default_margin"
+                    android:gravity="start|center"
+                    android:maxLines="3"
+                    android:textColor="@color/primary_text"
+                    android:textSize="18sp"
+                    android:layout_weight="1"
+                    android:transitionName="@string/transition_title"
+                    tools:text="@string/dummy_title" />
+
+                <TextView
+                    android:id="@+id/item_repeat_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="@dimen/items_default_margin"
+                    android:layout_marginBottom="@dimen/items_default_margin"
+                    android:gravity="end|center"
+                    android:maxLines="1"
+                    android:textColor="@color/primary_text"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:transitionName="@string/transition_title"
+                    tools:text="@string/dummy_repeat_count" />
+            </LinearLayout>
 
             <ImageView
                 android:id="@+id/item_category_iv"

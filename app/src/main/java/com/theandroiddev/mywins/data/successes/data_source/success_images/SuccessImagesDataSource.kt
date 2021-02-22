@@ -1,8 +1,7 @@
-package com.theandroiddev.mywins.data.data_source.success_images
+package com.theandroiddev.mywins.data.successes.data_source.success_images
 
-import com.theandroiddev.mywins.data.model.SuccessImageEntity
+import com.theandroiddev.mywins.data.successes.model.SuccessImageEntity
 import io.reactivex.Completable
-import io.reactivex.Flowable
 import io.reactivex.Single
 
 interface SuccessImagesDataSource {

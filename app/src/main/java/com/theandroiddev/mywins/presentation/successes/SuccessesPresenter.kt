@@ -199,6 +199,11 @@ class SuccessesPresenter @Inject() constructor(
         if (id == R.id.action_search) {
             toggleSearchBar(isSearchOpened)
         }
+        if (id == R.id.action_about_app) {
+            ifViewAttached { view ->
+                view.displayAppInfoDialog()
+            }
+        }
         when (id) {
             R.id.action_date_started -> {
 
@@ -353,6 +358,7 @@ class SuccessesPresenter @Inject() constructor(
             R.id.action_journey -> categoryPicked(JOURNEY)
             R.id.action_money -> categoryPicked(BUSINESS)
             R.id.action_video -> categoryPicked(MEDIA)
+            R.id.action_hobby -> categoryPicked(HOBBY)
 
             else -> {
             }
@@ -435,7 +441,7 @@ class SuccessesPresenter @Inject() constructor(
         successes: MutableList<SuccessModel>, success: SuccessModel, position: Int,
         titleTv: TextView, categoryTv: TextView, dateStartedTv: TextView,
         dateEndedTv: TextView, categoryIv: ImageView, importanceIv: ImageView,
-        constraintLayout: ConstraintLayout, cardView: CardView
+        repeatCountTv: TextView, constraintLayout: ConstraintLayout, cardView: CardView
     ) {
 
         //TODO Fix this animation

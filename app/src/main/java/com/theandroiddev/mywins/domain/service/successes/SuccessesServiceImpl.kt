@@ -1,7 +1,7 @@
 package com.theandroiddev.mywins.domain.service.successes
 
-import com.theandroiddev.mywins.data.repository.SuccessesLocalDataSource
-import com.theandroiddev.mywins.data.model.toServiceModel
+import com.theandroiddev.mywins.data.successes.repository.SuccessesLocalDataSource
+import com.theandroiddev.mywins.data.successes.model.toServiceModel
 import com.theandroiddev.mywins.domain.service.common.InvalidArgumentException
 import com.theandroiddev.mywins.presentation.edit_success.hasOne
 import com.theandroiddev.mywins.utils.Constants.Companion.SortType.TITLE

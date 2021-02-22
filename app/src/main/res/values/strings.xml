@@ -6,6 +6,7 @@
     <string name="category_description">category</string>
     <string name="dummy_date">27.05.17</string>
     <string name="dummy_title">Title</string>
+    <string name="dummy_repeat_count">1</string>
     <string name="dummy_category">Android</string>
     <string name="importance_description">importance</string>
     <string name="title_activity_success_slider">Success Slider</string>
@@ -16,6 +17,7 @@
     <string name="action_date_started">Sort by date started</string>
     <string name="action_date_ended">Sort by date ended</string>
     <string name="action_title">Sort by title</string>
+    <string name="about_app">About app</string>
 
     <string name="descr_image">image</string>
 
@@ -42,11 +44,13 @@
     <string name="category_business">Business</string>
     <string name="category_journey">Journey</string>
     <string name="category_learn">Education</string>
+    <string name="category_hobby">Hobby</string>
     <string name="category_other">Other</string>
     <string name="category_none">Other</string>
 
     <string name="error_title">What\'s the name of your success?</string>
     <string name="error_date_ended">You ended before started!</string>
+    <string name="error_repeat_count">How many times did you achieve that?</string>
     <string name="not_date_but_text">Date</string>
     <string name="snack_description_todo">Not active!</string>
     <string name="snack_refresh_needed">Successes may not be synced</string>
